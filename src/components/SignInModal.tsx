@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import ModalOverlay from "./ModalOverlay";
@@ -12,10 +12,20 @@ interface Props {
 const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [signing, setSigning] = useState(false);
   const [error, setError] = useState("");
   const { signIn } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const saved = localStorage.getItem("offlist_remember");
+    if (saved) {
+      const { email: savedEmail } = JSON.parse(saved);
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const inputClass = "w-full bg-transparent border-none text-foreground font-body text-[15px] font-light py-2.5 outline-none transition-colors tracking-wide focus:border-accent placeholder:text-foreground/20";
 
@@ -33,6 +43,11 @@ const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
       setSigning(false);
       setTimeout(() => setError(""), 3000);
     } else {
+      if (rememberMe) {
+        localStorage.setItem("offlist_remember", JSON.stringify({ email }));
+      } else {
+        localStorage.removeItem("offlist_remember");
+      }
       setSigning(false);
       onClose();
       navigate("/dashboard");
@@ -46,26 +61,38 @@ const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
         <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Sign in.</h2>
         <div className="h-9" />
 
-        <div className="mb-6">
-          <label className="block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2">Email</label>
-          <input className={inputClass} type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ borderBottom: "1px solid hsl(var(--input))" }} />
-        </div>
-        <div className="mb-6">
-          <label className="block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2">Password</label>
-          <input className={inputClass} type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={{ borderBottom: "1px solid hsl(var(--input))" }} />
-        </div>
+        <form autoComplete="on" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          <div className="mb-6">
+            <label className="block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2">Email</label>
+            <input className={inputClass} type="email" name="email" autoComplete="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ borderBottom: "1px solid hsl(var(--input))" }} />
+          </div>
+          <div className="mb-6">
+            <label className="block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2">Password</label>
+            <input className={inputClass} type="password" name="password" autoComplete="current-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={{ borderBottom: "1px solid hsl(var(--input))" }} />
+          </div>
 
-        {error && (
-          <p className="text-[11px] text-destructive tracking-wide mb-3">{error}</p>
-        )}
+          <label className="flex items-center gap-2.5 cursor-pointer mb-4 select-none">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-3.5 h-3.5 accent-accent cursor-pointer"
+            />
+            <span className="text-[11px] tracking-wide text-warm-grey">Remember me</span>
+          </label>
 
-        <button
-          onClick={handleSubmit}
-          disabled={signing}
-          className="w-full bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer mt-3 transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
-        >
-          {signing ? "Signing in…" : "Sign In →"}
-        </button>
+          {error && (
+            <p className="text-[11px] text-destructive tracking-wide mb-3">{error}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={signing}
+            className="w-full bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer mt-3 transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
+          >
+            {signing ? "Signing in…" : "Sign In →"}
+          </button>
+        </form>
 
         <p className="text-center mt-5 text-[11px] text-warm-grey tracking-wide">
           No account?{" "}
