@@ -11,11 +11,9 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
           className="font-display text-[clamp(60px,7vw,104px)] font-light leading-[0.93] tracking-tight mb-14 opacity-0 animate-fade-up"
           style={{ animationDelay: "0.5s" }}
         >
-          Private
+          Private <em className="italic text-accent">Events</em>
           <br />
-          <em className="italic text-accent">Events</em>
-          <br />
-          Network.
+          Network
         </h1>
         <div className="flex gap-5 items-center opacity-0 animate-fade-up" style={{ animationDelay: "0.7s" }}>
           <button
