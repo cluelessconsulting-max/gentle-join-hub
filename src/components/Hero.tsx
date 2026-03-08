@@ -36,7 +36,7 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col justify-center items-center px-12">
           <p className="font-display text-[26px] font-light italic text-foreground/70 leading-relaxed text-center">
-            Access to curated private events.
+            Access to curated private events and tailored experiences in your city.
           </p>
         </div>
 
