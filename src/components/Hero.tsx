@@ -33,11 +33,11 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
         </div>
       </div>
       <div className="hidden md:block relative overflow-hidden opacity-0 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#2a2420] via-[#3a322b] to-[#2a2218]" />
+        <div className="absolute inset-0 bg-secondary" />
         
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col justify-center items-center px-12">
-          <p className="font-display text-[26px] font-light italic text-primary-foreground leading-relaxed opacity-80 text-center">
+          <p className="font-display text-[26px] font-light italic text-foreground/70 leading-relaxed text-center">
             Access to curated private events.
           </p>
         </div>
@@ -46,7 +46,7 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
         <div className="absolute bottom-12 left-0 right-0 overflow-hidden">
           <div className="flex whitespace-nowrap animate-[ticker_12s_linear_infinite]">
             {[...Array(3)].map((_, i) => (
-              <span key={i} className="font-display text-[13px] font-light tracking-[0.3em] uppercase mx-0" style={{ color: "rgba(245,240,232,0.25)" }}>
+              <span key={i} className="font-display text-[13px] font-light tracking-[0.3em] uppercase mx-0 text-foreground/15">
                 London&nbsp;&nbsp;·&nbsp;&nbsp;Paris&nbsp;&nbsp;·&nbsp;&nbsp;Milan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;London&nbsp;&nbsp;·&nbsp;&nbsp;Paris&nbsp;&nbsp;·&nbsp;&nbsp;Milan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </span>
             ))}
