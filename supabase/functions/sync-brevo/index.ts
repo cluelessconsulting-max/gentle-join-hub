@@ -9,9 +9,20 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const BREVO_API_KEY = Deno.env.get('BREVO_API_KEY');
+    let BREVO_API_KEY = Deno.env.get('BREVO_API_KEY');
     if (!BREVO_API_KEY) {
       throw new Error('BREVO_API_KEY is not configured');
+    }
+    
+    // Handle base64-encoded JSON format from Brevo dashboard
+    if (!BREVO_API_KEY.startsWith('xkeysib-')) {
+      try {
+        const decoded = atob(BREVO_API_KEY);
+        const parsed = JSON.parse(decoded);
+        BREVO_API_KEY = parsed.api_key || BREVO_API_KEY;
+      } catch {
+        // Use as-is if decoding fails
+      }
     }
 
     const { email, firstName, lastName, city, referral } = await req.json();
