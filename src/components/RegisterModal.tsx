@@ -49,6 +49,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
       setSubmitting(false);
       setTimeout(() => setError(""), 3000);
     } else {
+      // Sync contact to Brevo (fire and forget)
+      supabase.functions.invoke('sync-brevo', {
+        body: { email, firstName, lastName, city, referral },
+      }).catch(err => console.error('Brevo sync error:', err));
+      
       setSubmitted(true);
       setSubmitting(false);
     }
