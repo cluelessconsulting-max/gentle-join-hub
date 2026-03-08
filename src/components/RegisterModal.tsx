@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import ModalOverlay from "./ModalOverlay";
 
 interface Props {
@@ -19,24 +20,37 @@ const RegisterModal = ({ open, onClose }: Props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [city, setCity] = useState("");
   const [referral, setReferral] = useState("");
   const [moreOpen, setMoreOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { signUp } = useAuth();
 
-  const handleSubmit = () => {
-    if (!firstName || !lastName || !email || !city) {
+  const handleSubmit = async () => {
+    if (!firstName || !lastName || !email || !password || !city) {
       setError("Please fill required fields");
       setTimeout(() => setError(""), 2000);
       return;
     }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setTimeout(() => setError(""), 2000);
+      return;
+    }
     setSubmitting(true);
-    setTimeout(() => {
+    setError("");
+    const { error: authError } = await signUp(email, password, `${firstName} ${lastName}`);
+    if (authError) {
+      setError(authError);
+      setSubmitting(false);
+      setTimeout(() => setError(""), 3000);
+    } else {
       setSubmitted(true);
       setSubmitting(false);
-    }, 900);
+    }
   };
 
   const handleClose = () => {
@@ -46,6 +60,7 @@ const RegisterModal = ({ open, onClose }: Props) => {
       setFirstName("");
       setLastName("");
       setEmail("");
+      setPassword("");
       setCity("");
       setReferral("");
       setMoreOpen(false);
@@ -76,6 +91,10 @@ const RegisterModal = ({ open, onClose }: Props) => {
           <div className="mb-6">
             <label className="block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2">Email</label>
             <input className={inputClass} type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ borderBottom: "1px solid hsl(var(--input))" }} />
+          </div>
+          <div className="mb-6">
+            <label className="block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2">Password</label>
+            <input className={inputClass} type="password" placeholder="Minimum 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} style={{ borderBottom: "1px solid hsl(var(--input))" }} />
           </div>
           <div className="mb-6">
             <label className="block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2">City</label>
@@ -154,14 +173,16 @@ const RegisterModal = ({ open, onClose }: Props) => {
             </div>
           )}
 
+          {error && (
+            <p className="text-[11px] text-destructive tracking-wide mt-3">{error}</p>
+          )}
+
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className={`w-full border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer mt-7 transition-all hover:-translate-y-0.5 ${
-              error ? "bg-warm-grey text-primary-foreground" : "bg-primary text-primary-foreground hover:bg-accent"
-            } disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default`}
+            className="w-full bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer mt-7 transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
           >
-            {error || (submitting ? "Submitting…" : "Submit →")}
+            {submitting ? "Submitting…" : "Submit →"}
           </button>
         </div>
       ) : (
@@ -171,7 +192,7 @@ const RegisterModal = ({ open, onClose }: Props) => {
           <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">
             Welcome to Offlist.
             <br />
-            We'll be in touch with your first invitation.
+            Check your email to confirm your account.
           </p>
         </div>
       )}

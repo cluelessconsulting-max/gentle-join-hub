@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import EventsSection from "@/components/EventsSection";
@@ -11,6 +13,14 @@ const Index = () => {
   const [registerOpen, setRegisterOpen] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
   const [eventModal, setEventModal] = useState<{ title: string; date: string } | null>(null);
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/dashboard");
+    }
+  }, [user, loading, navigate]);
 
   const openRegister = () => { setSignInOpen(false); setEventModal(null); setRegisterOpen(true); };
   const openSignIn = () => { setRegisterOpen(false); setEventModal(null); setSignInOpen(true); };
