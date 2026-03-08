@@ -7,9 +7,6 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
   return (
     <section className="min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden">
       <div className="flex flex-col justify-center px-6 md:px-12 pt-28 md:pt-36 pb-20">
-        <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-8 opacity-0 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-          London · 2026
-        </p>
         <h1
           className="font-display text-[clamp(60px,7vw,104px)] font-light leading-[0.93] tracking-tight mb-14 opacity-0 animate-fade-up"
           style={{ animationDelay: "0.5s" }}
