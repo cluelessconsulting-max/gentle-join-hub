@@ -7,9 +7,6 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
   return (
     <section className="min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden">
       <div className="flex flex-col justify-center px-6 md:px-12 pt-28 md:pt-36 pb-20">
-        <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-8 opacity-0 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-          London · 2026
-        </p>
         <h1
           className="font-display text-[clamp(60px,7vw,104px)] font-light leading-[0.93] tracking-tight mb-14 opacity-0 animate-fade-up"
           style={{ animationDelay: "0.5s" }}
@@ -37,23 +34,23 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
       </div>
       <div className="hidden md:block relative overflow-hidden opacity-0 animate-fade-in" style={{ animationDelay: "0.2s" }}>
         <div className="absolute inset-0 bg-gradient-to-br from-[#2a2420] via-[#3a322b] to-[#2a2218]" />
-        {/* Background city names */}
-        <div className="absolute inset-0 flex flex-col justify-center items-center gap-6 select-none pointer-events-none">
-          {["London", "Paris", "Milan"].map((city, i) => (
-            <span
-              key={city}
-              className="font-display text-[clamp(70px,9vw,120px)] font-light tracking-[0.08em] uppercase leading-none"
-              style={{ color: "rgba(245,240,232,0.06)", animationDelay: `${0.4 + i * 0.2}s` }}
-            >
-              {city}
-            </span>
-          ))}
-        </div>
-        <div className="absolute bottom-20 left-12 right-12">
-          <p className="font-display text-[26px] font-light italic text-primary-foreground leading-relaxed opacity-80 mb-5">
-            Access to curated private events, by invitation only.
+        
+        {/* Center content */}
+        <div className="absolute inset-0 flex flex-col justify-center items-center px-12">
+          <p className="font-display text-[26px] font-light italic text-primary-foreground leading-relaxed opacity-80 text-center">
+            Access to curated private events.
           </p>
-          <p className="text-[10px] tracking-wide-lg uppercase text-accent">London · 2026</p>
+        </div>
+
+        {/* Scrolling cities ticker at bottom */}
+        <div className="absolute bottom-12 left-0 right-0 overflow-hidden">
+          <div className="flex whitespace-nowrap animate-[ticker_12s_linear_infinite]">
+            {[...Array(3)].map((_, i) => (
+              <span key={i} className="font-display text-[13px] font-light tracking-[0.3em] uppercase mx-0" style={{ color: "rgba(245,240,232,0.25)" }}>
+                London&nbsp;&nbsp;·&nbsp;&nbsp;Paris&nbsp;&nbsp;·&nbsp;&nbsp;Milan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;London&nbsp;&nbsp;·&nbsp;&nbsp;Paris&nbsp;&nbsp;·&nbsp;&nbsp;Milan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
