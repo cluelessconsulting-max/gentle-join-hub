@@ -36,14 +36,19 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
         </div>
       </div>
       <div className="hidden md:block relative overflow-hidden opacity-0 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1612] via-[#2d2520] to-[#1a1410]" />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(184,151,90,0.04) 60px, rgba(184,151,90,0.04) 61px), repeating-linear-gradient(-45deg, transparent, transparent 60px, rgba(184,151,90,0.04) 60px, rgba(184,151,90,0.04) 61px)",
-          }}
-        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2a2420] via-[#3a322b] to-[#2a2218]" />
+        {/* Background city names */}
+        <div className="absolute inset-0 flex flex-col justify-center items-center gap-6 select-none pointer-events-none">
+          {["London", "Paris", "Milan"].map((city, i) => (
+            <span
+              key={city}
+              className="font-display text-[clamp(70px,9vw,120px)] font-light tracking-[0.08em] uppercase leading-none"
+              style={{ color: "rgba(245,240,232,0.06)", animationDelay: `${0.4 + i * 0.2}s` }}
+            >
+              {city}
+            </span>
+          ))}
+        </div>
         <div className="absolute bottom-20 left-12 right-12">
           <p className="font-display text-[26px] font-light italic text-primary-foreground leading-relaxed opacity-80 mb-5">
             Access to curated private events, by invitation only.
