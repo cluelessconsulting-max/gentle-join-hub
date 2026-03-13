@@ -85,15 +85,20 @@ export type Database = {
           created_at: string
           email: string | null
           event_frequency: string | null
+          favourite_neighbourhoods: string | null
           full_name: string | null
           how_heard: string | null
           id: string
+          ideal_night_out: string | null
+          industry: string | null
           instagram: string | null
           interests: string[] | null
+          job_title: string | null
           phone: string | null
           referral: string | null
           shopping_style: string | null
           tiktok: string | null
+          travel_style: string | null
           updated_at: string
           user_id: string
         }
@@ -105,15 +110,20 @@ export type Database = {
           created_at?: string
           email?: string | null
           event_frequency?: string | null
+          favourite_neighbourhoods?: string | null
           full_name?: string | null
           how_heard?: string | null
           id?: string
+          ideal_night_out?: string | null
+          industry?: string | null
           instagram?: string | null
           interests?: string[] | null
+          job_title?: string | null
           phone?: string | null
           referral?: string | null
           shopping_style?: string | null
           tiktok?: string | null
+          travel_style?: string | null
           updated_at?: string
           user_id: string
         }
@@ -125,15 +135,20 @@ export type Database = {
           created_at?: string
           email?: string | null
           event_frequency?: string | null
+          favourite_neighbourhoods?: string | null
           full_name?: string | null
           how_heard?: string | null
           id?: string
+          ideal_night_out?: string | null
+          industry?: string | null
           instagram?: string | null
           interests?: string[] | null
+          job_title?: string | null
           phone?: string | null
           referral?: string | null
           shopping_style?: string | null
           tiktok?: string | null
+          travel_style?: string | null
           updated_at?: string
           user_id?: string
         }
