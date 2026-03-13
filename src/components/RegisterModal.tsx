@@ -353,7 +353,7 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
             {/* How Heard */}
             <div className="mb-6">
-              <label className={labelClass}>How did you find us?</label>
+              <label className={labelClass}>How did you hear about Offlist?</label>
               <select
                 value={howHeard}
                 onChange={(e) => setHowHeard(e.target.value)}
