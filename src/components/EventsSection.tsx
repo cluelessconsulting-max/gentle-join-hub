@@ -9,6 +9,7 @@ interface Event {
 }
 
 const events: Event[] = [
+  { tag: "Party · Soirée", name: "Private Party", date: "27 March 2026", location: "Mayfair, London", access: "Tickets available" },
   { tag: "Private · Fashion", name: "Private Shopping Session", date: "March 2026", location: "Marylebone, London", access: "Invitation only" },
   { tag: "Lifestyle · Morning", name: "Fashion Breakfast", date: "April 2026", location: "Central London", access: "Limited seats" },
   { tag: "Coming Soon · Exclusive", name: "Brand Launch", date: "Spring 2026", location: "London", access: "Members only" },
