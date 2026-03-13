@@ -37,6 +37,7 @@ const howHeardOptions = ["From a friend", "Instagram", "TikTok", "At an event", 
 
 const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   const [step, setStep] = useState(1);
+  const [skipped, setSkipped] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
