@@ -439,19 +439,28 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
 
           {error && <p className="text-[11px] text-destructive tracking-wide mt-2">{error}</p>}
 
-          <div className="flex gap-3 mt-6">
+          <div className="flex flex-col gap-3 mt-6">
+            <div className="flex gap-3">
+              <button
+                onClick={() => setStep(1)}
+                className="flex-1 bg-transparent border border-foreground/15 text-foreground py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:border-accent hover:text-accent"
+              >
+                ← Back
+              </button>
+              <button
+                onClick={() => handleSubmit(false)}
+                disabled={submitting}
+                className="flex-[2] bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
+              >
+                {submitting ? "Submitting…" : "Submit Application →"}
+              </button>
+            </div>
             <button
-              onClick={() => setStep(1)}
-              className="flex-1 bg-transparent border border-foreground/15 text-foreground py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:border-accent hover:text-accent"
-            >
-              ← Back
-            </button>
-            <button
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(true)}
               disabled={submitting}
-              className="flex-[2] bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
+              className="w-full bg-transparent border border-foreground/10 text-warm-grey py-3 font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:border-accent hover:text-accent"
             >
-              {submitting ? "Submitting…" : "Submit Application →"}
+              Skip & sign me up directly →
             </button>
           </div>
         </div>
