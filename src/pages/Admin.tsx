@@ -348,6 +348,11 @@ const Admin = () => {
           >
             <span className="text-base">{tab.icon}</span>
             {tab.label}
+            {tab.badge && (
+              <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 animate-pulse">
+                {tab.badge}
+              </span>
+            )}
           </button>
         ))}
 
