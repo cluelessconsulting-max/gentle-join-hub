@@ -100,6 +100,10 @@ Deno.serve(async (req) => {
             Adding a few details about your lifestyle and preferences helps us curate the perfect experiences for you.
           </span>
         </td></tr>
+        <tr><td style="padding:0 0 24px 0;text-align:center;">
+          <a href="https://gentle-join-hub.lovable.app/dashboard" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">Complete Your Profile</a>
+          </span>
+        </td></tr>
         <tr><td style="padding:0 0 32px 0;text-align:center;">
           <span style="font-size:12px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
             Don't forget to follow us on
