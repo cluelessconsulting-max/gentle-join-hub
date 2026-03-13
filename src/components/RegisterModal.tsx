@@ -295,7 +295,7 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
           {/* Interests */}
           <div className="mb-6">
-            <label className={labelClass}>What draws you in?</label>
+            <label className={labelClass}>What are your main interests?</label>
             <div className="flex flex-col">
               {interestOptions.map((item) => (
                 <label key={item} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
