@@ -132,6 +132,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
         event_frequency: eventFrequency || null,
         referral: referral || null,
         how_heard: howHeard || null,
+        job_title: jobTitle || null,
+        industry: industry || null,
+        travel_style: travelStyle || null,
+        ideal_night_out: idealNightOut || null,
+        favourite_neighbourhoods: favouriteNeighbourhoods || null,
         application_status: "pending",
       }).eq("user_id", user.id);
     }
