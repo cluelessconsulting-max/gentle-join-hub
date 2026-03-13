@@ -135,7 +135,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
     setError("");
 
     const fullName = `${firstName} ${lastName}`;
-    const { error: authError } = await signUp(email, password, fullName);
+    const { error: authError, user } = await signUp(email, password, fullName);
 
     if (authError) {
       setError(authError);
@@ -144,7 +144,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
       return;
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    // Update profile if we have a user (may not have session with email confirmation)
     if (user) {
       const profileData: Record<string, any> = {
         full_name: fullName,
@@ -186,15 +186,15 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
           p_referral_code: referralCode.toUpperCase(),
         });
       }
+    }
 
-      // Send confirmation email
-      try {
-        await supabase.functions.invoke("send-application-email", {
-          body: { email, firstName, skipped: isSkip },
-        });
-      } catch (e) {
-        console.error("Email send error:", e);
-      }
+    // Send confirmation email regardless of session state
+    try {
+      await supabase.functions.invoke("send-application-email", {
+        body: { email, firstName, skipped: isSkip },
+      });
+    } catch (e) {
+      console.error("Email send error:", e);
     }
 
     setSkipped(isSkip);
