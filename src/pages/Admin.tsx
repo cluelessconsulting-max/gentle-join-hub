@@ -412,6 +412,7 @@ const Admin = () => {
                         />
                       </td>
                       <td className="p-3 text-[13px] text-slate-200 whitespace-nowrap">{p.full_name || "—"}</td>
+                      <td className="p-3 text-[13px] text-slate-400 whitespace-nowrap">{p.email || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{p.city || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{p.age || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{p.instagram || "—"}</td>
