@@ -260,6 +260,7 @@ const Admin = () => {
     { id: "overview", icon: "◈", label: "Overview" },
     { id: "members", icon: "◉", label: "Members" },
     { id: "events", icon: "◎", label: "Events" },
+    { id: "buyers", icon: "◆", label: "Buyers" },
     { id: "invites", icon: "◇", label: "Invites" },
     { id: "referrals", icon: "◈", label: "Referrals" },
     { id: "email", icon: "◎", label: "Send Email" },
