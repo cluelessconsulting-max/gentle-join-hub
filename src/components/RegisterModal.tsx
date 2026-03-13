@@ -205,7 +205,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   const handleClose = () => {
     onClose();
     setTimeout(() => {
-      setSubmitted(false);
+      setSubmitted(false); setSkipped(false);
       setStep(1);
       setFirstName(""); setLastName(""); setEmail(""); setPassword("");
       setPhone(""); setCity(""); setAge(""); setInstagram(""); setTiktok("");
