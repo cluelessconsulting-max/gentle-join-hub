@@ -14,9 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      event_registrations: {
+        Row: {
+          event_id: string
+          id: string
+          registered_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          registered_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          registered_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           access: string
+          capacity: number | null
           created_at: string
           date: string
           description: string | null
@@ -27,6 +78,7 @@ export type Database = {
         }
         Insert: {
           access: string
+          capacity?: number | null
           created_at?: string
           date: string
           description?: string | null
@@ -37,6 +89,7 @@ export type Database = {
         }
         Update: {
           access?: string
+          capacity?: number | null
           created_at?: string
           date?: string
           description?: string | null
@@ -76,6 +129,33 @@ export type Database = {
           },
         ]
       }
+      invites: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -93,9 +173,12 @@ export type Database = {
           industry: string | null
           instagram: string | null
           interests: string[] | null
+          invite_code: string | null
           job_title: string | null
           phone: string | null
           referral: string | null
+          referral_code: string | null
+          referred_by: string | null
           shopping_style: string | null
           tiktok: string | null
           travel_style: string | null
@@ -118,9 +201,12 @@ export type Database = {
           industry?: string | null
           instagram?: string | null
           interests?: string[] | null
+          invite_code?: string | null
           job_title?: string | null
           phone?: string | null
           referral?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           shopping_style?: string | null
           tiktok?: string | null
           travel_style?: string | null
@@ -143,9 +229,12 @@ export type Database = {
           industry?: string | null
           instagram?: string | null
           interests?: string[] | null
+          invite_code?: string | null
           job_title?: string | null
           phone?: string | null
           referral?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           shopping_style?: string | null
           tiktok?: string | null
           travel_style?: string | null
@@ -159,7 +248,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_invite: {
+        Args: { p_code: string; p_user_id: string }
+        Returns: boolean
+      }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      register_for_event: {
+        Args: { p_event_id: string; p_user_id: string }
+        Returns: string
+      }
+      set_referral: {
+        Args: { p_referral_code: string; p_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

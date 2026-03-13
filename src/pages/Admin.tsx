@@ -3,6 +3,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import AdminInvites from "@/components/admin/AdminInvites";
+import AdminEventsManager from "@/components/admin/AdminEventsManager";
+import AdminReferrals from "@/components/admin/AdminReferrals";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
@@ -255,6 +258,9 @@ const Admin = () => {
   const tabs = [
     { id: "overview", icon: "◈", label: "Overview" },
     { id: "members", icon: "◉", label: "Members" },
+    { id: "events", icon: "◎", label: "Events" },
+    { id: "invites", icon: "◇", label: "Invites" },
+    { id: "referrals", icon: "◈", label: "Referrals" },
     { id: "email", icon: "◎", label: "Send Email" },
     { id: "testing", icon: "◌", label: "System Check" },
   ];
@@ -459,6 +465,15 @@ const Admin = () => {
             )}
           </div>
         )}
+
+        {/* ── EVENTS MANAGER ── */}
+        {activeTab === "events" && <AdminEventsManager />}
+
+        {/* ── INVITES ── */}
+        {activeTab === "invites" && user && <AdminInvites userId={user.id} />}
+
+        {/* ── REFERRALS ── */}
+        {activeTab === "referrals" && <AdminReferrals />}
 
         {/* ── EMAIL COMPOSER ── */}
         {activeTab === "email" && (

@@ -12,13 +12,20 @@ interface Event {
   location: string;
   access: string;
   description: string | null;
+  capacity: number | null;
+}
+
+interface Registration {
+  event_id: string;
+  status: string;
 }
 
 const Dashboard = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
-  const [registeredIds, setRegisteredIds] = useState<Set<string>>(new Set());
+  const [registrations, setRegistrations] = useState<Map<string, string>>(new Map());
+  const [regCounts, setRegCounts] = useState<Map<string, number>>(new Map());
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
@@ -32,13 +39,27 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const [{ data: eventsData }, { data: regsData }, { data: profileData }] = await Promise.all([
+      const [{ data: eventsData }, { data: regsData }, { data: profileData }, { data: allRegs }] = await Promise.all([
         supabase.from("events").select("*"),
-        supabase.from("guest_list_registrations").select("event_id").eq("user_id", user.id),
+        supabase.from("event_registrations" as any).select("event_id, status").eq("user_id", user.id),
         supabase.from("profiles").select("application_status").eq("user_id", user.id).single(),
+        supabase.from("event_registrations" as any).select("event_id, status"),
       ]);
       setEvents((eventsData as Event[]) || []);
-      setRegisteredIds(new Set((regsData || []).map((r: { event_id: string }) => r.event_id)));
+
+      const regMap = new Map<string, string>();
+      ((regsData as any) || []).forEach((r: Registration) => regMap.set(r.event_id, r.status));
+      setRegistrations(regMap);
+
+      // Count confirmed registrations per event
+      const counts = new Map<string, number>();
+      ((allRegs as any) || []).forEach((r: Registration) => {
+        if (r.status === "confirmed") {
+          counts.set(r.event_id, (counts.get(r.event_id) || 0) + 1);
+        }
+      });
+      setRegCounts(counts);
+
       setApplicationStatus((profileData as any)?.application_status || "pending");
       setLoading(false);
     };
@@ -48,19 +69,26 @@ const Dashboard = () => {
   const handleRegister = async (eventId: string) => {
     if (!user) return;
     setLoadingId(eventId);
-    const { error } = await supabase.from("guest_list_registrations").insert({
-      user_id: user.id,
-      event_id: eventId,
+
+    const { data, error } = await supabase.rpc("register_for_event" as any, {
+      p_user_id: user.id,
+      p_event_id: eventId,
     });
+
     if (error) {
       if (error.code === "23505") {
-        toast.info("You're already on the guest list!");
+        toast.info("You're already registered!");
       } else {
         toast.error("Something went wrong. Try again.");
       }
     } else {
-      setRegisteredIds((prev) => new Set(prev).add(eventId));
-      toast.success("You're on the guest list!");
+      const status = data as string;
+      setRegistrations((prev) => new Map(prev).set(eventId, status));
+      if (status === "waitlist") {
+        toast.info("Event is full — you're on the waitlist!");
+      } else {
+        toast.success("You're on the guest list!");
+      }
     }
     setLoadingId(null);
   };
@@ -78,41 +106,24 @@ const Dashboard = () => {
     );
   }
 
-  // Pending / Rejected state
   if (applicationStatus !== "approved") {
     return (
       <div className="min-h-screen bg-background">
         <nav className="flex justify-between items-center px-6 md:px-12 py-7">
-          <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">
-            Offlist
-          </a>
-          <button
-            onClick={handleSignOut}
-            className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary"
-          >
-            Sign Out
-          </button>
+          <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">Offlist</a>
+          <button onClick={handleSignOut} className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary">Sign Out</button>
         </nav>
-
         <section className="px-6 md:px-12 py-24 text-center max-w-xl mx-auto">
           <div className="font-display text-[56px] text-accent mb-6 leading-none">◆</div>
           {applicationStatus === "rejected" ? (
             <>
               <h1 className="font-display text-[38px] font-light mb-5">Application not approved.</h1>
-              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">
-                Unfortunately, your application wasn't approved at this time.
-                <br />
-                Feel free to reach out if you have any questions.
-              </p>
+              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">Unfortunately, your application wasn't approved at this time.<br />Feel free to reach out if you have any questions.</p>
             </>
           ) : (
             <>
               <h1 className="font-display text-[38px] font-light mb-5">Application pending.</h1>
-              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">
-                Your application is under review.
-                <br />
-                We'll notify you once it's been approved.
-              </p>
+              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">Your application is under review.<br />We'll notify you once it's been approved.</p>
             </>
           )}
         </section>
@@ -123,17 +134,10 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <nav className="flex justify-between items-center px-6 md:px-12 py-7">
-        <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">
-          Offlist
-        </a>
+        <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">Offlist</a>
         <div className="flex gap-5 items-center">
           <span className="text-[11px] tracking-wide text-warm-grey">{user?.email}</span>
-          <button
-            onClick={handleSignOut}
-            className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary"
-          >
-            Sign Out
-          </button>
+          <button onClick={handleSignOut} className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary">Sign Out</button>
         </div>
       </nav>
 
@@ -143,30 +147,51 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
           {events.map((event) => {
-            const isRegistered = registeredIds.has(event.id);
+            const regStatus = registrations.get(event.id);
+            const isRegistered = !!regStatus;
             const isLoading = loadingId === event.id;
+            const confirmed = regCounts.get(event.id) || 0;
+            const isFull = event.capacity ? confirmed >= event.capacity : false;
+
             return (
               <div key={event.id} className="bg-background p-10 md:p-12 relative overflow-hidden group">
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-accent scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100" />
                 <span className="text-[9px] tracking-wide-lg uppercase text-accent mb-6 block">{event.tag}</span>
                 <h3 className="font-display text-[28px] font-light leading-tight mb-5">{event.name}</h3>
-                <div className="flex flex-col gap-2 mb-9">
+                <div className="flex flex-col gap-2 mb-4">
                   {[event.date, event.location, event.access].map((item) => (
-                    <span key={item} className="text-[11px] text-warm-grey tracking-wide flex gap-2.5 items-center before:content-['—'] before:text-accent before:text-[9px]">
-                      {item}
-                    </span>
+                    <span key={item} className="text-[11px] text-warm-grey tracking-wide flex gap-2.5 items-center before:content-['—'] before:text-accent before:text-[9px]">{item}</span>
                   ))}
                 </div>
 
+                {event.capacity && (
+                  <div className="mb-5">
+                    <div className="flex justify-between text-[10px] text-warm-grey mb-1">
+                      <span>{confirmed} / {event.capacity} spots</span>
+                      {isFull && <span className="text-amber-500">Full</span>}
+                    </div>
+                    <div className="w-full h-1 bg-foreground/10 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${isFull ? "bg-amber-500" : "bg-accent"}`}
+                        style={{ width: `${Math.min(100, (confirmed / event.capacity) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {isRegistered ? (
-                  <span className="text-[10px] tracking-wide-md uppercase text-accent flex items-center gap-2">✓ On the guest list</span>
+                  <span className={`text-[10px] tracking-wide-md uppercase flex items-center gap-2 ${
+                    regStatus === "waitlist" ? "text-amber-500" : "text-accent"
+                  }`}>
+                    {regStatus === "waitlist" ? "⏳ On the waitlist" : "✓ On the guest list"}
+                  </span>
                 ) : (
                   <button
                     onClick={() => handleRegister(event.id)}
                     disabled={isLoading}
                     className="bg-primary text-primary-foreground border-none px-8 py-3.5 font-body text-[10px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
                   >
-                    {isLoading ? "Joining…" : "Get on the guest list →"}
+                    {isLoading ? "Joining…" : isFull ? "Join Waitlist →" : "Get on the guest list →"}
                   </button>
                 )}
               </div>

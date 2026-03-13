@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -15,6 +15,9 @@ const Index = () => {
   const [eventModal, setEventModal] = useState<{ title: string; date: string } | null>(null);
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const referralCode = useMemo(() => searchParams.get("ref") || undefined, [searchParams]);
 
   useEffect(() => {
     if (!loading && user) {
@@ -32,7 +35,7 @@ const Index = () => {
       <EventsSection onEventClick={(name, date) => setEventModal({ title: name, date })} />
       <Footer />
 
-      <RegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)} />
+      <RegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)} referralCode={referralCode} />
       <SignInModal open={signInOpen} onClose={() => setSignInOpen(false)} onSwitchToRegister={openRegister} />
       <EventAccessModal
         open={!!eventModal}
