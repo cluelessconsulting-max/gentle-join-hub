@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          sender: { name: senderName || 'Offlist', email: senderEmail || 'clueless.consulting@gmail.com' },
+          sender: { name: senderName || 'Offlist', email: senderEmail || 'application@offlist.com' },
           to: recipients.map((r: { email: string; name?: string }) => ({
             email: r.email,
             name: r.name || r.email,
