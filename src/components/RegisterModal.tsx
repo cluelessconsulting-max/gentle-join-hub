@@ -157,6 +157,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
         eventFrequency: eventFrequency || "",
         referral: referral || "",
         howHeard: howHeard || "",
+        jobTitle: jobTitle || "",
+        industry: industry || "",
+        travelStyle: travelStyle || "",
+        idealNightOut: idealNightOut || "",
+        favouriteNeighbourhoods: favouriteNeighbourhoods || "",
       },
     }).catch((err) => console.error("Brevo sync error:", err));
 
