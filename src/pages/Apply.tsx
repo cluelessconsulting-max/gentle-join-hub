@@ -6,7 +6,7 @@ import RegisterModal from "@/components/RegisterModal";
 const Apply = () => {
   const [searchParams] = useSearchParams();
   const referralCode = useMemo(() => searchParams.get("ref") || undefined, [searchParams]);
-  const [registerOpen, setRegisterOpen] = useState(true);
+  const [registerOpen, setRegisterOpen] = useState(false);
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
