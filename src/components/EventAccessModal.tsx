@@ -21,7 +21,7 @@ const EventAccessModal = ({ open, onClose, title, date, onRegister, onSignIn }: 
           onClick={() => { onClose(); setTimeout(onRegister, 120); }}
           className="w-full py-[17px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-colors bg-primary text-primary-foreground border-none hover:bg-accent"
         >
-          Register to Access
+          Apply to Access
         </button>
         <button
           onClick={() => { onClose(); setTimeout(onSignIn, 120); }}

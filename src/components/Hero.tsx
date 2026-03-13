@@ -20,7 +20,7 @@ const Hero = ({ onRegister, onSignIn }: HeroProps) => {
             onClick={onRegister}
             className="bg-primary text-primary-foreground border-none px-12 py-[18px] font-body text-[11px] tracking-wide-xl uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5"
           >
-            Register
+            Apply
           </button>
           <button
             onClick={onSignIn}

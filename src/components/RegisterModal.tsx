@@ -80,7 +80,7 @@ const RegisterModal = ({ open, onClose }: Props) => {
       {!submitted ? (
         <div className="p-10 md:p-12">
           <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Join Offlist</p>
-          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Create your account.</h2>
+          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Apply for access.</h2>
           <div className="h-9" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
