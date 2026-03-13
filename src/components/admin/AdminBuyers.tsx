@@ -237,6 +237,7 @@ const AdminBuyers = () => {
                       <td className="p-3 text-[13px] text-slate-200">{b.full_name || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{b.email || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{b.city || "—"}</td>
+                      <td className="p-3"><TierBadge tier={b.buyer_tier} /></td>
                       <td className="p-3 text-[12px] text-purple-400">{codes.map((c) => c.code).join(", ")}</td>
                       <td className="p-3 text-[13px] text-slate-300">{userPurchases.length}</td>
                       <td className="p-3 text-[13px] text-emerald-400 font-semibold">£{totalSpent.toFixed(2)}</td>
