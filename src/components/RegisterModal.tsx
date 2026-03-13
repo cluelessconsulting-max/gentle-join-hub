@@ -303,12 +303,12 @@ const RegisterModal = ({ open, onClose }: Props) => {
       ) : (
         <div className="p-10 md:p-12">
           <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 2 of 2</p>
-          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Tell us about you.</h2>
-          <p className="text-[11px] text-warm-grey tracking-wide mb-7">Help us tailor the events we bring you</p>
+          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Your world.</h2>
+          <p className="text-[11px] text-warm-grey tracking-wide mb-7">Help us curate the right experiences for you</p>
 
           {/* Interests */}
           <div className="mb-6">
-            <label className={labelClass}>What are your main interests?</label>
+            <label className={labelClass}>What draws you in?</label>
             <div className="flex flex-col">
               {interestOptions.map((item) => (
                 <label key={item} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
@@ -326,9 +326,51 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
           <div className="h-px bg-border mb-6" />
 
+          {/* Travel Style */}
+          <div className="mb-6">
+            <label className={labelClass}>Your favourite way to travel?</label>
+            <div className="flex flex-col">
+              {travelOptions.map((item) => (
+                <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
+                  <input
+                    type="radio"
+                    name="travelStyle"
+                    checked={travelStyle === item.value}
+                    onChange={() => setTravelStyle(item.value)}
+                    className="appearance-none w-3.5 h-3.5 border border-foreground/25 rounded-full shrink-0 cursor-pointer relative checked:border-accent transition-all"
+                  />
+                  <span className="text-xs tracking-wide text-foreground leading-snug">{item.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="h-px bg-border mb-6" />
+
+          {/* Ideal Night Out */}
+          <div className="mb-6">
+            <label className={labelClass}>Your ideal night out?</label>
+            <div className="flex flex-col">
+              {nightOutOptions.map((item) => (
+                <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
+                  <input
+                    type="radio"
+                    name="nightOut"
+                    checked={idealNightOut === item.value}
+                    onChange={() => setIdealNightOut(item.value)}
+                    className="appearance-none w-3.5 h-3.5 border border-foreground/25 rounded-full shrink-0 cursor-pointer relative checked:border-accent transition-all"
+                  />
+                  <span className="text-xs tracking-wide text-foreground leading-snug">{item.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="h-px bg-border mb-6" />
+
           {/* Shopping Style */}
           <div className="mb-6">
-            <label className={labelClass}>What best describes your shopping style?</label>
+            <label className={labelClass}>How do you shop?</label>
             <div className="flex flex-col">
               {shopStyles.map((item) => (
                 <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
@@ -347,36 +389,44 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
           <div className="h-px bg-border mb-6" />
 
-          {/* Event Frequency */}
+          {/* Favourite Neighbourhoods */}
           <div className="mb-6">
-            <label className={labelClass}>How often do you attend events?</label>
-            <select
-              value={eventFrequency}
-              onChange={(e) => setEventFrequency(e.target.value)}
-              className={`${inputClass} cursor-pointer`}
-              style={borderStyle}
-            >
-              <option value="">Select frequency</option>
-              {frequencyOptions.map((opt) => (
-                <option key={opt}>{opt}</option>
-              ))}
-            </select>
+            <label className={labelClass}>Neighbourhoods you love</label>
+            <input className={inputClass} placeholder="e.g. Shoreditch, Marais, Soho, Brera..." value={favouriteNeighbourhoods} onChange={(e) => setFavouriteNeighbourhoods(e.target.value)} style={borderStyle} />
           </div>
 
-          {/* How Heard */}
-          <div className="mb-6">
-            <label className={labelClass}>How did you hear about Offlist?</label>
-            <select
-              value={howHeard}
-              onChange={(e) => setHowHeard(e.target.value)}
-              className={`${inputClass} cursor-pointer`}
-              style={borderStyle}
-            >
-              <option value="">Select</option>
-              {howHeardOptions.map((opt) => (
-                <option key={opt}>{opt}</option>
-              ))}
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
+            {/* Event Frequency */}
+            <div className="mb-6">
+              <label className={labelClass}>How often do you go out?</label>
+              <select
+                value={eventFrequency}
+                onChange={(e) => setEventFrequency(e.target.value)}
+                className={`${inputClass} cursor-pointer`}
+                style={borderStyle}
+              >
+                <option value="">Select</option>
+                {frequencyOptions.map((opt) => (
+                  <option key={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* How Heard */}
+            <div className="mb-6">
+              <label className={labelClass}>How did you find us?</label>
+              <select
+                value={howHeard}
+                onChange={(e) => setHowHeard(e.target.value)}
+                className={`${inputClass} cursor-pointer`}
+                style={borderStyle}
+              >
+                <option value="">Select</option>
+                {howHeardOptions.map((opt) => (
+                  <option key={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {error && <p className="text-[11px] text-destructive tracking-wide mt-2">{error}</p>}
