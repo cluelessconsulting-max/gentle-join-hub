@@ -164,7 +164,25 @@ const Dashboard = () => {
 
       <section className="px-6 md:px-12 py-16">
         <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-3.5">Your Events</p>
-        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-14">Welcome back</h1>
+        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-6">Welcome back{profileName ? `, ${profileName.split(" ")[0]}` : ""}</h1>
+
+        {referralCode && (
+          <div className="mb-14 flex items-center gap-4">
+            <div className="bg-foreground/5 border border-foreground/10 px-5 py-3 inline-flex items-center gap-3">
+              <span className="text-[10px] tracking-wide-lg uppercase text-warm-grey">Your Code</span>
+              <span className="font-display text-[15px] tracking-wider text-accent">{referralCode}</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(referralCode);
+                  toast.success("Code copied!");
+                }}
+                className="text-[10px] text-warm-grey hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
           {events.map((event) => {
