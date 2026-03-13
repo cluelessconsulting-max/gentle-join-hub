@@ -7,6 +7,8 @@ interface Profile {
   full_name: string | null;
   email: string | null;
   city: string | null;
+  buyer_tier: string;
+  total_points: number;
 }
 
 interface Purchase {
