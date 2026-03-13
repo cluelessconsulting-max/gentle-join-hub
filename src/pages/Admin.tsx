@@ -52,6 +52,7 @@ const Admin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
 
   // Email composer
   const [emailSubject, setEmailSubject] = useState("");
