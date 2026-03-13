@@ -120,10 +120,14 @@ const Admin = () => {
   };
 
   const syncToBrevo = async (profile: Profile) => {
+    if (!profile.email) {
+      toast.error("No email found for this profile");
+      return;
+    }
     const { error } = await supabase.functions.invoke("brevo-admin", {
       body: {
         action: "sync_contact",
-        email: profile.full_name, // We don't have email in profiles, need to handle
+        email: profile.email,
         attributes: {
           FIRSTNAME: profile.full_name?.split(" ")[0] || "",
           LASTNAME: profile.full_name?.split(" ").slice(1).join(" ") || "",
