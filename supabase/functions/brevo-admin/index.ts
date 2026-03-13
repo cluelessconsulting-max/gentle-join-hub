@@ -109,6 +109,46 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Action: create_attributes — create missing contact attributes
+    if (action === 'create_attributes') {
+      const attributes = [
+        { name: 'CITY', type: 'text' },
+        { name: 'AGE', type: 'text' },
+        { name: 'INSTAGRAM', type: 'text' },
+        { name: 'TIKTOK', type: 'text' },
+        { name: 'INTERESTS', type: 'text' },
+        { name: 'SHOPPING_STYLE', type: 'text' },
+        { name: 'EVENT_FREQUENCY', type: 'text' },
+        { name: 'REFERRAL', type: 'text' },
+        { name: 'HOW_HEARD', type: 'text' },
+        { name: 'STATUS', type: 'text' },
+      ];
+
+      const results = [];
+      for (const attr of attributes) {
+        try {
+          const res = await fetch(`https://api.brevo.com/v3/contacts/attributes/normal/${attr.name}`, {
+            method: 'POST',
+            headers: {
+              'api-key': BREVO_API_KEY,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type: attr.type }),
+          });
+          const ok = res.ok || res.status === 400; // 400 = already exists
+          const detail = res.ok ? 'created' : (await res.text());
+          results.push({ name: attr.name, ok, detail });
+        } catch (e) {
+          results.push({ name: attr.name, ok: false, detail: e.message });
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true, results }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     // Action: get_stats — get Brevo account info
     if (action === 'get_stats') {
       const response = await fetch('https://api.brevo.com/v3/account', {

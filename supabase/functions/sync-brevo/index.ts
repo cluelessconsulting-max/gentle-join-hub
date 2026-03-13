@@ -44,8 +44,8 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         email,
         attributes: {
-          FIRSTNAME: firstName || '',
-          LASTNAME: lastName || '',
+          NOME: firstName || '',
+          COGNOME: lastName || '',
           CITY: city || '',
           AGE: age || '',
           INSTAGRAM: instagram || '',
