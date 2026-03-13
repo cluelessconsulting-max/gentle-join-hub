@@ -10,7 +10,7 @@ interface Profile {
   id: string;
   user_id: string;
   full_name: string | null;
-  city: string | null;
+  email: string | null;
   age: number | null;
   instagram: string | null;
   tiktok: string | null;
