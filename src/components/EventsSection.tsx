@@ -56,20 +56,18 @@ const SocialCTA = () => (
     </p>
     <div className="flex gap-3">
       <a
-        href="instagram://user?username=offlist.london"
-        onClick={() => {
-          setTimeout(() => { window.location.href = "https://instagram.com/offlist.london"; }, 500);
-        }}
+        href="https://www.instagram.com/offlist.network/"
+        target="_blank"
+        rel="noopener noreferrer"
         className="flex items-center gap-2 border border-foreground/15 px-4 py-2.5 text-foreground transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary group"
       >
         <Instagram size={14} className="opacity-60 group-hover:opacity-100 transition-opacity" />
         <span className="text-[9px] tracking-wide-lg uppercase">Instagram</span>
       </a>
       <a
-        href="snssdk1233://user/profile/offlist.london"
-        onClick={() => {
-          setTimeout(() => { window.location.href = "https://tiktok.com/@offlist.london"; }, 500);
-        }}
+        href="https://www.tiktok.com/@off.list.network"
+        target="_blank"
+        rel="noopener noreferrer"
         className="flex items-center gap-2 border border-foreground/15 px-4 py-2.5 text-foreground transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary group"
       >
         <TikTokIcon size={14} className="opacity-60 group-hover:opacity-100 transition-opacity" />
