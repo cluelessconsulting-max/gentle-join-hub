@@ -30,6 +30,8 @@ const Dashboard = () => {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{ eventName: string; status: string } | null>(null);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ const Dashboard = () => {
       const [{ data: eventsData }, { data: regsData }, { data: profileData }, { data: allRegs }] = await Promise.all([
         supabase.from("events").select("*"),
         supabase.from("event_registrations" as any).select("event_id, status").eq("user_id", user.id),
-        supabase.from("profiles").select("application_status, full_name").eq("user_id", user.id).single(),
+        supabase.from("profiles").select("application_status, full_name, referral_code").eq("user_id", user.id).single(),
         supabase.from("event_registrations" as any).select("event_id, status"),
       ]);
       setEvents((eventsData as Event[]) || []);
@@ -62,6 +64,8 @@ const Dashboard = () => {
       setRegCounts(counts);
 
       setApplicationStatus((profileData as any)?.application_status || "pending");
+      setReferralCode((profileData as any)?.referral_code || null);
+      setProfileName((profileData as any)?.full_name || null);
       setLoading(false);
     };
     fetchData();
@@ -160,7 +164,25 @@ const Dashboard = () => {
 
       <section className="px-6 md:px-12 py-16">
         <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-3.5">Your Events</p>
-        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-14">Welcome back</h1>
+        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-6">Welcome back{profileName ? `, ${profileName.split(" ")[0]}` : ""}</h1>
+
+        {referralCode && (
+          <div className="mb-14 flex items-center gap-4">
+            <div className="bg-foreground/5 border border-foreground/10 px-5 py-3 inline-flex items-center gap-3">
+              <span className="text-[10px] tracking-wide-lg uppercase text-warm-grey">Your Code</span>
+              <span className="font-display text-[15px] tracking-wider text-accent">{referralCode}</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(referralCode);
+                  toast.success("Code copied!");
+                }}
+                className="text-[10px] text-warm-grey hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
           {events.map((event) => {
