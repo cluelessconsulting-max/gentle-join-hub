@@ -214,8 +214,8 @@ const EventsSection = ({ onEventClick }: Props) => {
             </RevealDiv>
           ))}
           {/* Social CTA fills remaining grid space */}
-          <RevealDiv className={socialColSpan > 1 ? `md:col-span-${socialColSpan}` : ""}>
-            <div className={`border-b border-border h-full ${socialColSpan > 1 ? "" : "border-r"}`}>
+          <RevealDiv className={socialSpanClass}>
+            <div className="border-b border-border h-full">
               <SocialCTA />
             </div>
           </RevealDiv>
