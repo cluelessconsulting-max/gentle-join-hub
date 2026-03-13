@@ -273,8 +273,9 @@ const RegisterModal = ({ open, onClose }: Props) => {
               <input className={inputClass} placeholder="@handle or instagram.com/..." value={instagram} onChange={(e) => setInstagram(e.target.value)} style={borderStyle} />
             </div>
             <div className="mb-5">
-              <label className={labelClass}>TikTok Handle</label>
-              <input className={inputClass} placeholder="@yourhandle (optional)" value={tiktok} onChange={(e) => setTiktok(e.target.value)} style={borderStyle} />
+              <label className={labelClass}>TikTok</label>
+              <p className="text-[10px] text-warm-grey/70 tracking-wide mb-1.5">Handle or profile link</p>
+              <input className={inputClass} placeholder="@handle or tiktok.com/..." value={tiktok} onChange={(e) => setTiktok(e.target.value)} style={borderStyle} />
             </div>
           </div>
 
