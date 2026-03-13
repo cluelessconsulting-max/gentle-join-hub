@@ -106,14 +106,10 @@ const EventsSection = ({ onEventClick }: Props) => {
     }
   };
 
-  const noResults = filteredEvents.length === 0;
-
-  // Calculate grid: events + social card fills the row
-  // On md+ we use 3 columns. Social card always takes the last slot.
-  const totalCells = filteredEvents.length + 1; // +1 for social card
-  // Pad to fill the 3-col row if needed (on desktop)
-  const remainder = totalCells % 3;
-  const socialColSpan = remainder === 0 ? 1 : (3 - (filteredEvents.length % 3));
+  // Social card col-span: fill the remaining slots in the 3-col grid
+  const eventsInLastRow = filteredEvents.length % 3;
+  // If events fill row perfectly, social takes 1 full col; otherwise fill remaining
+  const socialSpanClass = eventsInLastRow === 0 ? "" : eventsInLastRow === 1 ? "md:col-span-2" : "";
 
   return (
     <section className="px-6 md:px-12 py-[72px] md:py-[100px] border-t border-border" id="events">
