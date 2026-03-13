@@ -70,6 +70,7 @@ const AdminBuyers = () => {
       amount: parseFloat(form.amount),
       purchase_date: form.purchase_date || new Date().toISOString().split("T")[0],
       notes: form.notes || null,
+      verified_by: "clueless.consulting@gmail.com",
     } as any);
     if (error) {
       toast.error("Failed to add purchase");

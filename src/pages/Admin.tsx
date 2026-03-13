@@ -690,4 +690,19 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
+const TierBadge = ({ tier }: { tier: string }) => {
+  const classes: Record<string, string> = {
+    guest: "bg-slate-800 text-slate-400",
+    shopper: "bg-emerald-950 text-emerald-400",
+    buyer: "bg-sky-950 text-sky-400",
+    vip: "bg-purple-950 text-purple-400",
+  };
+  const cls = classes[tier] || classes.guest;
+  return (
+    <span className={`${cls} px-2.5 py-0.5 rounded-full text-xs font-semibold`}>
+      {tier || "guest"}
+    </span>
+  );
+};
+
 export default Admin;
