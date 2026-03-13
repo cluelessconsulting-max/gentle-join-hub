@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          sender: { name: senderName || 'Offlist', email: senderEmail || 'noreply@offlist.com' },
+          sender: { name: senderName || 'Offlist', email: senderEmail || 'clueless.consulting@gmail.com' },
           to: recipients.map((r: { email: string; name?: string }) => ({
             email: r.email,
             name: r.name || r.email,
@@ -159,6 +159,44 @@ Deno.serve(async (req) => {
       const response = await fetch('https://api.brevo.com/v3/account', {
         headers: { 'api-key': BREVO_API_KEY },
       });
+      const data = await response.json();
+      return new Response(JSON.stringify({ success: response.ok, data }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Action: get_senders — check sender/domain configuration
+    if (action === 'get_senders') {
+      const response = await fetch('https://api.brevo.com/v3/senders', {
+        headers: {
+          'api-key': BREVO_API_KEY,
+          'Accept': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      return new Response(JSON.stringify({ success: response.ok, data }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Action: get_email_events — inspect delivery/bounce/block events
+    if (action === 'get_email_events') {
+      const { email, limit = 20, days = 7 } = payload;
+      const params = new URLSearchParams();
+      if (email) params.set('email', email);
+      params.set('limit', String(limit));
+      params.set('days', String(days));
+
+      const response = await fetch(`https://api.brevo.com/v3/smtp/statistics/events?${params.toString()}`, {
+        headers: {
+          'api-key': BREVO_API_KEY,
+          'Accept': 'application/json',
+        },
+      });
+
       const data = await response.json();
       return new Response(JSON.stringify({ success: response.ok, data }), {
         status: 200,

@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        sender: { name: 'Offlist', email: 'noreply@offlist.network' },
+        sender: { name: 'Offlist', email: 'clueless.consulting@gmail.com' },
         to: [{ email, name: firstName || '' }],
         subject: 'Your application has been received — Offlist',
         htmlContent: skipped ? skippedHtml : completeHtml,
@@ -140,7 +140,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ success: true, providerResponse: data }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
