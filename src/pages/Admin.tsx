@@ -74,6 +74,18 @@ const Admin = () => {
   useEffect(() => {
     if (!user || user.email !== ADMIN_EMAIL) return;
     fetchProfiles();
+
+    // Realtime subscription for new pending applications
+    const channel = supabase
+      .channel('admin-profiles')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, (payload) => {
+        const newProfile = payload.new as unknown as Profile;
+        setProfiles(prev => [newProfile, ...prev]);
+        toast.info(`New application from ${newProfile.full_name || newProfile.email || 'unknown'}`);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
   const fetchProfiles = async () => {
