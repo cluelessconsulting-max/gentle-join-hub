@@ -258,6 +258,9 @@ const Admin = () => {
   const tabs = [
     { id: "overview", icon: "◈", label: "Overview" },
     { id: "members", icon: "◉", label: "Members" },
+    { id: "events", icon: "◎", label: "Events" },
+    { id: "invites", icon: "◇", label: "Invites" },
+    { id: "referrals", icon: "◈", label: "Referrals" },
     { id: "email", icon: "◎", label: "Send Email" },
     { id: "testing", icon: "◌", label: "System Check" },
   ];
