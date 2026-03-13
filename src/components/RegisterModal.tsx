@@ -26,6 +26,28 @@ const shopStyles = [
   { value: "Social Shopper", label: "Social Shopper — discovers through community" },
 ];
 
+const industryOptions = [
+  "Fashion & Retail", "Finance & Investments", "Tech & Startups",
+  "Creative & Media", "Real Estate", "Hospitality & F&B",
+  "Law & Consulting", "Healthcare", "Entertainment & Music", "Other",
+];
+
+const travelOptions = [
+  { value: "Boutique Hotels", label: "Boutique hotels in hidden gems" },
+  { value: "Five Star Resorts", label: "Five-star resorts & beach clubs" },
+  { value: "Private Villas", label: "Private villas & members-only retreats" },
+  { value: "City Explorer", label: "Spontaneous city breaks & Airbnbs" },
+  { value: "Adventure Travel", label: "Adventure & off-the-grid experiences" },
+];
+
+const nightOutOptions = [
+  { value: "Intimate Dinner", label: "Intimate dinner at a reservation-only spot" },
+  { value: "Rooftop Cocktails", label: "Rooftop cocktails & late-night DJ sets" },
+  { value: "Private Members Club", label: "Private members' club with close friends" },
+  { value: "Gallery & Culture", label: "Gallery opening followed by wine bar" },
+  { value: "House Party", label: "House party or underground event" },
+];
+
 const frequencyOptions = ["Several times a week", "Once a week", "A few times a month", "Occasionally"];
 const howHeardOptions = ["From a friend", "Instagram", "TikTok", "At an event", "QR Code", "Other"];
 
