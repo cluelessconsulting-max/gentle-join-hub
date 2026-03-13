@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react"; 
 import { Instagram } from "lucide-react";
 
 interface Event {
