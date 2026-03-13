@@ -83,6 +83,7 @@ export type Database = {
           avatar_url: string | null
           city: string | null
           created_at: string
+          email: string | null
           event_frequency: string | null
           full_name: string | null
           how_heard: string | null
@@ -102,6 +103,7 @@ export type Database = {
           avatar_url?: string | null
           city?: string | null
           created_at?: string
+          email?: string | null
           event_frequency?: string | null
           full_name?: string | null
           how_heard?: string | null
@@ -121,6 +123,7 @@ export type Database = {
           avatar_url?: string | null
           city?: string | null
           created_at?: string
+          email?: string | null
           event_frequency?: string | null
           full_name?: string | null
           how_heard?: string | null
