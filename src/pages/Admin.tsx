@@ -471,6 +471,9 @@ const Admin = () => {
         {/* ── EVENTS MANAGER ── */}
         {activeTab === "events" && <AdminEventsManager />}
 
+        {/* ── BUYERS ── */}
+        {activeTab === "buyers" && <AdminBuyers />}
+
         {/* ── INVITES ── */}
         {activeTab === "invites" && user && <AdminInvites userId={user.id} />}
 
