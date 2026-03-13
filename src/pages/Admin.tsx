@@ -104,13 +104,11 @@ const Admin = () => {
       // Send welcome email on approval
       if (status === "approved") {
         const profile = profiles.find((p) => p.id === profileId);
-        if (profile) {
-          const { data: userData } = await supabase.auth.admin?.getUserById?.(profile.user_id) || {};
-          // Use edge function to send welcome email
+        if (profile?.email) {
           supabase.functions.invoke("brevo-admin", {
             body: {
               action: "send_email",
-              recipients: [{ email: profile.full_name ? `${profile.full_name}` : "Member", name: profile.full_name || "Member" }],
+              recipients: [{ email: profile.email, name: profile.full_name || "Member" }],
               subject: "Welcome to Offlist — You're In",
               htmlContent: `<h2>Welcome, ${profile.full_name || "there"}!</h2><p>Your application has been approved. You're now part of the Offlist network.</p><p>We'll be in touch about upcoming events.</p><p>— The Offlist Team</p>`,
             },
