@@ -130,7 +130,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (isSkip = false) => {
     setSubmitting(true);
     setError("");
 
@@ -146,25 +146,30 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      await supabase.from("profiles").update({
+      const profileData: Record<string, any> = {
         full_name: fullName,
         city,
         age: age ? parseInt(age) : null,
         instagram: instagram || null,
         tiktok: tiktok || null,
         phone: phone || null,
-        interests,
-        shopping_style: shoppingStyle || null,
-        event_frequency: eventFrequency || null,
         referral: referral || null,
-        how_heard: howHeard || null,
-        job_title: jobTitle || null,
-        industry: industry || null,
-        travel_style: travelStyle || null,
-        ideal_night_out: idealNightOut || null,
         favourite_neighbourhoods: favouriteNeighbourhoods || null,
         application_status: "pending",
-      } as any).eq("user_id", user.id);
+      };
+
+      if (!isSkip) {
+        profileData.interests = interests;
+        profileData.shopping_style = shoppingStyle || null;
+        profileData.event_frequency = eventFrequency || null;
+        profileData.how_heard = howHeard || null;
+        profileData.job_title = jobTitle || null;
+        profileData.industry = industry || null;
+        profileData.travel_style = travelStyle || null;
+        profileData.ideal_night_out = idealNightOut || null;
+      }
+
+      await supabase.from("profiles").update(profileData as any).eq("user_id", user.id);
 
       // Claim invite code if provided
       if (inviteCode.trim()) {
@@ -181,9 +186,18 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
           p_referral_code: referralCode.toUpperCase(),
         });
       }
+
+      // Send confirmation email
+      try {
+        await supabase.functions.invoke("send-application-email", {
+          body: { email, firstName, skipped: isSkip },
+        });
+      } catch (e) {
+        console.error("Email send error:", e);
+      }
     }
 
-    // Brevo sync is now handled automatically via database trigger
+    setSkipped(isSkip);
     setSubmitted(true);
     setSubmitting(false);
   };
