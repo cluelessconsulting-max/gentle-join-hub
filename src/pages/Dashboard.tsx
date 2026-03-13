@@ -30,6 +30,8 @@ const Dashboard = () => {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{ eventName: string; status: string } | null>(null);
 
   useEffect(() => {
