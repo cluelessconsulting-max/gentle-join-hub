@@ -11,6 +11,7 @@ interface Profile {
   user_id: string;
   full_name: string | null;
   email: string | null;
+  city: string | null;
   age: number | null;
   instagram: string | null;
   tiktok: string | null;
