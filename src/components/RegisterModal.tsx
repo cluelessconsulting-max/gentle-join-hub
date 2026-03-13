@@ -201,8 +201,8 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   };
 
   const inputClass =
-    "w-full bg-transparent border-none text-foreground font-body text-[15px] font-light py-2.5 outline-none transition-colors tracking-wide focus:border-accent placeholder:text-foreground/20";
-  const labelClass = "block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2";
+    "w-full bg-transparent border-none text-foreground font-body text-[16px] md:text-[15px] font-light py-2.5 outline-none transition-colors tracking-wide focus:border-accent placeholder:text-foreground/20";
+  const labelClass = "block text-[12px] md:text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2";
   const borderStyle = { borderBottom: "1px solid hsl(var(--input))" };
 
   return (
