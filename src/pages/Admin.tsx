@@ -157,12 +157,12 @@ const Admin = () => {
         ? profiles.filter((p) => selectedUsers.includes(p.id))
         : getFilteredProfiles();
 
-    // Note: we don't have email in profiles table directly
-    // For now, use full_name as placeholder - in production you'd join with auth.users
-    const recipients = targets.map((p) => ({
-      email: p.full_name || "unknown",
-      name: p.full_name || "Member",
-    }));
+    const recipients = targets
+      .filter((p) => p.email)
+      .map((p) => ({
+        email: p.email!,
+        name: p.full_name || "Member",
+      }));
 
     const { error } = await supabase.functions.invoke("brevo-admin", {
       body: {
