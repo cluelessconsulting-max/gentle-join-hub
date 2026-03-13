@@ -436,6 +436,7 @@ const Admin = () => {
                       <td className="p-3 text-[13px] text-slate-400">{p.instagram || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{p.phone || "—"}</td>
                       <td className="p-3 text-[11px] text-slate-400 max-w-[200px] truncate">{(p.interests || []).join(", ") || "—"}</td>
+                      <td className="p-3"><TierBadge tier={p.buyer_tier} /></td>
                       <td className="p-3"><StatusBadge status={p.application_status} /></td>
                       <td className="p-3 text-[11px] text-slate-500 whitespace-nowrap">{new Date(p.created_at).toLocaleDateString()}</td>
                       <td className="p-3">
