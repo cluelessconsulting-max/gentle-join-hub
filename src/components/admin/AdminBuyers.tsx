@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Profile {
   user_id: string;
@@ -37,6 +47,7 @@ const AdminBuyers = () => {
   const [form, setForm] = useState({ user_id: "", brand_name: "", amount: "", purchase_date: "", notes: "" });
   const [codeForm, setCodeForm] = useState({ user_id: "", code: "" });
   const [showCodeForm, setShowCodeForm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Purchase | null>(null);
 
   useEffect(() => {
     fetchAll();
@@ -79,6 +90,18 @@ const AdminBuyers = () => {
     toast.success("Purchase added");
     setForm({ user_id: "", brand_name: "", amount: "", purchase_date: "", notes: "" });
     setShowForm(false);
+    fetchAll();
+  };
+
+  const deletePurchase = async () => {
+    if (!deleteTarget) return;
+    const { error } = await supabase.from("purchases" as any).delete().eq("id", deleteTarget.id);
+    if (error) {
+      toast.error("Failed to delete purchase");
+      return;
+    }
+    toast.success("Purchase deleted — tier updated automatically");
+    setDeleteTarget(null);
     fetchAll();
   };
 
@@ -259,7 +282,7 @@ const AdminBuyers = () => {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                {["Name", "Email", "Brand", "Amount", "Date", "Notes"].map((h) => (
+                {["Name", "Email", "Brand", "Amount", "Date", "Notes", ""].map((h) => (
                   <th key={h} className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e] font-normal">{h}</th>
                 ))}
               </tr>
@@ -275,6 +298,14 @@ const AdminBuyers = () => {
                     <td className="p-3 text-[13px] text-emerald-400 font-semibold">£{Number(p.amount).toFixed(2)}</td>
                     <td className="p-3 text-[11px] text-slate-500">{p.purchase_date}</td>
                     <td className="p-3 text-[12px] text-slate-500">{p.notes || "—"}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => setDeleteTarget(p)}
+                        className="text-red-500/60 hover:text-red-400 text-[11px] transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
@@ -282,6 +313,25 @@ const AdminBuyers = () => {
           </table>
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent className="bg-[#0a0a14] border border-[#1e1e2e]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-slate-100">Delete Purchase</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
+              Are you sure you want to delete this purchase
+              {deleteTarget ? ` (£${Number(deleteTarget.amount).toFixed(2)} at ${deleteTarget.brand_name})` : ""}?
+              The user's tier will be recalculated automatically.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-[#1e1e2e] text-slate-300 border-none hover:bg-[#2a2a3e]">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={deletePurchase} className="bg-red-600 text-white hover:bg-red-500">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
