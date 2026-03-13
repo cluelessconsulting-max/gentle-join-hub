@@ -93,6 +93,18 @@ const AdminBuyers = () => {
     fetchAll();
   };
 
+  const deletePurchase = async () => {
+    if (!deleteTarget) return;
+    const { error } = await supabase.from("purchases" as any).delete().eq("id", deleteTarget.id);
+    if (error) {
+      toast.error("Failed to delete purchase");
+      return;
+    }
+    toast.success("Purchase deleted — tier updated automatically");
+    setDeleteTarget(null);
+    fetchAll();
+  };
+
   const saveDiscountCode = async () => {
     if (!codeForm.user_id || !codeForm.code) {
       toast.error("Please fill all fields");
