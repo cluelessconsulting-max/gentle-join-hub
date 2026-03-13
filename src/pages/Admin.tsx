@@ -74,6 +74,18 @@ const Admin = () => {
   useEffect(() => {
     if (!user || user.email !== ADMIN_EMAIL) return;
     fetchProfiles();
+
+    // Realtime subscription for new pending applications
+    const channel = supabase
+      .channel('admin-profiles')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, (payload) => {
+        const newProfile = payload.new as unknown as Profile;
+        setProfiles(prev => [newProfile, ...prev]);
+        toast.info(`New application from ${newProfile.full_name || newProfile.email || 'unknown'}`);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
   const fetchProfiles = async () => {
@@ -313,9 +325,11 @@ const Admin = () => {
     );
   }
 
+  const pendingCount = profiles.filter(p => p.application_status === "pending").length;
+
   const tabs = [
     { id: "overview", icon: "◈", label: "Overview" },
-    { id: "members", icon: "◉", label: "Members" },
+    { id: "members", icon: "◉", label: "Members", badge: pendingCount > 0 ? pendingCount : undefined },
     { id: "events", icon: "◎", label: "Events" },
     { id: "buyers", icon: "◆", label: "Buyers" },
     { id: "invites", icon: "◇", label: "Invites" },
@@ -346,6 +360,11 @@ const Admin = () => {
           >
             <span className="text-base">{tab.icon}</span>
             {tab.label}
+            {tab.badge && (
+              <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 animate-pulse">
+                {tab.badge}
+              </span>
+            )}
           </button>
         ))}
 
