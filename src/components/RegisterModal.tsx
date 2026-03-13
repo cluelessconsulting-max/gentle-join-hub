@@ -26,6 +26,28 @@ const shopStyles = [
   { value: "Social Shopper", label: "Social Shopper — discovers through community" },
 ];
 
+const industryOptions = [
+  "Fashion & Retail", "Finance & Investments", "Tech & Startups",
+  "Creative & Media", "Real Estate", "Hospitality & F&B",
+  "Law & Consulting", "Healthcare", "Entertainment & Music", "Other",
+];
+
+const travelOptions = [
+  { value: "Boutique Hotels", label: "Boutique hotels in hidden gems" },
+  { value: "Five Star Resorts", label: "Five-star resorts & beach clubs" },
+  { value: "Private Villas", label: "Private villas & members-only retreats" },
+  { value: "City Explorer", label: "Spontaneous city breaks & Airbnbs" },
+  { value: "Adventure Travel", label: "Adventure & off-the-grid experiences" },
+];
+
+const nightOutOptions = [
+  { value: "Intimate Dinner", label: "Intimate dinner at a reservation-only spot" },
+  { value: "Rooftop Cocktails", label: "Rooftop cocktails & late-night DJ sets" },
+  { value: "Private Members Club", label: "Private members' club with close friends" },
+  { value: "Gallery & Culture", label: "Gallery opening followed by wine bar" },
+  { value: "House Party", label: "House party or underground event" },
+];
+
 const frequencyOptions = ["Several times a week", "Once a week", "A few times a month", "Occasionally"];
 const howHeardOptions = ["From a friend", "Instagram", "TikTok", "At an event", "QR Code", "Other"];
 
@@ -45,6 +67,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
   const [shoppingStyle, setShoppingStyle] = useState("");
   const [eventFrequency, setEventFrequency] = useState("");
   const [howHeard, setHowHeard] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [travelStyle, setTravelStyle] = useState("");
+  const [idealNightOut, setIdealNightOut] = useState("");
+  const [favouriteNeighbourhoods, setFavouriteNeighbourhoods] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -105,6 +132,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
         event_frequency: eventFrequency || null,
         referral: referral || null,
         how_heard: howHeard || null,
+        job_title: jobTitle || null,
+        industry: industry || null,
+        travel_style: travelStyle || null,
+        ideal_night_out: idealNightOut || null,
+        favourite_neighbourhoods: favouriteNeighbourhoods || null,
         application_status: "pending",
       }).eq("user_id", user.id);
     }
@@ -125,6 +157,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
         eventFrequency: eventFrequency || "",
         referral: referral || "",
         howHeard: howHeard || "",
+        jobTitle: jobTitle || "",
+        industry: industry || "",
+        travelStyle: travelStyle || "",
+        idealNightOut: idealNightOut || "",
+        favouriteNeighbourhoods: favouriteNeighbourhoods || "",
       },
     }).catch((err) => console.error("Brevo sync error:", err));
 
@@ -151,6 +188,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
       setShoppingStyle("");
       setEventFrequency("");
       setHowHeard("");
+      setJobTitle("");
+      setIndustry("");
+      setTravelStyle("");
+      setIdealNightOut("");
+      setFavouriteNeighbourhoods("");
     }, 300);
   };
 
@@ -228,6 +270,22 @@ const RegisterModal = ({ open, onClose }: Props) => {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
+            <div className="mb-5">
+              <label className={labelClass}>What do you do?</label>
+              <input className={inputClass} placeholder="e.g. Creative Director, Founder..." value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} style={borderStyle} />
+            </div>
+            <div className="mb-5">
+              <label className={labelClass}>Industry</label>
+              <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={`${inputClass} cursor-pointer`} style={borderStyle}>
+                <option value="">Select your world</option>
+                {industryOptions.map((opt) => (
+                  <option key={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <div className="mb-5">
             <label className={labelClass}>Referred by</label>
             <input className={inputClass} placeholder="Who referred you?" value={referral} onChange={(e) => setReferral(e.target.value)} style={borderStyle} />
@@ -245,12 +303,12 @@ const RegisterModal = ({ open, onClose }: Props) => {
       ) : (
         <div className="p-10 md:p-12">
           <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 2 of 2</p>
-          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Tell us about you.</h2>
-          <p className="text-[11px] text-warm-grey tracking-wide mb-7">Help us tailor the events we bring you</p>
+          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Your world.</h2>
+          <p className="text-[11px] text-warm-grey tracking-wide mb-7">Help us curate the right experiences for you</p>
 
           {/* Interests */}
           <div className="mb-6">
-            <label className={labelClass}>What are your main interests?</label>
+            <label className={labelClass}>What draws you in?</label>
             <div className="flex flex-col">
               {interestOptions.map((item) => (
                 <label key={item} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
@@ -268,9 +326,51 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
           <div className="h-px bg-border mb-6" />
 
+          {/* Travel Style */}
+          <div className="mb-6">
+            <label className={labelClass}>Your favourite way to travel?</label>
+            <div className="flex flex-col">
+              {travelOptions.map((item) => (
+                <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
+                  <input
+                    type="radio"
+                    name="travelStyle"
+                    checked={travelStyle === item.value}
+                    onChange={() => setTravelStyle(item.value)}
+                    className="appearance-none w-3.5 h-3.5 border border-foreground/25 rounded-full shrink-0 cursor-pointer relative checked:border-accent transition-all"
+                  />
+                  <span className="text-xs tracking-wide text-foreground leading-snug">{item.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="h-px bg-border mb-6" />
+
+          {/* Ideal Night Out */}
+          <div className="mb-6">
+            <label className={labelClass}>Your ideal night out?</label>
+            <div className="flex flex-col">
+              {nightOutOptions.map((item) => (
+                <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
+                  <input
+                    type="radio"
+                    name="nightOut"
+                    checked={idealNightOut === item.value}
+                    onChange={() => setIdealNightOut(item.value)}
+                    className="appearance-none w-3.5 h-3.5 border border-foreground/25 rounded-full shrink-0 cursor-pointer relative checked:border-accent transition-all"
+                  />
+                  <span className="text-xs tracking-wide text-foreground leading-snug">{item.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="h-px bg-border mb-6" />
+
           {/* Shopping Style */}
           <div className="mb-6">
-            <label className={labelClass}>What best describes your shopping style?</label>
+            <label className={labelClass}>How do you shop?</label>
             <div className="flex flex-col">
               {shopStyles.map((item) => (
                 <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
@@ -289,36 +389,44 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
           <div className="h-px bg-border mb-6" />
 
-          {/* Event Frequency */}
+          {/* Favourite Neighbourhoods */}
           <div className="mb-6">
-            <label className={labelClass}>How often do you attend events?</label>
-            <select
-              value={eventFrequency}
-              onChange={(e) => setEventFrequency(e.target.value)}
-              className={`${inputClass} cursor-pointer`}
-              style={borderStyle}
-            >
-              <option value="">Select frequency</option>
-              {frequencyOptions.map((opt) => (
-                <option key={opt}>{opt}</option>
-              ))}
-            </select>
+            <label className={labelClass}>Neighbourhoods you love</label>
+            <input className={inputClass} placeholder="e.g. Shoreditch, Marais, Soho, Brera..." value={favouriteNeighbourhoods} onChange={(e) => setFavouriteNeighbourhoods(e.target.value)} style={borderStyle} />
           </div>
 
-          {/* How Heard */}
-          <div className="mb-6">
-            <label className={labelClass}>How did you hear about Offlist?</label>
-            <select
-              value={howHeard}
-              onChange={(e) => setHowHeard(e.target.value)}
-              className={`${inputClass} cursor-pointer`}
-              style={borderStyle}
-            >
-              <option value="">Select</option>
-              {howHeardOptions.map((opt) => (
-                <option key={opt}>{opt}</option>
-              ))}
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
+            {/* Event Frequency */}
+            <div className="mb-6">
+              <label className={labelClass}>How often do you go out?</label>
+              <select
+                value={eventFrequency}
+                onChange={(e) => setEventFrequency(e.target.value)}
+                className={`${inputClass} cursor-pointer`}
+                style={borderStyle}
+              >
+                <option value="">Select</option>
+                {frequencyOptions.map((opt) => (
+                  <option key={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* How Heard */}
+            <div className="mb-6">
+              <label className={labelClass}>How did you find us?</label>
+              <select
+                value={howHeard}
+                onChange={(e) => setHowHeard(e.target.value)}
+                className={`${inputClass} cursor-pointer`}
+                style={borderStyle}
+              >
+                <option value="">Select</option>
+                {howHeardOptions.map((opt) => (
+                  <option key={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {error && <p className="text-[11px] text-destructive tracking-wide mt-2">{error}</p>}

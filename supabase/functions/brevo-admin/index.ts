@@ -122,6 +122,11 @@ Deno.serve(async (req) => {
         { name: 'REFERRAL', type: 'text' },
         { name: 'HOW_HEARD', type: 'text' },
         { name: 'STATUS', type: 'text' },
+        { name: 'JOB_TITLE', type: 'text' },
+        { name: 'INDUSTRY', type: 'text' },
+        { name: 'TRAVEL_STYLE', type: 'text' },
+        { name: 'IDEAL_NIGHT_OUT', type: 'text' },
+        { name: 'FAVOURITE_NEIGHBOURHOODS', type: 'text' },
       ];
 
       const results = [];

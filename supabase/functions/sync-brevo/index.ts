@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { email, firstName, lastName, city, age, instagram, tiktok, phone, interests, shoppingStyle, eventFrequency, referral, howHeard } = await req.json();
+    const { email, firstName, lastName, city, age, instagram, tiktok, phone, interests, shoppingStyle, eventFrequency, referral, howHeard, jobTitle, industry, travelStyle, idealNightOut, favouriteNeighbourhoods } = await req.json();
 
     if (!email) {
       return new Response(JSON.stringify({ error: 'Email is required' }), {
@@ -56,6 +56,11 @@ Deno.serve(async (req) => {
           EVENT_FREQUENCY: eventFrequency || '',
           REFERRAL: referral || '',
           HOW_HEARD: howHeard || '',
+          JOBTITLE: jobTitle || '',
+          INDUSTRY: industry || '',
+          TRAVEL_STYLE: travelStyle || '',
+          IDEAL_NIGHT_OUT: idealNightOut || '',
+          FAVOURITE_NEIGHBOURHOODS: favouriteNeighbourhoods || '',
         },
         updateEnabled: true,
       }),
