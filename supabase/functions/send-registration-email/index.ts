@@ -53,14 +53,14 @@ Deno.serve(async (req) => {
           <tr>
             <td style="padding:0 0 10px 0;text-align:center;">
               <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#B49A6A;">
-                ${isWaitlist ? 'WAITLIST CONFIRMATION' : 'GUEST LIST'}
+                ${isWaitlist ? 'WAITLIST CONFIRMATION' : 'APPLICATION RECEIVED'}
               </span>
             </td>
           </tr>
           <tr>
             <td style="padding:0 0 24px 0;text-align:center;">
               <span style="font-size:28px;font-weight:300;color:#0A0A0A;letter-spacing:0.5px;">
-                ${isWaitlist ? 'You\'re on the waitlist.' : 'Your application has been submitted.'}
+                ${isWaitlist ? 'You\\'re on the waitlist.' : 'Your application has been submitted.'}
               </span>
             </td>
           </tr>
@@ -79,7 +79,16 @@ Deno.serve(async (req) => {
               <div style="height:1px;background-color:rgba(10,10,10,0.12);"></div>
             </td>
           </tr>
-          ${!isWaitlist ? `
+          <tr>
+            <td style="padding:0 0 24px 0;text-align:center;">
+              <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
+                ${isWaitlist
+                  ? 'The event is currently full. We\\'ll notify you if a spot opens up.'
+                  : 'We will be in touch with updates on the progress of your application.'}
+              </span>
+            </td>
+          </tr>
+          ${!isWaitlist ? \`
           <tr>
             <td style="padding:0 0 24px 0;text-align:center;">
               <span style="font-size:12px;color:#0A0A0A;letter-spacing:0.3px;font-style:italic;">
@@ -87,22 +96,19 @@ Deno.serve(async (req) => {
               </span>
             </td>
           </tr>
-          ` : `
+          \` : ''}
           <tr>
-            <td style="padding:0 0 24px 0;text-align:center;">
-              <span style="font-size:12px;color:#8B8178;letter-spacing:0.3px;">
-                The event is currently full. We'll notify you if a spot opens up.
-              </span>
+            <td style="padding:0 0 12px 0;">
+              <div style="height:1px;background-color:rgba(10,10,10,0.12);"></div>
             </td>
           </tr>
-          `}
           <tr>
-            <td style="padding:0 0 32px 0;text-align:center;">
-              <span style="font-size:12px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-                Don't forget to follow us on
-                <a href="https://www.instagram.com/offlist.network/" style="color:#0A0A0A;text-decoration:underline;">Instagram</a>
-                and
-                <a href="https://www.tiktok.com/@off.list.network" style="color:#0A0A0A;text-decoration:underline;">TikTok</a>
+            <td style="padding:24px 0 32px 0;text-align:center;">
+              <span style="font-size:18px;color:#0A0A0A;letter-spacing:0.5px;line-height:2;">
+                Don't forget to follow us on<br>
+                <a href="https://www.instagram.com/offlist.network/" style="color:#0A0A0A;text-decoration:underline;font-weight:500;">Instagram</a>
+                &amp;
+                <a href="https://www.tiktok.com/@off.list.network" style="color:#0A0A0A;text-decoration:underline;font-weight:500;">TikTok</a><br>
                 to stay updated with the latest events.
               </span>
             </td>
@@ -134,9 +140,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         sender: { name: 'Offlist', email: 'info@herclueless.co.uk' },
         to: [{ email, name: firstName || '' }],
-        subject: isWaitlist
-          ? `Waitlist confirmed — ${eventName}`
-          : `You're on the guest list — ${eventName}`,
+        subject: 'Offlist - Event updates',
         htmlContent,
       }),
     });
