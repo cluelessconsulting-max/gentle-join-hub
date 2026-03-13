@@ -97,7 +97,7 @@ const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
         <p className="text-center mt-5 text-[11px] text-warm-grey tracking-wide">
           No account?{" "}
           <span className="cursor-pointer underline text-foreground" onClick={() => { onClose(); setTimeout(onSwitchToRegister, 120); }}>
-            Register here
+            Apply here
           </span>
         </p>
       </div>

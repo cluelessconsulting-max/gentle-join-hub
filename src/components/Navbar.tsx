@@ -41,7 +41,7 @@ const Navbar = ({ onRegister, onSignIn }: NavbarProps) => {
           onClick={onRegister}
           className="text-[10px] tracking-wide-lg uppercase bg-primary text-primary-foreground px-6 py-2.5 cursor-pointer transition-colors border-none font-body font-light hover:bg-accent"
         >
-          Register
+          Apply
         </button>
       </div>
     </nav>
