@@ -46,7 +46,7 @@ const AdminBuyers = () => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ user_id: "", brand_name: "", amount: "", purchase_date: "", notes: "" });
   const [codeForm, setCodeForm] = useState({ user_id: "", code: "" });
-  const [showCodeForm, setShowCodeForm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Purchase | null>(null);
 
   useEffect(() => {
     fetchAll();
