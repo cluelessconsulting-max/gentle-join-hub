@@ -159,14 +159,6 @@ Deno.serve(async (req) => {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-      const response = await fetch('https://api.brevo.com/v3/account', {
-        headers: { 'api-key': BREVO_API_KEY },
-      });
-      const data = await response.json();
-      return new Response(JSON.stringify({ success: response.ok, data }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
     }
 
     return new Response(JSON.stringify({ error: 'Unknown action' }), {
