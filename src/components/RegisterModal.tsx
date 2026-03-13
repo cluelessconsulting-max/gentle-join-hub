@@ -221,8 +221,8 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
         </div>
       ) : step === 1 ? (
         <div className="p-10 md:p-12">
-          <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 1 of 2</p>
-          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Apply for access.</h2>
+          <p className="text-[12px] md:text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 1 of 2</p>
+          <h2 className="font-display text-[38px] md:text-[34px] font-light leading-tight mb-2.5">Apply for access.</h2>
           <div className="h-7" />
 
           {inviteRequired && (
