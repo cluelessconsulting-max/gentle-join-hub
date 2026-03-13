@@ -313,51 +313,9 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
           <div className="h-px bg-border mb-6" />
 
-          {/* Travel Style */}
-          <div className="mb-6">
-            <label className={labelClass}>Your favourite way to travel?</label>
-            <div className="flex flex-col">
-              {travelOptions.map((item) => (
-                <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
-                  <input
-                    type="radio"
-                    name="travelStyle"
-                    checked={travelStyle === item.value}
-                    onChange={() => setTravelStyle(item.value)}
-                    className="appearance-none w-3.5 h-3.5 border border-foreground/25 rounded-full shrink-0 cursor-pointer relative checked:border-accent transition-all"
-                  />
-                  <span className="text-xs tracking-wide text-foreground leading-snug">{item.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="h-px bg-border mb-6" />
-
-          {/* Ideal Night Out */}
-          <div className="mb-6">
-            <label className={labelClass}>Your ideal night out?</label>
-            <div className="flex flex-col">
-              {nightOutOptions.map((item) => (
-                <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
-                  <input
-                    type="radio"
-                    name="nightOut"
-                    checked={idealNightOut === item.value}
-                    onChange={() => setIdealNightOut(item.value)}
-                    className="appearance-none w-3.5 h-3.5 border border-foreground/25 rounded-full shrink-0 cursor-pointer relative checked:border-accent transition-all"
-                  />
-                  <span className="text-xs tracking-wide text-foreground leading-snug">{item.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="h-px bg-border mb-6" />
-
           {/* Shopping Style */}
           <div className="mb-6">
-            <label className={labelClass}>How do you shop?</label>
+            <label className={labelClass}>What best describes your shopping style?</label>
             <div className="flex flex-col">
               {shopStyles.map((item) => (
                 <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
@@ -375,12 +333,6 @@ const RegisterModal = ({ open, onClose }: Props) => {
           </div>
 
           <div className="h-px bg-border mb-6" />
-
-          {/* Favourite Neighbourhoods */}
-          <div className="mb-6">
-            <label className={labelClass}>Neighbourhoods you love</label>
-            <input className={inputClass} placeholder="e.g. Shoreditch, Marais, Soho, Brera..." value={favouriteNeighbourhoods} onChange={(e) => setFavouriteNeighbourhoods(e.target.value)} style={borderStyle} />
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             {/* Event Frequency */}
