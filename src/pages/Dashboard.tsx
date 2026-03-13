@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import EventConfirmationModal from "@/components/EventConfirmationModal";
 
 interface Event {
   id: string;
@@ -29,6 +30,7 @@ const Dashboard = () => {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{ eventName: string; status: string } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -42,7 +44,7 @@ const Dashboard = () => {
       const [{ data: eventsData }, { data: regsData }, { data: profileData }, { data: allRegs }] = await Promise.all([
         supabase.from("events").select("*"),
         supabase.from("event_registrations" as any).select("event_id, status").eq("user_id", user.id),
-        supabase.from("profiles").select("application_status").eq("user_id", user.id).single(),
+        supabase.from("profiles").select("application_status, full_name").eq("user_id", user.id).single(),
         supabase.from("event_registrations" as any).select("event_id, status"),
       ]);
       setEvents((eventsData as Event[]) || []);
@@ -51,7 +53,6 @@ const Dashboard = () => {
       ((regsData as any) || []).forEach((r: Registration) => regMap.set(r.event_id, r.status));
       setRegistrations(regMap);
 
-      // Count confirmed registrations per event
       const counts = new Map<string, number>();
       ((allRegs as any) || []).forEach((r: Registration) => {
         if (r.status === "confirmed") {
@@ -66,13 +67,13 @@ const Dashboard = () => {
     fetchData();
   }, [user]);
 
-  const handleRegister = async (eventId: string) => {
+  const handleRegister = async (event: Event) => {
     if (!user) return;
-    setLoadingId(eventId);
+    setLoadingId(event.id);
 
     const { data, error } = await supabase.rpc("register_for_event" as any, {
       p_user_id: user.id,
-      p_event_id: eventId,
+      p_event_id: event.id,
     });
 
     if (error) {
@@ -83,12 +84,28 @@ const Dashboard = () => {
       }
     } else {
       const status = data as string;
-      setRegistrations((prev) => new Map(prev).set(eventId, status));
-      if (status === "waitlist") {
-        toast.info("Event is full — you're on the waitlist!");
-      } else {
-        toast.success("You're on the guest list!");
-      }
+      setRegistrations((prev) => new Map(prev).set(event.id, status));
+
+      // Show confirmation modal
+      setConfirmModal({ eventName: event.name, status });
+
+      // Send confirmation email in background
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("user_id", user.id)
+        .single();
+
+      supabase.functions.invoke("send-registration-email", {
+        body: {
+          email: user.email,
+          firstName: (profile as any)?.full_name?.split(" ")[0] || "",
+          eventName: event.name,
+          eventDate: event.date,
+          eventLocation: event.location,
+          status,
+        },
+      });
     }
     setLoadingId(null);
   };
@@ -187,7 +204,7 @@ const Dashboard = () => {
                   </span>
                 ) : (
                   <button
-                    onClick={() => handleRegister(event.id)}
+                    onClick={() => handleRegister(event)}
                     disabled={isLoading}
                     className="bg-primary text-primary-foreground border-none px-8 py-3.5 font-body text-[10px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
                   >
@@ -199,6 +216,13 @@ const Dashboard = () => {
           })}
         </div>
       </section>
+
+      <EventConfirmationModal
+        open={!!confirmModal}
+        onClose={() => setConfirmModal(null)}
+        eventName={confirmModal?.eventName || ""}
+        status={confirmModal?.status || "confirmed"}
+      />
     </div>
   );
 };
