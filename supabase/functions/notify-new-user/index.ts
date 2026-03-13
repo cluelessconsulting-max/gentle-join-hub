@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        sender: { name: 'Offlist', email: 'noreply@offlist.network' },
+        sender: { name: 'Offlist', email: 'clueless.consulting@gmail.com' },
         to: [{ email: 'clueless.consulting@gmail.com', name: 'Admin' }],
         subject: `Nuovo utente registrato — ${full_name || email || 'Offlist'}`,
         htmlContent,
