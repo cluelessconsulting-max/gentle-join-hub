@@ -132,7 +132,7 @@ Deno.serve(async (req) => {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        sender: { name: 'Offlist', email: 'clueless.consulting@gmail.com' },
+        sender: { name: 'Offlist', email: 'application@offlist.com' },
         to: [{ email, name: firstName || '' }],
         subject: isWaitlist
           ? `Waitlist confirmed — ${eventName}`

@@ -49,7 +49,6 @@ Deno.serve(async (req) => {
         <tr><td style="padding:0 0 24px 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
         <tr><td style="padding:0 0 24px 0;text-align:center;">
           <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Hi \${firstName || 'there'},<br><br>
             You will be notified about the status of your application.<br><br>
             In the meantime, follow us on social media:
           </span>
@@ -88,7 +87,6 @@ Deno.serve(async (req) => {
         <tr><td style="padding:0 0 24px 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
         <tr><td style="padding:0 0 24px 0;text-align:center;">
           <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Hi \${firstName || 'there'},<br><br>
             You will be notified about the status of your application.<br><br>
             In the meantime, follow us on social media:
           </span>
@@ -123,7 +121,7 @@ Deno.serve(async (req) => {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        sender: { name: 'Offlist', email: 'clueless.consulting@gmail.com' },
+        sender: { name: 'Offlist', email: 'application@offlist.com' },
         to: [{ email, name: firstName || '' }],
         subject: 'Your application has been received — Offlist',
         htmlContent: skipped ? skippedHtml : completeHtml,
