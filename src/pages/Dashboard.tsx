@@ -135,16 +135,44 @@ const Dashboard = () => {
           <button onClick={handleSignOut} className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary">Sign Out</button>
         </nav>
         <section className="px-6 md:px-12 py-24 text-center max-w-xl mx-auto">
-          <div className="font-display text-[56px] text-accent mb-6 leading-none">◆</div>
           {applicationStatus === "rejected" ? (
             <>
+              <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                <span className="text-destructive text-2xl">✕</span>
+              </div>
               <h1 className="font-display text-[38px] font-light mb-5">Application not approved.</h1>
               <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">Unfortunately, your application wasn't approved at this time.<br />Feel free to reach out if you have any questions.</p>
             </>
           ) : (
             <>
-              <h1 className="font-display text-[38px] font-light mb-5">Application pending.</h1>
-              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">Your application is under review.<br />We'll notify you once it's been approved.</p>
+              <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-accent/15 flex items-center justify-center">
+                <svg className="w-8 h-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="font-display text-[38px] font-light mb-5">Your application has been submitted.</h1>
+              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide mb-8">
+                You will be notified about the status of your application.<br />
+                In the meantime, follow us on social media.
+              </p>
+              <div className="flex justify-center gap-4">
+                <a
+                  href="https://www.instagram.com/offlist.network/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-primary text-primary-foreground text-[10px] tracking-wide-lg uppercase px-7 py-3 no-underline transition-all hover:bg-accent hover:-translate-y-0.5"
+                >
+                  Instagram
+                </a>
+                <a
+                  href="https://www.tiktok.com/@off.list.network"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-primary text-primary-foreground text-[10px] tracking-wide-lg uppercase px-7 py-3 no-underline transition-all hover:bg-accent hover:-translate-y-0.5"
+                >
+                  TikTok
+                </a>
+              </div>
             </>
           )}
         </section>
