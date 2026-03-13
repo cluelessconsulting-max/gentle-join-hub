@@ -606,6 +606,68 @@ const Admin = () => {
             </div>
           </div>
         )}
+
+        {/* ── USER DETAIL MODAL ── */}
+        {selectedProfile && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setSelectedProfile(null)}>
+            <div className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-2xl max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="p-8">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-50">{selectedProfile.full_name || "—"}</h3>
+                    <p className="text-sm text-slate-500">{selectedProfile.email}</p>
+                  </div>
+                  <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
+                </div>
+
+                <StatusBadge status={selectedProfile.application_status} />
+
+                {selectedProfile.referral_code && (
+                  <div className="mt-4 bg-[#1a1a2e] px-4 py-2.5 rounded-lg inline-block">
+                    <span className="text-[10px] tracking-[2px] text-slate-600 uppercase mr-2">Code</span>
+                    <span className="text-purple-400 font-semibold text-sm">{selectedProfile.referral_code}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  {[
+                    ["City", selectedProfile.city],
+                    ["Age", selectedProfile.age],
+                    ["Phone", selectedProfile.phone],
+                    ["Instagram", selectedProfile.instagram],
+                    ["TikTok", selectedProfile.tiktok],
+                    ["Industry", selectedProfile.industry],
+                    ["Job Title", selectedProfile.job_title],
+                    ["Shopping Style", selectedProfile.shopping_style],
+                    ["Event Frequency", selectedProfile.event_frequency],
+                    ["Travel Style", selectedProfile.travel_style],
+                    ["Ideal Night Out", selectedProfile.ideal_night_out],
+                    ["Neighbourhoods", selectedProfile.favourite_neighbourhoods],
+                    ["How Heard", selectedProfile.how_heard],
+                    ["Referred By", selectedProfile.referral],
+                    ["Joined", new Date(selectedProfile.created_at).toLocaleDateString()],
+                  ].map(([label, value]) => (
+                    <div key={label as string}>
+                      <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1">{label}</p>
+                      <p className="text-sm text-slate-300">{value || "—"}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {(selectedProfile.interests || []).length > 0 && (
+                  <div className="mt-5">
+                    <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-2">Interests</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedProfile.interests!.map((i) => (
+                        <span key={i} className="bg-indigo-950 text-purple-400 px-2.5 py-1 rounded-full text-xs">{i}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
