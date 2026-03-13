@@ -154,7 +154,7 @@ const EventsSection = ({ onEventClick }: Props) => {
         ))}
       </div>
 
-      {noResults ? (
+      {filteredEvents.length === 0 ? (
         /* When no events match, show social CTA as the main content */
         <RevealDiv>
           <div className="border border-border">
