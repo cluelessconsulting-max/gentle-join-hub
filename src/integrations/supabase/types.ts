@@ -32,6 +32,30 @@ export type Database = {
         }
         Relationships: []
       }
+      discount_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       event_registrations: {
         Row: {
           event_id: string
@@ -242,6 +266,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      purchases: {
+        Row: {
+          amount: number
+          brand_name: string
+          created_at: string
+          discount_code_id: string | null
+          id: string
+          notes: string | null
+          purchase_date: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          brand_name: string
+          created_at?: string
+          discount_code_id?: string | null
+          id?: string
+          notes?: string | null
+          purchase_date?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          brand_name?: string
+          created_at?: string
+          discount_code_id?: string | null
+          id?: string
+          notes?: string | null
+          purchase_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_discount_code_id_fkey"
+            columns: ["discount_code_id"]
+            isOneToOne: false
+            referencedRelation: "discount_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

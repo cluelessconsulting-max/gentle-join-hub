@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import AdminInvites from "@/components/admin/AdminInvites";
 import AdminEventsManager from "@/components/admin/AdminEventsManager";
 import AdminReferrals from "@/components/admin/AdminReferrals";
+import AdminBuyers from "@/components/admin/AdminBuyers";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
@@ -259,6 +260,7 @@ const Admin = () => {
     { id: "overview", icon: "◈", label: "Overview" },
     { id: "members", icon: "◉", label: "Members" },
     { id: "events", icon: "◎", label: "Events" },
+    { id: "buyers", icon: "◆", label: "Buyers" },
     { id: "invites", icon: "◇", label: "Invites" },
     { id: "referrals", icon: "◈", label: "Referrals" },
     { id: "email", icon: "◎", label: "Send Email" },
@@ -468,6 +470,9 @@ const Admin = () => {
 
         {/* ── EVENTS MANAGER ── */}
         {activeTab === "events" && <AdminEventsManager />}
+
+        {/* ── BUYERS ── */}
+        {activeTab === "buyers" && <AdminBuyers />}
 
         {/* ── INVITES ── */}
         {activeTab === "invites" && user && <AdminInvites userId={user.id} />}
