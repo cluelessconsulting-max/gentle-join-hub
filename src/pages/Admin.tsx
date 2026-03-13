@@ -623,7 +623,13 @@ const Admin = () => {
                   <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
                 </div>
 
-                <StatusBadge status={selectedProfile.application_status} />
+                <div className="flex gap-2">
+                  <StatusBadge status={selectedProfile.application_status} />
+                  <TierBadge tier={selectedProfile.buyer_tier} />
+                  {selectedProfile.total_points > 0 && (
+                    <span className="bg-amber-950 text-amber-400 px-2.5 py-0.5 rounded-full text-xs font-semibold">{selectedProfile.total_points} pts</span>
+                  )}
+                </div>
 
                 {selectedProfile.referral_code && (
                   <div className="mt-4 bg-[#1a1a2e] px-4 py-2.5 rounded-lg inline-block">
