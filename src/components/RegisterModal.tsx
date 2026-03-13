@@ -248,22 +248,6 @@ const RegisterModal = ({ open, onClose }: Props) => {
             <input className={inputClass} type="password" placeholder="Minimum 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} style={borderStyle} />
           </div>
 
-          <div className="mb-5">
-            <label className={labelClass}>Phone Number *</label>
-            <p className="text-[10px] text-warm-grey/70 tracking-wide mb-1.5">Include country code (e.g. +44, +1, +39). Required for guest list confirmations.</p>
-            <input
-              className={inputClass}
-              type="tel"
-              placeholder="+44 7700 000000"
-              value={phone}
-              onChange={(e) => {
-                const val = e.target.value.replace(/[^0-9+\s()-]/g, '');
-                setPhone(val);
-              }}
-              style={borderStyle}
-            />
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             <div className="mb-5">
               <label className={labelClass}>City *</label>
@@ -281,6 +265,42 @@ const RegisterModal = ({ open, onClose }: Props) => {
               <input className={inputClass} placeholder="e.g. Shoreditch, Chelsea, Notting Hill..." value={favouriteNeighbourhoods} onChange={(e) => setFavouriteNeighbourhoods(e.target.value)} style={borderStyle} />
             </div>
           )}
+
+          <div className="mb-5">
+            <label className={labelClass}>Phone Number *</label>
+            <p className="text-[10px] text-warm-grey/70 tracking-wide mb-1.5">Include country code (e.g. +44, +1, +39). Required for guest list confirmations.</p>
+            <input
+              className={inputClass}
+              type="tel"
+              placeholder="+44 7700 000000"
+              value={phone}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9+\s()-]/g, '');
+                setPhone(val);
+              }}
+              onFocus={() => {
+                if (!phone) {
+                  const cityLower = city.toLowerCase().trim();
+                  const prefixMap: Record<string, string> = {
+                    london: '+44 ', uk: '+44 ', manchester: '+44 ', birmingham: '+44 ', edinburgh: '+44 ', bristol: '+44 ', leeds: '+44 ', liverpool: '+44 ', glasgow: '+44 ',
+                    milano: '+39 ', milan: '+39 ', roma: '+39 ', rome: '+39 ', firenze: '+39 ', florence: '+39 ', napoli: '+39 ', torino: '+39 ', turin: '+39 ', bologna: '+39 ', venezia: '+39 ', venice: '+39 ',
+                    paris: '+33 ', lyon: '+33 ', marseille: '+33 ', nice: '+33 ',
+                    'new york': '+1 ', 'los angeles': '+1 ', miami: '+1 ', chicago: '+1 ', 'san francisco': '+1 ',
+                    dubai: '+971 ', 'abu dhabi': '+971 ',
+                    berlin: '+49 ', munich: '+49 ', hamburg: '+49 ', frankfurt: '+49 ',
+                    madrid: '+34 ', barcelona: '+34 ',
+                    amsterdam: '+31 ',
+                    lisbon: '+351 ', lisboa: '+351 ',
+                    zurich: '+41 ', geneva: '+41 ',
+                  };
+                  const prefix = Object.entries(prefixMap).find(([key]) => cityLower.includes(key));
+                  if (prefix) setPhone(prefix[1]);
+                }
+              }}
+              style={borderStyle}
+            />
+          </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             <div className="mb-5">
