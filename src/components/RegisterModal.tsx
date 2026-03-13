@@ -37,6 +37,7 @@ const howHeardOptions = ["From a friend", "Instagram", "TikTok", "At an event", 
 
 const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   const [step, setStep] = useState(1);
+  const [skipped, setSkipped] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -129,7 +130,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (isSkip = false) => {
     setSubmitting(true);
     setError("");
 
@@ -145,25 +146,30 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      await supabase.from("profiles").update({
+      const profileData: Record<string, any> = {
         full_name: fullName,
         city,
         age: age ? parseInt(age) : null,
         instagram: instagram || null,
         tiktok: tiktok || null,
         phone: phone || null,
-        interests,
-        shopping_style: shoppingStyle || null,
-        event_frequency: eventFrequency || null,
         referral: referral || null,
-        how_heard: howHeard || null,
-        job_title: jobTitle || null,
-        industry: industry || null,
-        travel_style: travelStyle || null,
-        ideal_night_out: idealNightOut || null,
         favourite_neighbourhoods: favouriteNeighbourhoods || null,
         application_status: "pending",
-      } as any).eq("user_id", user.id);
+      };
+
+      if (!isSkip) {
+        profileData.interests = interests;
+        profileData.shopping_style = shoppingStyle || null;
+        profileData.event_frequency = eventFrequency || null;
+        profileData.how_heard = howHeard || null;
+        profileData.job_title = jobTitle || null;
+        profileData.industry = industry || null;
+        profileData.travel_style = travelStyle || null;
+        profileData.ideal_night_out = idealNightOut || null;
+      }
+
+      await supabase.from("profiles").update(profileData as any).eq("user_id", user.id);
 
       // Claim invite code if provided
       if (inviteCode.trim()) {
@@ -180,9 +186,18 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
           p_referral_code: referralCode.toUpperCase(),
         });
       }
+
+      // Send confirmation email
+      try {
+        await supabase.functions.invoke("send-application-email", {
+          body: { email, firstName, skipped: isSkip },
+        });
+      } catch (e) {
+        console.error("Email send error:", e);
+      }
     }
 
-    // Brevo sync is now handled automatically via database trigger
+    setSkipped(isSkip);
     setSubmitted(true);
     setSubmitting(false);
   };
@@ -190,7 +205,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   const handleClose = () => {
     onClose();
     setTimeout(() => {
-      setSubmitted(false);
+      setSubmitted(false); setSkipped(false);
       setStep(1);
       setFirstName(""); setLastName(""); setEmail(""); setPassword("");
       setPhone(""); setCity(""); setAge(""); setInstagram(""); setTiktok("");
@@ -209,15 +224,18 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
     <ModalOverlay open={open} onClose={handleClose}>
       {submitted ? (
         <div className="py-20 px-12 text-center animate-fade-up">
-          <div className="font-display text-[56px] text-accent mb-5 leading-none">◆</div>
-          <h2 className="font-display text-[38px] font-light mb-4">Application received.</h2>
+          <div className="text-[56px] mb-5 leading-none">✓</div>
+          <h2 className="font-display text-[38px] font-light mb-4">Application submitted.</h2>
           <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">
-            Welcome to Offlist.
+            Your application has been submitted.
             <br />
-            Check your email to confirm your account.
-            <br />
-            We'll review your application and get back to you shortly.
+            Our team will let you know as soon as there are any updates.
           </p>
+          {skipped && (
+            <p className="text-[12px] text-accent leading-relaxed tracking-wide mt-6">
+              Check your email — you can still complete your profile to help us tailor events to you.
+            </p>
+          )}
         </div>
       ) : step === 1 ? (
         <div className="p-10 md:p-12">
@@ -421,19 +439,28 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
 
           {error && <p className="text-[11px] text-destructive tracking-wide mt-2">{error}</p>}
 
-          <div className="flex gap-3 mt-6">
+          <div className="flex flex-col gap-3 mt-6">
+            <div className="flex gap-3">
+              <button
+                onClick={() => setStep(1)}
+                className="flex-1 bg-transparent border border-foreground/15 text-foreground py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:border-accent hover:text-accent"
+              >
+                ← Back
+              </button>
+              <button
+                onClick={() => handleSubmit(false)}
+                disabled={submitting}
+                className="flex-[2] bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
+              >
+                {submitting ? "Submitting…" : "Submit Application →"}
+              </button>
+            </div>
             <button
-              onClick={() => setStep(1)}
-              className="flex-1 bg-transparent border border-foreground/15 text-foreground py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:border-accent hover:text-accent"
-            >
-              ← Back
-            </button>
-            <button
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(true)}
               disabled={submitting}
-              className="flex-[2] bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
+              className="w-full bg-transparent border border-foreground/10 text-warm-grey py-3 font-body text-[11px] tracking-wide-lg uppercase cursor-pointer transition-all hover:border-accent hover:text-accent"
             >
-              {submitting ? "Submitting…" : "Submit Application →"}
+              Skip & sign me up directly →
             </button>
           </div>
         </div>
