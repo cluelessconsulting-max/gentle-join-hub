@@ -49,21 +49,16 @@ Deno.serve(async (req) => {
         <tr><td style="padding:0 0 24px 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
         <tr><td style="padding:0 0 24px 0;text-align:center;">
           <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Hi ${firstName || 'there'},<br><br>
-            Thank you for applying to Offlist.<br>
-            Our team will let you know as soon as there are any updates.
+            Hi \${firstName || 'there'},<br><br>
+            Your application will be reviewed and we will let you know as soon as it is approved.<br><br>
+            In the meantime, follow us on social media:
           </span>
         </td></tr>
-        <tr><td style="padding:0 0 32px 0;text-align:center;">
-          <span style="font-size:12px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Don't forget to follow us on
-            <a href="https://www.instagram.com/offlist.network/" style="color:#0A0A0A;text-decoration:underline;">Instagram</a>
-            and
-            <a href="https://www.tiktok.com/@off.list.network" style="color:#0A0A0A;text-decoration:underline;">TikTok</a>
-            to stay updated with the latest events.
-          </span>
+        <tr><td style="padding:0 0 12px 0;text-align:center;">
+          <a href="https://www.instagram.com/offlist.network/" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 6px;">Instagram</a>
+          <a href="https://www.tiktok.com/@off.list.network" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 6px;">TikTok</a>
         </td></tr>
-        <tr><td><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
+        <tr><td style="padding:24px 0 0 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
         <tr><td style="padding:24px 0 0 0;text-align:center;">
           <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#8B8178;">OFFLIST NETWORK</span>
         </td></tr>
@@ -93,27 +88,24 @@ Deno.serve(async (req) => {
         <tr><td style="padding:0 0 24px 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
         <tr><td style="padding:0 0 24px 0;text-align:center;">
           <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Hi ${firstName || 'there'},<br><br>
-            Thank you for applying to Offlist.<br>
-            Our team will let you know as soon as there are any updates.<br><br>
-            <span style="color:#0A0A0A;font-style:italic;">In the meantime, tell us more about yourself so that we can best tailor our events to your needs and interests.</span><br><br>
-            Adding a few details about your lifestyle and preferences helps us curate the perfect experiences for you.
+            Hi \${firstName || 'there'},<br><br>
+            Your application will be reviewed and we will let you know as soon as it is approved.<br><br>
+            In the meantime, follow us on social media:
+          </span>
+        </td></tr>
+        <tr><td style="padding:0 0 12px 0;text-align:center;">
+          <a href="https://www.instagram.com/offlist.network/" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 6px;">Instagram</a>
+          <a href="https://www.tiktok.com/@off.list.network" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 6px;">TikTok</a>
+        </td></tr>
+        <tr><td style="padding:0 0 24px 0;text-align:center;">
+          <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
+            <br><span style="color:#0A0A0A;font-style:italic;">Tell us more about yourself so we can tailor our events to your interests.</span>
           </span>
         </td></tr>
         <tr><td style="padding:0 0 24px 0;text-align:center;">
           <a href="https://gentle-join-hub.lovable.app/dashboard" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">Complete Your Profile</a>
-          </span>
         </td></tr>
-        <tr><td style="padding:0 0 32px 0;text-align:center;">
-          <span style="font-size:12px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Don't forget to follow us on
-            <a href="https://www.instagram.com/offlist.network/" style="color:#0A0A0A;text-decoration:underline;">Instagram</a>
-            and
-            <a href="https://www.tiktok.com/@off.list.network" style="color:#0A0A0A;text-decoration:underline;">TikTok</a>
-            to stay updated with the latest events.
-          </span>
-        </td></tr>
-        <tr><td><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
+        <tr><td style="padding:24px 0 0 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
         <tr><td style="padding:24px 0 0 0;text-align:center;">
           <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#8B8178;">OFFLIST NETWORK</span>
         </td></tr>
