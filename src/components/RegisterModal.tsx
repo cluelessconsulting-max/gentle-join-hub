@@ -389,13 +389,16 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
             <label className={labelClass}>What best describes your shopping style?</label>
             <div className="flex flex-col">
               {shopStyles.map((item) => (
-                <label key={item.value} className="flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0">
+                <label key={item.value} className={`flex items-center gap-3 py-2 border-b border-foreground/5 cursor-pointer last:border-b-0 px-2 rounded transition-all ${shoppingStyle === item.value ? 'bg-accent/10' : ''}`}>
+                  <span className={`w-3.5 h-3.5 border rounded-full shrink-0 flex items-center justify-center transition-all ${shoppingStyle === item.value ? 'border-accent' : 'border-foreground/25'}`}>
+                    {shoppingStyle === item.value && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                  </span>
                   <input
                     type="radio"
                     name="shopStyle"
                     checked={shoppingStyle === item.value}
                     onChange={() => setShoppingStyle(item.value)}
-                    className="appearance-none w-3.5 h-3.5 border border-foreground/25 rounded-full shrink-0 cursor-pointer relative checked:border-accent transition-all"
+                    className="hidden"
                   />
                   <span className="text-xs tracking-wide text-foreground leading-snug">{item.label}</span>
                 </label>
