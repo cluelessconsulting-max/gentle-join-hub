@@ -94,6 +94,12 @@ const RegisterModal = ({ open, onClose }: Props) => {
       setTimeout(() => setError(""), 2500);
       return false;
     }
+    const cleanPhone = phone.replace(/[\s()-]/g, '');
+    if (!/^\+\d{7,15}$/.test(cleanPhone)) {
+      setError("Please enter a valid phone number with country code (e.g. +44...)");
+      setTimeout(() => setError(""), 3000);
+      return false;
+    }
     return true;
   };
 
