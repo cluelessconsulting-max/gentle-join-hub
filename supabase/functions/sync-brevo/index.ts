@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { email, firstName, lastName, city, age, instagram, tiktok, phone, interests, shoppingStyle, eventFrequency, referral, howHeard } = await req.json();
+    const { email, firstName, lastName, city, age, instagram, tiktok, phone, interests, shoppingStyle, eventFrequency, referral, howHeard, jobTitle, industry, travelStyle, idealNightOut, favouriteNeighbourhoods } = await req.json();
 
     if (!email) {
       return new Response(JSON.stringify({ error: 'Email is required' }), {
