@@ -67,6 +67,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
   const [shoppingStyle, setShoppingStyle] = useState("");
   const [eventFrequency, setEventFrequency] = useState("");
   const [howHeard, setHowHeard] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [travelStyle, setTravelStyle] = useState("");
+  const [idealNightOut, setIdealNightOut] = useState("");
+  const [favouriteNeighbourhoods, setFavouriteNeighbourhoods] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
