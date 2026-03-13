@@ -121,7 +121,7 @@ Deno.serve(async (req) => {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        sender: { name: 'Offlist', email: 'application@offlist.com' },
+        sender: { name: 'Offlist', email: 'info@herclueless.co.uk' },
         to: [{ email, name: firstName || '' }],
         subject: 'Your application has been received — Offlist',
         htmlContent: skipped ? skippedHtml : completeHtml,
