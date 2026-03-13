@@ -270,21 +270,8 @@ const RegisterModal = ({ open, onClose }: Props) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
-            <div className="mb-5">
-              <label className={labelClass}>What do you do?</label>
-              <input className={inputClass} placeholder="e.g. Creative Director, Founder..." value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} style={borderStyle} />
-            </div>
-            <div className="mb-5">
-              <label className={labelClass}>Industry</label>
-              <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={`${inputClass} cursor-pointer`} style={borderStyle}>
-                <option value="">Select your world</option>
-                {industryOptions.map((opt) => (
-                  <option key={opt}>{opt}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+
+
 
           <div className="mb-5">
             <label className={labelClass}>Referred by</label>
