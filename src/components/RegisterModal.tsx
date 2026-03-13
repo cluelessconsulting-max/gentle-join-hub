@@ -94,6 +94,12 @@ const RegisterModal = ({ open, onClose }: Props) => {
       setTimeout(() => setError(""), 2500);
       return false;
     }
+    const cleanPhone = phone.replace(/[\s()-]/g, '');
+    if (!/^\+\d{7,15}$/.test(cleanPhone)) {
+      setError("Please enter a valid phone number with country code (e.g. +44...)");
+      setTimeout(() => setError(""), 3000);
+      return false;
+    }
     return true;
   };
 
@@ -244,8 +250,18 @@ const RegisterModal = ({ open, onClose }: Props) => {
 
           <div className="mb-5">
             <label className={labelClass}>Phone Number *</label>
-            <p className="text-[10px] text-warm-grey/70 tracking-wide mb-1.5">For guest list confirmations and event details</p>
-            <input className={inputClass} type="tel" placeholder="+44 7700 000000" value={phone} onChange={(e) => setPhone(e.target.value)} style={borderStyle} />
+            <p className="text-[10px] text-warm-grey/70 tracking-wide mb-1.5">Include country code (e.g. +44, +1, +39). Required for guest list confirmations.</p>
+            <input
+              className={inputClass}
+              type="tel"
+              placeholder="+44 7700 000000"
+              value={phone}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9+\s()-]/g, '');
+                setPhone(val);
+              }}
+              style={borderStyle}
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
