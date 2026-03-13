@@ -64,6 +64,8 @@ const Dashboard = () => {
       setRegCounts(counts);
 
       setApplicationStatus((profileData as any)?.application_status || "pending");
+      setReferralCode((profileData as any)?.referral_code || null);
+      setProfileName((profileData as any)?.full_name || null);
       setLoading(false);
     };
     fetchData();
