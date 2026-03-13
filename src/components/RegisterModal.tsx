@@ -188,6 +188,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
       setShoppingStyle("");
       setEventFrequency("");
       setHowHeard("");
+      setJobTitle("");
+      setIndustry("");
+      setTravelStyle("");
+      setIdealNightOut("");
+      setFavouriteNeighbourhoods("");
     }, 300);
   };
 
