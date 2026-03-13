@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import ModalOverlay from "./ModalOverlay";
@@ -6,6 +6,7 @@ import ModalOverlay from "./ModalOverlay";
 interface Props {
   open: boolean;
   onClose: () => void;
+  referralCode?: string;
 }
 
 const interestOptions = [
@@ -32,26 +33,9 @@ const industryOptions = [
   "Law & Consulting", "Healthcare", "Entertainment & Music", "Other",
 ];
 
-const travelOptions = [
-  { value: "Boutique Hotels", label: "Boutique hotels in hidden gems" },
-  { value: "Five Star Resorts", label: "Five-star resorts & beach clubs" },
-  { value: "Private Villas", label: "Private villas & members-only retreats" },
-  { value: "City Explorer", label: "Spontaneous city breaks & Airbnbs" },
-  { value: "Adventure Travel", label: "Adventure & off-the-grid experiences" },
-];
-
-const nightOutOptions = [
-  { value: "Intimate Dinner", label: "Intimate dinner at a reservation-only spot" },
-  { value: "Rooftop Cocktails", label: "Rooftop cocktails & late-night DJ sets" },
-  { value: "Private Members Club", label: "Private members' club with close friends" },
-  { value: "Gallery & Culture", label: "Gallery opening followed by wine bar" },
-  { value: "House Party", label: "House party or underground event" },
-];
-
-const frequencyOptions = ["Several times a week", "Once a week", "A few times a month", "Occasionally"];
 const howHeardOptions = ["From a friend", "Instagram", "TikTok", "At an event", "QR Code", "Other"];
 
-const RegisterModal = ({ open, onClose }: Props) => {
+const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   const [step, setStep] = useState(1);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -72,10 +56,27 @@ const RegisterModal = ({ open, onClose }: Props) => {
   const [travelStyle, setTravelStyle] = useState("");
   const [idealNightOut, setIdealNightOut] = useState("");
   const [favouriteNeighbourhoods, setFavouriteNeighbourhoods] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [inviteRequired, setInviteRequired] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { signUp } = useAuth();
+
+  // Check if invite-only mode is enabled
+  useEffect(() => {
+    const checkInviteMode = async () => {
+      const { data } = await supabase
+        .from("app_settings" as any)
+        .select("value")
+        .eq("key", "invite_only")
+        .single();
+      if (data) {
+        setInviteRequired((data as any).value?.enabled === true);
+      }
+    };
+    checkInviteMode();
+  }, [open]);
 
   const toggleInterest = (item: string) => {
     setInterests((prev) =>
@@ -83,7 +84,7 @@ const RegisterModal = ({ open, onClose }: Props) => {
     );
   };
 
-  const validateStep1 = () => {
+  const validateStep1 = async () => {
     if (!firstName || !lastName || !email || !password || !phone || !city) {
       setError("Please fill all required fields");
       setTimeout(() => setError(""), 2500);
@@ -100,11 +101,30 @@ const RegisterModal = ({ open, onClose }: Props) => {
       setTimeout(() => setError(""), 3000);
       return false;
     }
+    // Validate invite code if required
+    if (inviteRequired) {
+      if (!inviteCode.trim()) {
+        setError("An invite code is required to join");
+        setTimeout(() => setError(""), 2500);
+        return false;
+      }
+      const { data } = await supabase
+        .from("invites" as any)
+        .select("id")
+        .eq("code", inviteCode.trim().toUpperCase())
+        .is("used_by", null)
+        .single();
+      if (!data) {
+        setError("Invalid or already used invite code");
+        setTimeout(() => setError(""), 3000);
+        return false;
+      }
+    }
     return true;
   };
 
-  const handleNext = () => {
-    if (validateStep1()) {
+  const handleNext = async () => {
+    if (await validateStep1()) {
       setStep(2);
     }
   };
@@ -123,7 +143,6 @@ const RegisterModal = ({ open, onClose }: Props) => {
       return;
     }
 
-    // Get the newly created user to update their profile
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       await supabase.from("profiles").update({
@@ -144,33 +163,26 @@ const RegisterModal = ({ open, onClose }: Props) => {
         ideal_night_out: idealNightOut || null,
         favourite_neighbourhoods: favouriteNeighbourhoods || null,
         application_status: "pending",
-      }).eq("user_id", user.id);
+      } as any).eq("user_id", user.id);
+
+      // Claim invite code if provided
+      if (inviteCode.trim()) {
+        await supabase.rpc("claim_invite" as any, {
+          p_code: inviteCode.trim().toUpperCase(),
+          p_user_id: user.id,
+        });
+      }
+
+      // Set referral if came via ?ref= link
+      if (referralCode) {
+        await supabase.rpc("set_referral" as any, {
+          p_user_id: user.id,
+          p_referral_code: referralCode.toUpperCase(),
+        });
+      }
     }
 
-    // Sync to Brevo
-    supabase.functions.invoke("sync-brevo", {
-      body: {
-        email,
-        firstName,
-        lastName,
-        city,
-        age: age || "",
-        instagram: instagram || "",
-        tiktok: tiktok || "",
-        phone: phone || "",
-        interests: interests.join(", "),
-        shoppingStyle: shoppingStyle || "",
-        eventFrequency: eventFrequency || "",
-        referral: referral || "",
-        howHeard: howHeard || "",
-        jobTitle: jobTitle || "",
-        industry: industry || "",
-        travelStyle: travelStyle || "",
-        idealNightOut: idealNightOut || "",
-        favouriteNeighbourhoods: favouriteNeighbourhoods || "",
-      },
-    }).catch((err) => console.error("Brevo sync error:", err));
-
+    // Brevo sync is now handled automatically via database trigger
     setSubmitted(true);
     setSubmitting(false);
   };
@@ -180,25 +192,11 @@ const RegisterModal = ({ open, onClose }: Props) => {
     setTimeout(() => {
       setSubmitted(false);
       setStep(1);
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPassword("");
-      setPhone("");
-      setCity("");
-      setAge("");
-      setInstagram("");
-      setTiktok("");
-      setReferral("");
-      setInterests([]);
-      setShoppingStyle("");
-      setEventFrequency("");
-      setHowHeard("");
-      setJobTitle("");
-      setIndustry("");
-      setTravelStyle("");
-      setIdealNightOut("");
-      setFavouriteNeighbourhoods("");
+      setFirstName(""); setLastName(""); setEmail(""); setPassword("");
+      setPhone(""); setCity(""); setAge(""); setInstagram(""); setTiktok("");
+      setReferral(""); setInterests([]); setShoppingStyle(""); setEventFrequency("");
+      setHowHeard(""); setJobTitle(""); setIndustry(""); setTravelStyle("");
+      setIdealNightOut(""); setFavouriteNeighbourhoods(""); setInviteCode("");
     }, 300);
   };
 
@@ -226,6 +224,20 @@ const RegisterModal = ({ open, onClose }: Props) => {
           <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 1 of 2</p>
           <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Apply for access.</h2>
           <div className="h-7" />
+
+          {inviteRequired && (
+            <div className="mb-5">
+              <label className={labelClass}>Invite Code *</label>
+              <p className="text-[10px] text-warm-grey/70 tracking-wide mb-1.5">Offlist is invite-only. Enter the code you received.</p>
+              <input
+                className={inputClass}
+                placeholder="Enter your invite code"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                style={borderStyle}
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             <div className="mb-5">
@@ -301,7 +313,6 @@ const RegisterModal = ({ open, onClose }: Props) => {
             />
           </div>
 
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             <div className="mb-5">
               <label className={labelClass}>Instagram</label>
@@ -314,9 +325,6 @@ const RegisterModal = ({ open, onClose }: Props) => {
               <input className={inputClass} placeholder="@handle or tiktok.com/..." value={tiktok} onChange={(e) => setTiktok(e.target.value)} style={borderStyle} />
             </div>
           </div>
-
-
-
 
           <div className="mb-5">
             <label className={labelClass}>Referred by</label>
@@ -380,7 +388,6 @@ const RegisterModal = ({ open, onClose }: Props) => {
           <div className="h-px bg-border mb-6" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
-            {/* Industry / Job Role */}
             <div className="mb-6">
               <label className={labelClass}>Your industry / job role</label>
               <select
@@ -396,7 +403,6 @@ const RegisterModal = ({ open, onClose }: Props) => {
               </select>
             </div>
 
-            {/* How Heard */}
             <div className="mb-6">
               <label className={labelClass}>How did you hear about Offlist?</label>
               <select
