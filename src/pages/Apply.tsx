@@ -1,14 +1,22 @@
 import { useState, useMemo, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import Hero from "@/components/Hero";
+import EventsSection from "@/components/EventsSection";
+import Footer from "@/components/Footer";
 import RegisterModal from "@/components/RegisterModal";
+import SignInModal from "@/components/SignInModal";
+import EventAccessModal from "@/components/EventAccessModal";
 
 const Apply = () => {
-  const [searchParams] = useSearchParams();
-  const referralCode = useMemo(() => searchParams.get("ref") || undefined, [searchParams]);
   const [registerOpen, setRegisterOpen] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
+  const [eventModal, setEventModal] = useState<{ title: string; date: string } | null>(null);
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const referralCode = useMemo(() => searchParams.get("ref") || undefined, [searchParams]);
 
   useEffect(() => {
     if (!loading && user) {
@@ -16,60 +24,47 @@ const Apply = () => {
     }
   }, [user, loading, navigate]);
 
+  const openRegister = () => { setSignInOpen(false); setEventModal(null); setRegisterOpen(true); };
+  const openSignIn = () => { setRegisterOpen(false); setEventModal(null); setSignInOpen(true); };
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Minimal header — no navigation links */}
-      <header className="px-6 md:px-12 py-7 flex justify-center">
+    <>
+      {/* Standalone navbar — no links to main site */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-12 py-5 bg-background/80 backdrop-blur-md transition-transform duration-300">
         <span className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground">
           Offlist
         </span>
-      </header>
-
-      {/* Hero content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-16 text-center">
-        <p
-          className="text-[10px] tracking-[0.3em] uppercase text-accent mb-6 opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.3s" }}
-        >
-          Private Events Network
-        </p>
-        <h1
-          className="font-display text-[clamp(40px,6vw,72px)] font-light leading-[0.95] tracking-tight mb-8 opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.5s" }}
-        >
-          Apply for <em className="italic text-accent">access</em>.
-        </h1>
-        <p
-          className="text-[13px] text-warm-grey tracking-wide leading-relaxed max-w-md mb-10 opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.65s" }}
-        >
-          Curated private events and tailored experiences in your city.
-          <br />
-          Membership is by application only.
-        </p>
-        <div className="opacity-0 animate-fade-up" style={{ animationDelay: "0.8s" }}>
+        <div className="flex gap-5 items-center">
           <button
-            onClick={() => setRegisterOpen(true)}
-            className="bg-primary text-primary-foreground border-none px-14 py-[18px] font-body text-[11px] tracking-wide-xl uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5"
+            onClick={openSignIn}
+            className="text-[10px] tracking-wide-md uppercase text-foreground opacity-45 hover:opacity-100 transition-opacity cursor-pointer border-none bg-transparent font-body font-light"
           >
-            Start Application →
+            Sign In
+          </button>
+          <button
+            onClick={openRegister}
+            className="bg-primary text-primary-foreground border-none px-6 py-2.5 font-body text-[10px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent hover:-translate-y-0.5"
+          >
+            Apply
           </button>
         </div>
-      </main>
+      </nav>
 
-      {/* Minimal footer */}
-      <footer className="px-6 py-6 text-center">
-        <p className="text-[10px] text-warm-grey/40 tracking-wide">
-          © {new Date().getFullYear()} Offlist. All rights reserved.
-        </p>
-      </footer>
+      <Hero onRegister={openRegister} onSignIn={openSignIn} />
+      <EventsSection onEventClick={(name, date) => setEventModal({ title: name, date })} />
+      <Footer />
 
-      <RegisterModal
-        open={registerOpen}
-        onClose={() => setRegisterOpen(false)}
-        referralCode={referralCode}
+      <RegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)} referralCode={referralCode} />
+      <SignInModal open={signInOpen} onClose={() => setSignInOpen(false)} onSwitchToRegister={openRegister} />
+      <EventAccessModal
+        open={!!eventModal}
+        onClose={() => setEventModal(null)}
+        title={eventModal?.title || ""}
+        date={eventModal?.date || ""}
+        onRegister={openRegister}
+        onSignIn={openSignIn}
       />
-    </div>
+    </>
   );
 };
 
