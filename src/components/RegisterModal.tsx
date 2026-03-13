@@ -201,8 +201,8 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   };
 
   const inputClass =
-    "w-full bg-transparent border-none text-foreground font-body text-[15px] font-light py-2.5 outline-none transition-colors tracking-wide focus:border-accent placeholder:text-foreground/20";
-  const labelClass = "block text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2";
+    "w-full bg-transparent border-none text-foreground font-body text-[16px] md:text-[15px] font-light py-2.5 outline-none transition-colors tracking-wide focus:border-accent placeholder:text-foreground/20";
+  const labelClass = "block text-[12px] md:text-[10px] tracking-wide-lg uppercase text-warm-grey mb-2";
   const borderStyle = { borderBottom: "1px solid hsl(var(--input))" };
 
   return (
@@ -221,8 +221,8 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
         </div>
       ) : step === 1 ? (
         <div className="p-10 md:p-12">
-          <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 1 of 2</p>
-          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Apply for access.</h2>
+          <p className="text-[12px] md:text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 1 of 2</p>
+          <h2 className="font-display text-[38px] md:text-[34px] font-light leading-tight mb-2.5">Apply for access.</h2>
           <div className="h-7" />
 
           {inviteRequired && (
@@ -342,9 +342,9 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
         </div>
       ) : (
         <div className="p-10 md:p-12">
-          <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 2 of 2</p>
-          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Tell us about you.</h2>
-          <p className="text-[11px] text-warm-grey tracking-wide mb-7">Help us tailor the events we bring you</p>
+          <p className="text-[12px] md:text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 2 of 2</p>
+          <h2 className="font-display text-[38px] md:text-[34px] font-light leading-tight mb-2.5">Tell us about you.</h2>
+          <p className="text-[13px] md:text-[11px] text-warm-grey tracking-wide mb-7">Help us tailor the events we bring you</p>
 
           {/* Interests */}
           <div className="mb-6">
