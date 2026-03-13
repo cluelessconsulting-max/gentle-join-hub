@@ -313,9 +313,11 @@ const Admin = () => {
     );
   }
 
+  const pendingCount = profiles.filter(p => p.application_status === "pending").length;
+
   const tabs = [
     { id: "overview", icon: "◈", label: "Overview" },
-    { id: "members", icon: "◉", label: "Members" },
+    { id: "members", icon: "◉", label: "Members", badge: pendingCount > 0 ? pendingCount : undefined },
     { id: "events", icon: "◎", label: "Events" },
     { id: "buyers", icon: "◆", label: "Buyers" },
     { id: "invites", icon: "◇", label: "Invites" },
