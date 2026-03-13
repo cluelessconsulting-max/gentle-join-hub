@@ -343,17 +343,17 @@ const RegisterModal = ({ open, onClose }: Props) => {
           <div className="h-px bg-border mb-6" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
-            {/* Event Frequency */}
+            {/* Industry / Job Role */}
             <div className="mb-6">
-              <label className={labelClass}>How often do you attend events?</label>
+              <label className={labelClass}>Your industry / job role</label>
               <select
-                value={eventFrequency}
-                onChange={(e) => setEventFrequency(e.target.value)}
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
                 className={`${inputClass} cursor-pointer`}
                 style={borderStyle}
               >
                 <option value="">Select</option>
-                {frequencyOptions.map((opt) => (
+                {industryOptions.map((opt) => (
                   <option key={opt}>{opt}</option>
                 ))}
               </select>
