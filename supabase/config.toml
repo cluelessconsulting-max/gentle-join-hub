@@ -2,3 +2,6 @@ project_id = "wuefwgkeulmgykkmfhdr"
 
 [functions.sync-brevo]
 verify_jwt = false
+
+[functions.send-registration-email]
+verify_jwt = false
