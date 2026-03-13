@@ -18,6 +18,7 @@ interface Purchase {
   amount: number;
   purchase_date: string;
   notes: string | null;
+  verified_by: string | null;
   created_at: string;
 }
 
