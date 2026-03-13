@@ -290,8 +290,8 @@ const RegisterModal = ({ open, onClose }: Props) => {
       ) : (
         <div className="p-10 md:p-12">
           <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-4">Step 2 of 2</p>
-          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Your world.</h2>
-          <p className="text-[11px] text-warm-grey tracking-wide mb-7">Help us curate the right experiences for you</p>
+          <h2 className="font-display text-[34px] font-light leading-tight mb-2.5">Tell us about you.</h2>
+          <p className="text-[11px] text-warm-grey tracking-wide mb-7">Help us tailor the events we bring you</p>
 
           {/* Interests */}
           <div className="mb-6">
