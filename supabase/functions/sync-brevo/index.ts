@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
       throw new Error('BREVO_API_KEY is not configured');
     }
     
-    // Handle base64-encoded JSON format from Brevo dashboard
+    // Handle base64-encoded JSON format
     if (!BREVO_API_KEY.startsWith('xkeysib-')) {
       try {
         const decoded = atob(BREVO_API_KEY);
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { email, firstName, lastName, city, referral } = await req.json();
+    const { email, firstName, lastName, city, age, instagram, tiktok, phone, interests, shoppingStyle, eventFrequency, referral, howHeard } = await req.json();
 
     if (!email) {
       return new Response(JSON.stringify({ error: 'Email is required' }), {
@@ -34,7 +34,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create or update contact in Brevo
     const response = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
@@ -48,7 +47,15 @@ Deno.serve(async (req) => {
           FIRSTNAME: firstName || '',
           LASTNAME: lastName || '',
           CITY: city || '',
+          AGE: age || '',
+          INSTAGRAM: instagram || '',
+          TIKTOK: tiktok || '',
+          SMS: phone || '',
+          INTERESTS: interests || '',
+          SHOPPING_STYLE: shoppingStyle || '',
+          EVENT_FREQUENCY: eventFrequency || '',
           REFERRAL: referral || '',
+          HOW_HEARD: howHeard || '',
         },
         updateEnabled: true,
       }),
@@ -58,7 +65,6 @@ Deno.serve(async (req) => {
 
     if (!response.ok && response.status !== 204) {
       console.error('Brevo API error:', JSON.stringify(data));
-      // Don't fail the registration if Brevo sync fails
       return new Response(JSON.stringify({ success: false, error: data }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

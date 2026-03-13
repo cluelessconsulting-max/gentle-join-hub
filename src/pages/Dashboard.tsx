@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [registeredIds, setRegisteredIds] = useState<Set<string>>(new Set());
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -31,12 +32,14 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const [{ data: eventsData }, { data: regsData }] = await Promise.all([
+      const [{ data: eventsData }, { data: regsData }, { data: profileData }] = await Promise.all([
         supabase.from("events").select("*"),
         supabase.from("guest_list_registrations").select("event_id").eq("user_id", user.id),
+        supabase.from("profiles").select("application_status").eq("user_id", user.id).single(),
       ]);
       setEvents((eventsData as Event[]) || []);
       setRegisteredIds(new Set((regsData || []).map((r: { event_id: string }) => r.event_id)));
+      setApplicationStatus((profileData as any)?.application_status || "pending");
       setLoading(false);
     };
     fetchData();
@@ -75,17 +78,56 @@ const Dashboard = () => {
     );
   }
 
+  // Pending / Rejected state
+  if (applicationStatus !== "approved") {
+    return (
+      <div className="min-h-screen bg-background">
+        <nav className="flex justify-between items-center px-6 md:px-12 py-7">
+          <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">
+            Offlist
+          </a>
+          <button
+            onClick={handleSignOut}
+            className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary"
+          >
+            Sign Out
+          </button>
+        </nav>
+
+        <section className="px-6 md:px-12 py-24 text-center max-w-xl mx-auto">
+          <div className="font-display text-[56px] text-accent mb-6 leading-none">◆</div>
+          {applicationStatus === "rejected" ? (
+            <>
+              <h1 className="font-display text-[38px] font-light mb-5">Application not approved.</h1>
+              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">
+                Unfortunately, your application wasn't approved at this time.
+                <br />
+                Feel free to reach out if you have any questions.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="font-display text-[38px] font-light mb-5">Application pending.</h1>
+              <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">
+                Your application is under review.
+                <br />
+                We'll notify you once it's been approved.
+              </p>
+            </>
+          )}
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <nav className="flex justify-between items-center px-6 md:px-12 py-7">
         <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">
           Offlist
         </a>
         <div className="flex gap-5 items-center">
-          <span className="text-[11px] tracking-wide text-warm-grey">
-            {user?.email}
-          </span>
+          <span className="text-[11px] tracking-wide text-warm-grey">{user?.email}</span>
           <button
             onClick={handleSignOut}
             className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary"
@@ -95,12 +137,9 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      {/* Content */}
       <section className="px-6 md:px-12 py-16">
         <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-3.5">Your Events</p>
-        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-14">
-          Welcome back
-        </h1>
+        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-14">Welcome back</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
           {events.map((event) => {
@@ -120,9 +159,7 @@ const Dashboard = () => {
                 </div>
 
                 {isRegistered ? (
-                  <span className="text-[10px] tracking-wide-md uppercase text-accent flex items-center gap-2">
-                    ✓ On the guest list
-                  </span>
+                  <span className="text-[10px] tracking-wide-md uppercase text-accent flex items-center gap-2">✓ On the guest list</span>
                 ) : (
                   <button
                     onClick={() => handleRegister(event.id)}
