@@ -27,6 +27,13 @@ interface Profile {
   how_heard: string | null;
   application_status: string;
   created_at: string;
+  referral_code: string | null;
+  job_title: string | null;
+  industry: string | null;
+  travel_style: string | null;
+  ideal_night_out: string | null;
+  favourite_neighbourhoods: string | null;
+  referred_by: string | null;
 }
 
 interface CheckResult {
