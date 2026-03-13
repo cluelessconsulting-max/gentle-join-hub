@@ -34,6 +34,8 @@ interface Profile {
   ideal_night_out: string | null;
   favourite_neighbourhoods: string | null;
   referred_by: string | null;
+  buyer_tier: string;
+  total_points: number;
 }
 
 interface CheckResult {
