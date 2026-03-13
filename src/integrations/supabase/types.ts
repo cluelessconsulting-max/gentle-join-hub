@@ -78,26 +78,59 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age: number | null
+          application_status: string
           avatar_url: string | null
+          city: string | null
           created_at: string
+          event_frequency: string | null
           full_name: string | null
+          how_heard: string | null
           id: string
+          instagram: string | null
+          interests: string[] | null
+          phone: string | null
+          referral: string | null
+          shopping_style: string | null
+          tiktok: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          age?: number | null
+          application_status?: string
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          event_frequency?: string | null
           full_name?: string | null
+          how_heard?: string | null
           id?: string
+          instagram?: string | null
+          interests?: string[] | null
+          phone?: string | null
+          referral?: string | null
+          shopping_style?: string | null
+          tiktok?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          age?: number | null
+          application_status?: string
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          event_frequency?: string | null
           full_name?: string | null
+          how_heard?: string | null
           id?: string
+          instagram?: string | null
+          interests?: string[] | null
+          phone?: string | null
+          referral?: string | null
+          shopping_style?: string | null
+          tiktok?: string | null
           updated_at?: string
           user_id?: string
         }
