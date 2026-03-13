@@ -168,16 +168,18 @@ const EventsSection = ({ onEventClick }: Props) => {
               <p className="text-[11px] text-warm-grey tracking-wide mb-7">New events, drops & exclusive invites.</p>
               <div className="flex justify-center gap-4">
                 <a
-                  href="instagram://user?username=offlist.london"
-                  onClick={() => { setTimeout(() => { window.location.href = "https://instagram.com/offlist.london"; }, 500); }}
+                  href="https://www.instagram.com/offlist.network/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 border border-foreground/15 px-5 py-2.5 text-foreground transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary group"
                 >
                   <Instagram size={15} className="opacity-60 group-hover:opacity-100 transition-opacity" />
                   <span className="text-[10px] tracking-wide-lg uppercase">Instagram</span>
                 </a>
                 <a
-                  href="snssdk1233://user/profile/offlist.london"
-                  onClick={() => { setTimeout(() => { window.location.href = "https://tiktok.com/@offlist.london"; }, 500); }}
+                  href="https://www.tiktok.com/@off.list.network"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 border border-foreground/15 px-5 py-2.5 text-foreground transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary group"
                 >
                   <TikTokIcon size={15} className="opacity-60 group-hover:opacity-100 transition-opacity" />
