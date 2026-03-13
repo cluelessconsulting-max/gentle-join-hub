@@ -224,15 +224,18 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
     <ModalOverlay open={open} onClose={handleClose}>
       {submitted ? (
         <div className="py-20 px-12 text-center animate-fade-up">
-          <div className="font-display text-[56px] text-accent mb-5 leading-none">◆</div>
-          <h2 className="font-display text-[38px] font-light mb-4">Application received.</h2>
+          <div className="text-[56px] mb-5 leading-none">✓</div>
+          <h2 className="font-display text-[38px] font-light mb-4">Application submitted.</h2>
           <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide">
-            Welcome to Offlist.
+            Your application has been submitted.
             <br />
-            Check your email to confirm your account.
-            <br />
-            We'll review your application and get back to you shortly.
+            Our team will let you know as soon as there are any updates.
           </p>
+          {skipped && (
+            <p className="text-[12px] text-accent leading-relaxed tracking-wide mt-6">
+              Check your email — you can still complete your profile to help us tailor events to you.
+            </p>
+          )}
         </div>
       ) : step === 1 ? (
         <div className="p-10 md:p-12">
