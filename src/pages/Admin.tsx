@@ -466,6 +466,15 @@ const Admin = () => {
           </div>
         )}
 
+        {/* ── EVENTS MANAGER ── */}
+        {activeTab === "events" && <AdminEventsManager />}
+
+        {/* ── INVITES ── */}
+        {activeTab === "invites" && user && <AdminInvites userId={user.id} />}
+
+        {/* ── REFERRALS ── */}
+        {activeTab === "referrals" && <AdminReferrals />}
+
         {/* ── EMAIL COMPOSER ── */}
         {activeTab === "email" && (
           <div className="max-w-[680px]">
