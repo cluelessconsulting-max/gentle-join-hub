@@ -415,7 +415,7 @@ const Admin = () => {
                 </thead>
                 <tbody>
                   {filteredProfiles.map((p) => (
-                    <tr key={p.id} className="border-b border-[#1a1a2e] hover:bg-[#0f0f1a]/50 transition-colors">
+                    <tr key={p.id} className="border-b border-[#1a1a2e] hover:bg-[#0f0f1a]/50 transition-colors cursor-pointer" onClick={() => setSelectedProfile(p)}>
                       <td className="p-3 text-[13px] text-slate-300">
                         <input
                           type="checkbox"
