@@ -34,6 +34,8 @@ interface Profile {
   ideal_night_out: string | null;
   favourite_neighbourhoods: string | null;
   referred_by: string | null;
+  buyer_tier: string;
+  total_points: number;
 }
 
 interface CheckResult {
@@ -406,7 +408,7 @@ const Admin = () => {
                         checked={selectedUsers.length === filteredProfiles.length && filteredProfiles.length > 0}
                       />
                     </th>
-                    {["Name", "Email", "City", "Age", "IG", "Phone", "Interests", "Status", "Date", "Actions"].map((h) => (
+                    {["Name", "Email", "City", "Age", "IG", "Phone", "Interests", "Tier", "Status", "Date", "Actions"].map((h) => (
                       <th key={h} className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e] whitespace-nowrap font-normal">
                         {h}
                       </th>
@@ -434,6 +436,7 @@ const Admin = () => {
                       <td className="p-3 text-[13px] text-slate-400">{p.instagram || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{p.phone || "—"}</td>
                       <td className="p-3 text-[11px] text-slate-400 max-w-[200px] truncate">{(p.interests || []).join(", ") || "—"}</td>
+                      <td className="p-3"><TierBadge tier={p.buyer_tier} /></td>
                       <td className="p-3"><StatusBadge status={p.application_status} /></td>
                       <td className="p-3 text-[11px] text-slate-500 whitespace-nowrap">{new Date(p.created_at).toLocaleDateString()}</td>
                       <td className="p-3">
@@ -620,7 +623,13 @@ const Admin = () => {
                   <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
                 </div>
 
-                <StatusBadge status={selectedProfile.application_status} />
+                <div className="flex gap-2">
+                  <StatusBadge status={selectedProfile.application_status} />
+                  <TierBadge tier={selectedProfile.buyer_tier} />
+                  {selectedProfile.total_points > 0 && (
+                    <span className="bg-amber-950 text-amber-400 px-2.5 py-0.5 rounded-full text-xs font-semibold">{selectedProfile.total_points} pts</span>
+                  )}
+                </div>
 
                 {selectedProfile.referral_code && (
                   <div className="mt-4 bg-[#1a1a2e] px-4 py-2.5 rounded-lg inline-block">
@@ -683,6 +692,21 @@ const StatusBadge = ({ status }: { status: string }) => {
   return (
     <span className={`${cls} px-2.5 py-0.5 rounded-full text-xs font-semibold`}>
       {status || "unknown"}
+    </span>
+  );
+};
+
+const TierBadge = ({ tier }: { tier: string }) => {
+  const classes: Record<string, string> = {
+    guest: "bg-slate-800 text-slate-400",
+    shopper: "bg-emerald-950 text-emerald-400",
+    buyer: "bg-sky-950 text-sky-400",
+    vip: "bg-purple-950 text-purple-400",
+  };
+  const cls = classes[tier] || classes.guest;
+  return (
+    <span className={`${cls} px-2.5 py-0.5 rounded-full text-xs font-semibold`}>
+      {tier || "guest"}
     </span>
   );
 };

@@ -7,6 +7,8 @@ interface Profile {
   full_name: string | null;
   email: string | null;
   city: string | null;
+  buyer_tier: string;
+  total_points: number;
 }
 
 interface Purchase {
@@ -16,6 +18,7 @@ interface Purchase {
   amount: number;
   purchase_date: string;
   notes: string | null;
+  verified_by: string | null;
   created_at: string;
 }
 
@@ -42,7 +45,7 @@ const AdminBuyers = () => {
   const fetchAll = async () => {
     const [{ data: purchasesData }, { data: profilesData }, { data: codesData }] = await Promise.all([
       supabase.from("purchases" as any).select("*").order("purchase_date", { ascending: false }),
-      supabase.from("profiles").select("user_id, full_name, email, city"),
+      supabase.from("profiles").select("user_id, full_name, email, city, buyer_tier, total_points"),
       supabase.from("discount_codes" as any).select("*"),
     ]);
     if (purchasesData) setPurchases(purchasesData as any);
@@ -67,6 +70,7 @@ const AdminBuyers = () => {
       amount: parseFloat(form.amount),
       purchase_date: form.purchase_date || new Date().toISOString().split("T")[0],
       notes: form.notes || null,
+      verified_by: "clueless.consulting@gmail.com",
     } as any);
     if (error) {
       toast.error("Failed to add purchase");
@@ -218,7 +222,7 @@ const AdminBuyers = () => {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  {["Name", "Email", "City", "Codes", "Total Purchases", "Total Spent"].map((h) => (
+                  {["Name", "Email", "City", "Tier", "Codes", "Total Purchases", "Total Spent"].map((h) => (
                     <th key={h} className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e] font-normal">{h}</th>
                   ))}
                 </tr>
@@ -233,6 +237,7 @@ const AdminBuyers = () => {
                       <td className="p-3 text-[13px] text-slate-200">{b.full_name || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{b.email || "—"}</td>
                       <td className="p-3 text-[13px] text-slate-400">{b.city || "—"}</td>
+                      <td className="p-3"><TierBadge tier={b.buyer_tier} /></td>
                       <td className="p-3 text-[12px] text-purple-400">{codes.map((c) => c.code).join(", ")}</td>
                       <td className="p-3 text-[13px] text-slate-300">{userPurchases.length}</td>
                       <td className="p-3 text-[13px] text-emerald-400 font-semibold">£{totalSpent.toFixed(2)}</td>
@@ -278,6 +283,21 @@ const AdminBuyers = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const TierBadge = ({ tier }: { tier: string }) => {
+  const classes: Record<string, string> = {
+    guest: "bg-slate-800 text-slate-400",
+    shopper: "bg-emerald-950 text-emerald-400",
+    buyer: "bg-sky-950 text-sky-400",
+    vip: "bg-purple-950 text-purple-400",
+  };
+  const cls = classes[tier] || classes.guest;
+  return (
+    <span className={`${cls} px-2.5 py-0.5 rounded-full text-xs font-semibold`}>
+      {tier || "guest"}
+    </span>
   );
 };
 

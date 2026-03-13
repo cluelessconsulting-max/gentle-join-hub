@@ -185,6 +185,7 @@ export type Database = {
           age: number | null
           application_status: string
           avatar_url: string | null
+          buyer_tier: string
           city: string | null
           created_at: string
           email: string | null
@@ -205,6 +206,7 @@ export type Database = {
           referred_by: string | null
           shopping_style: string | null
           tiktok: string | null
+          total_points: number
           travel_style: string | null
           updated_at: string
           user_id: string
@@ -213,6 +215,7 @@ export type Database = {
           age?: number | null
           application_status?: string
           avatar_url?: string | null
+          buyer_tier?: string
           city?: string | null
           created_at?: string
           email?: string | null
@@ -233,6 +236,7 @@ export type Database = {
           referred_by?: string | null
           shopping_style?: string | null
           tiktok?: string | null
+          total_points?: number
           travel_style?: string | null
           updated_at?: string
           user_id: string
@@ -241,6 +245,7 @@ export type Database = {
           age?: number | null
           application_status?: string
           avatar_url?: string | null
+          buyer_tier?: string
           city?: string | null
           created_at?: string
           email?: string | null
@@ -261,6 +266,7 @@ export type Database = {
           referred_by?: string | null
           shopping_style?: string | null
           tiktok?: string | null
+          total_points?: number
           travel_style?: string | null
           updated_at?: string
           user_id?: string
@@ -277,6 +283,7 @@ export type Database = {
           notes: string | null
           purchase_date: string
           user_id: string
+          verified_by: string | null
         }
         Insert: {
           amount: number
@@ -287,6 +294,7 @@ export type Database = {
           notes?: string | null
           purchase_date?: string
           user_id: string
+          verified_by?: string | null
         }
         Update: {
           amount?: number
@@ -297,6 +305,7 @@ export type Database = {
           notes?: string | null
           purchase_date?: string
           user_id?: string
+          verified_by?: string | null
         }
         Relationships: [
           {
