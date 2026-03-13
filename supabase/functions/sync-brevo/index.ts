@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
           EVENT_FREQUENCY: eventFrequency || '',
           REFERRAL: referral || '',
           HOW_HEARD: howHeard || '',
-          JOB_TITLE: jobTitle || '',
+          JOBTITLE: jobTitle || '',
           INDUSTRY: industry || '',
           TRAVEL_STYLE: travelStyle || '',
           IDEAL_NIGHT_OUT: idealNightOut || '',
