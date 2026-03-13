@@ -390,7 +390,7 @@ const Admin = () => {
                         checked={selectedUsers.length === filteredProfiles.length && filteredProfiles.length > 0}
                       />
                     </th>
-                    {["Name", "City", "Age", "IG", "Phone", "Interests", "Status", "Date", "Actions"].map((h) => (
+                    {["Name", "Email", "City", "Age", "IG", "Phone", "Interests", "Status", "Date", "Actions"].map((h) => (
                       <th key={h} className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e] whitespace-nowrap font-normal">
                         {h}
                       </th>
