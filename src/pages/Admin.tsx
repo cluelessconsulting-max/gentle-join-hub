@@ -129,8 +129,8 @@ const Admin = () => {
         action: "sync_contact",
         email: profile.email,
         attributes: {
-          FIRSTNAME: profile.full_name?.split(" ")[0] || "",
-          LASTNAME: profile.full_name?.split(" ").slice(1).join(" ") || "",
+          NOME: profile.full_name?.split(" ")[0] || "",
+          COGNOME: profile.full_name?.split(" ").slice(1).join(" ") || "",
           CITY: profile.city || "",
           INTERESTS: (profile.interests || []).join(", "),
           STATUS: profile.application_status,
