@@ -337,7 +337,7 @@ const RegisterModal = ({ open, onClose }: Props) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             {/* Event Frequency */}
             <div className="mb-6">
-              <label className={labelClass}>How often do you go out?</label>
+              <label className={labelClass}>How often do you attend events?</label>
               <select
                 value={eventFrequency}
                 onChange={(e) => setEventFrequency(e.target.value)}
