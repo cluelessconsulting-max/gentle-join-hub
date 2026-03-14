@@ -15,7 +15,8 @@ const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [signing, setSigning] = useState(false);
   const [error, setError] = useState("");
-  const { signIn } = useAuth();
+  const [resetSent, setResetSent] = useState(false);
+  const { signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
