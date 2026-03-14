@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import Apply from "./pages/Apply";
 import QrCardApply from "./pages/QrCardApply";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/apply" element={<Apply />} />
             <Route path="/qr-apply" element={<QrCardApply />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

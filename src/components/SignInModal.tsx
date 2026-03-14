@@ -15,7 +15,8 @@ const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [signing, setSigning] = useState(false);
   const [error, setError] = useState("");
-  const { signIn } = useAuth();
+  const [resetSent, setResetSent] = useState(false);
+  const { signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
             <input className={inputClass} type="password" name="password" autoComplete="current-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={{ borderBottom: "1px solid hsl(var(--input))" }} />
           </div>
 
-          <label className="flex items-center gap-2.5 cursor-pointer mb-4 select-none">
+          <label className="flex items-center gap-2.5 cursor-pointer mb-2 select-none">
             <input
               type="checkbox"
               checked={rememberMe}
@@ -80,6 +81,35 @@ const SignInModal = ({ open, onClose, onSwitchToRegister }: Props) => {
             />
             <span className="text-[11px] tracking-wide text-warm-grey">Remember me</span>
           </label>
+
+          <p className="text-right mb-4">
+            <span
+              className="text-[11px] text-warm-grey tracking-wide cursor-pointer underline hover:text-foreground transition-colors"
+              onClick={async () => {
+                if (!email) {
+                  setError("Enter your email first");
+                  setTimeout(() => setError(""), 2000);
+                  return;
+                }
+                const { error: err } = await resetPassword(email);
+                if (err) {
+                  setError(err);
+                  setTimeout(() => setError(""), 3000);
+                } else {
+                  setResetSent(true);
+                  setTimeout(() => setResetSent(false), 5000);
+                }
+              }}
+            >
+              Forgot password?
+            </span>
+          </p>
+
+          {resetSent && (
+            <p className="text-[11px] text-accent tracking-wide mb-3">
+              Reset link sent — check your inbox.
+            </p>
+          )}
 
           {error && (
             <p className="text-[11px] text-destructive tracking-wide mb-3">{error}</p>
