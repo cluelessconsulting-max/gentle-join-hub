@@ -8,6 +8,7 @@ import NotificationBell from "@/components/NotificationBell";
 import ReferralLeaderboard from "@/components/ReferralLeaderboard";
 import MemberPurchases from "@/components/MemberPurchases";
 import LoyaltySection from "@/components/dashboard/LoyaltySection";
+import PartnerPerks from "@/components/dashboard/PartnerPerks";
 
 interface Event {
   id: string;
