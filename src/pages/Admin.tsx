@@ -328,7 +328,7 @@ const Admin = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-primary">
         <p className="text-2xl text-accent animate-pulse font-display">Offlist</p>
       </div>
     );
