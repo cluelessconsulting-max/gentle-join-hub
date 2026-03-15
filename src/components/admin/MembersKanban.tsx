@@ -232,6 +232,7 @@ const MembersKanban = ({
   const [hasIG, setHasIG] = useState(false);
   const [hasTT, setHasTT] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ type: string; profileId?: string; name?: string; count?: number } | null>(null);
 
   const allInterests = ["Fashion & Style", "Music & Nightlife", "Art & Design", "Gastronomy & Social Dining", "Fitness & Wellness", "Travel & Culture", "Luxury & Lifestyle"];
   const allCities = [...new Set(allProfiles.map(p => p.city).filter(Boolean) as string[])].sort();
