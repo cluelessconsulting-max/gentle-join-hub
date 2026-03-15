@@ -67,18 +67,15 @@ const Admin = () => {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
 
-  // Approval email modal
   const [approvalProfile, setApprovalProfile] = useState<Profile | null>(null);
   const [approvalSubject, setApprovalSubject] = useState("");
   const [approvalBody, setApprovalBody] = useState("");
 
-  // Email composer
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
   const [sending, setSending] = useState(false);
   const [emailConfirm, setEmailConfirm] = useState(false);
 
-  // System check
   const [checkResults, setCheckResults] = useState<CheckResult[]>([]);
   const [checking, setChecking] = useState(false);
 
@@ -92,7 +89,6 @@ const Admin = () => {
     if (!user || user.email !== ADMIN_EMAIL) return;
     fetchProfiles();
 
-    // Realtime subscription for new pending applications
     const channel = supabase
       .channel('admin-profiles')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, (payload) => {
@@ -146,7 +142,6 @@ const Admin = () => {
       setProfiles((prev) =>
         prev.map((p) => (p.id === profileId ? { ...p, application_status: status } : p))
       );
-      // Audit log
       try {
         await supabase.from("audit_log" as any).insert({
           action: `member_${status}`,
@@ -158,7 +153,6 @@ const Admin = () => {
         } as any);
       } catch {}
 
-      // Also explicitly sync to Brevo for reliability
       if (profile) {
         const updatedProfile = { ...profile, application_status: status };
         syncToBrevo(updatedProfile).catch(() => {});
@@ -247,7 +241,6 @@ const Admin = () => {
         setEmailSubject("");
         setEmailBody("");
         setSelectedUsers([]);
-        // Audit log
         try {
           await supabase.from("audit_log" as any).insert({
             action: "bulk_email_sent",
@@ -267,7 +260,6 @@ const Admin = () => {
     setChecking(true);
     const checks: CheckResult[] = [];
 
-    // 1. Database connection
     try {
       const { error } = await supabase.from("profiles").select("id").limit(1);
       checks.push({ name: "Database Connection", ok: !error, detail: error?.message || "Connected" });
@@ -275,7 +267,6 @@ const Admin = () => {
       checks.push({ name: "Database Connection", ok: false, detail: e.message });
     }
 
-    // 2. Profiles table
     try {
       const { data, error } = await supabase.from("profiles").select("*").limit(1);
       checks.push({ name: "Profiles Table", ok: !error, detail: error?.message || `Table OK, ${profiles.length} total rows` });
@@ -283,7 +274,6 @@ const Admin = () => {
       checks.push({ name: "Profiles Table", ok: false, detail: e.message });
     }
 
-    // 3. Auth
     try {
       const { data } = await supabase.auth.getUser();
       checks.push({ name: "Auth System", ok: !!data?.user, detail: data?.user?.email || "Not authenticated" });
@@ -291,7 +281,6 @@ const Admin = () => {
       checks.push({ name: "Auth System", ok: false, detail: e.message });
     }
 
-    // 4. Brevo API
     try {
       const { data, error } = await supabase.functions.invoke("brevo-admin", {
         body: { action: "get_stats" },
@@ -301,7 +290,6 @@ const Admin = () => {
       checks.push({ name: "Brevo API", ok: false, detail: "Cannot reach Brevo" });
     }
 
-    // 5. Events table
     try {
       const { data, error } = await supabase.from("events").select("id").limit(1);
       checks.push({ name: "Events Table", ok: !error, detail: error?.message || "Table OK" });
@@ -321,7 +309,6 @@ const Admin = () => {
     cities: [...new Set(profiles.map((p) => p.city).filter(Boolean))].length,
   };
 
-  // City breakdown
   const cityBreakdown = profiles.reduce((acc, p) => {
     const city = p.city || "Unknown";
     acc[city] = (acc[city] || 0) + 1;
@@ -329,7 +316,6 @@ const Admin = () => {
   }, {} as Record<string, number>);
   const sortedCities = Object.entries(cityBreakdown).sort((a, b) => b[1] - a[1]);
 
-  // Tier breakdown
   const tierBreakdown = profiles.reduce((acc, p) => {
     const tier = p.buyer_tier || "guest";
     acc[tier] = (acc[tier] || 0) + 1;
@@ -342,8 +328,8 @@ const Admin = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
-        <p className="text-2xl text-purple-400 animate-pulse">⬡</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-2xl text-accent animate-pulse font-display">Offlist</p>
       </div>
     );
   }
@@ -367,14 +353,13 @@ const Admin = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#0a0a0f] font-mono text-slate-200">
+    <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground font-body">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[220px] bg-[#0f0f1a] border-r border-[#1e1e2e] p-8 px-4 flex-col gap-1 shrink-0">
+      <aside className="hidden md:flex w-[220px] bg-secondary border-r border-border p-8 px-4 flex-col gap-1 shrink-0">
         <div className="flex items-center gap-2.5 mb-7">
-          <span className="text-2xl text-purple-400">⬡</span>
-          <span className="text-lg font-bold tracking-[4px] text-slate-50">OFFLIST</span>
+          <span className="font-display text-[22px] font-normal tracking-wide uppercase text-foreground">Offlist</span>
         </div>
-        <p className="text-[10px] tracking-[3px] text-slate-600 mb-2 pl-2">ADMIN</p>
+        <p className="text-[10px] tracking-[3px] text-muted-foreground mb-2 pl-2">ADMIN</p>
 
         {tabs.map((tab) => (
           <button
@@ -382,14 +367,14 @@ const Admin = () => {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2.5 bg-transparent border-none text-left px-3 py-2.5 rounded-lg cursor-pointer text-[13px] tracking-wide transition-all ${
               activeTab === tab.id
-                ? "bg-indigo-950 text-purple-400"
-                : "text-slate-400 hover:text-slate-200 hover:bg-[#1a1a2e]"
+                ? "bg-accent/15 text-accent"
+                : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
             }`}
           >
             <span className="text-base">{tab.icon}</span>
             {tab.label}
             {tab.badge && (
-              <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 animate-pulse">
+              <span className="ml-auto bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 animate-pulse">
                 {tab.badge}
               </span>
             )}
@@ -398,38 +383,37 @@ const Admin = () => {
 
         <button
           onClick={async () => { await signOut(); navigate("/"); }}
-          className="mt-auto bg-transparent border border-[#1e1e2e] text-slate-600 px-3 py-2 rounded-lg cursor-pointer text-xs tracking-wider hover:text-slate-400 hover:border-slate-600 transition-colors"
+          className="mt-auto bg-transparent border border-border text-muted-foreground px-3 py-2 rounded-lg cursor-pointer text-xs tracking-wider hover:text-foreground hover:border-foreground/30 transition-colors"
         >
           ↩ Sign Out
         </button>
       </aside>
 
       {/* Mobile Bottom Tab Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f0f1a] border-t border-[#1e1e2e] flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-secondary border-t border-border flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
         {tabs.slice(0, 5).map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex flex-col items-center gap-0.5 bg-transparent border-none cursor-pointer py-2 px-2 rounded-lg min-h-[44px] min-w-[44px] transition-all ${
-              activeTab === tab.id ? "text-purple-400" : "text-slate-500"
+              activeTab === tab.id ? "text-accent" : "text-muted-foreground"
             }`}
           >
             <span className="text-sm">{tab.icon}</span>
             <span className="text-[9px] tracking-wider">{tab.label}</span>
-            {tab.badge && <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />}
+            {tab.badge && <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-destructive" />}
           </button>
         ))}
       </nav>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#0f0f1a] border-b border-[#1e1e2e]">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-secondary border-b border-border">
         <div className="flex items-center gap-2">
-          <span className="text-lg text-purple-400">⬡</span>
-          <span className="text-sm font-bold tracking-[3px] text-slate-50">OFFLIST</span>
+          <span className="font-display text-[18px] font-normal tracking-wide uppercase text-foreground">Offlist</span>
         </div>
         <button
           onClick={async () => { await signOut(); navigate("/"); }}
-          className="text-slate-500 text-[10px] tracking-wider bg-transparent border border-[#1e1e2e] px-2.5 py-1.5 rounded cursor-pointer"
+          className="text-muted-foreground text-[10px] tracking-wider bg-transparent border border-border px-2.5 py-1.5 rounded cursor-pointer"
         >
           Sign Out
         </button>
@@ -440,13 +424,13 @@ const Admin = () => {
         {/* ── OVERVIEW ── */}
         {activeTab === "overview" && (
           <div>
-            <h2 className="text-2xl font-bold tracking-wider mb-5 text-slate-50">Overview</h2>
+            <h2 className="font-display text-[32px] font-light tracking-wide mb-5 text-foreground">Overview</h2>
 
-            {/* ─── Alert Banners ─── */}
+            {/* Alert Banners */}
             {(() => {
               const alerts: { text: string; tab: string; color: string }[] = [];
               const pending48h = profiles.filter(p => p.application_status === "pending" && (Date.now() - new Date(p.created_at).getTime()) > 48 * 60 * 60 * 1000);
-              if (pending48h.length > 0) alerts.push({ text: `${pending48h.length} applicant${pending48h.length > 1 ? 's' : ''} waiting over 48h — review now`, tab: "members", color: "border-amber-500/50 bg-amber-500/5 text-amber-400" });
+              if (pending48h.length > 0) alerts.push({ text: `${pending48h.length} applicant${pending48h.length > 1 ? 's' : ''} waiting over 48h — review now`, tab: "members", color: "border-amber-600/50 bg-amber-50 text-amber-800" });
               return alerts.length > 0 ? (
                 <div className="flex flex-col gap-2 mb-6">
                   {alerts.map((a, i) => (
@@ -460,59 +444,56 @@ const Admin = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
               {[
-                { label: "Total", value: stats.total, color: "text-purple-400" },
-                { label: "Approved", value: stats.approved, color: "text-emerald-400" },
-                { label: "Pending", value: stats.pending, color: "text-amber-400" },
-                { label: "Rejected", value: stats.rejected, color: "text-red-400" },
-                { label: "Cities", value: stats.cities, color: "text-sky-400" },
+                { label: "Total", value: stats.total, color: "text-accent" },
+                { label: "Approved", value: stats.approved, color: "text-emerald-700" },
+                { label: "Pending", value: stats.pending, color: "text-amber-700" },
+                { label: "Rejected", value: stats.rejected, color: "text-red-700" },
+                { label: "Cities", value: stats.cities, color: "text-sky-700" },
               ].map((s) => (
-                <div key={s.label} className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-xl p-5">
-                  <p className={`text-4xl font-bold ${s.color}`}>{s.value}</p>
-                  <p className="text-xs text-slate-500 mt-1 tracking-wider">{s.label}</p>
+                <div key={s.label} className="bg-secondary border border-border rounded-xl p-5">
+                  <p className={`text-4xl font-display font-light ${s.color}`}>{s.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1 tracking-wider">{s.label}</p>
                 </div>
               ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-10">
-              {/* City Breakdown */}
               <div>
-                <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">By City</h3>
+                <h3 className="text-[10px] tracking-[3px] text-muted-foreground uppercase mb-4">By City</h3>
                 <div className="flex flex-col gap-0.5">
                   {sortedCities.slice(0, 10).map(([city, count]) => (
-                    <div key={city} className="flex justify-between items-center px-4 py-2.5 bg-[#0f0f1a] rounded-lg">
-                      <span className="text-sm text-slate-200">{city}</span>
-                      <span className="text-xs text-sky-400 font-semibold">{count}</span>
+                    <div key={city} className="flex justify-between items-center px-4 py-2.5 bg-secondary rounded-lg">
+                      <span className="text-sm text-foreground">{city}</span>
+                      <span className="text-xs text-accent font-semibold">{count}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Tier Breakdown */}
               <div>
-                <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">By Buyer Tier</h3>
+                <h3 className="text-[10px] tracking-[3px] text-muted-foreground uppercase mb-4">By Buyer Tier</h3>
                 <div className="flex flex-col gap-0.5">
                   {sortedTiers.map(([tier, count]) => (
-                    <div key={tier} className="flex justify-between items-center px-4 py-2.5 bg-[#0f0f1a] rounded-lg">
+                    <div key={tier} className="flex justify-between items-center px-4 py-2.5 bg-secondary rounded-lg">
                       <TierBadge tier={tier} />
-                      <span className="text-xs text-slate-300 font-semibold">{count}</span>
+                      <span className="text-xs text-foreground/70 font-semibold">{count}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Member Intelligence / Scoring */}
             <div className="mb-10">
               <AdminScoring profiles={profiles} onSelectProfile={setSelectedProfile} />
             </div>
 
-            <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">Recent Applications</h3>
+            <h3 className="text-[10px] tracking-[3px] text-muted-foreground uppercase mb-4">Recent Applications</h3>
             <div className="flex flex-col gap-0.5">
               {profiles.slice(0, 8).map((p) => (
-                <div key={p.id} className="flex justify-between items-center px-4 py-3 bg-[#0f0f1a] rounded-lg">
+                <div key={p.id} className="flex justify-between items-center px-4 py-3 bg-secondary rounded-lg">
                   <div>
-                    <span className="block text-sm text-slate-200">{p.full_name || "—"}</span>
-                    <span className="text-[11px] text-slate-600">{p.city || "No city"} · {p.instagram || "No IG"}</span>
+                    <span className="block text-sm text-foreground">{p.full_name || "—"}</span>
+                    <span className="text-[11px] text-muted-foreground">{p.city || "No city"} · {p.instagram || "No IG"}</span>
                   </div>
                   <StatusBadge status={p.application_status} />
                 </div>
@@ -521,7 +502,6 @@ const Admin = () => {
           </div>
         )}
 
-        {/* ── MEMBERS ── */}
         {activeTab === "members" && (
           <MembersKanban
             profiles={profiles}
@@ -543,54 +523,37 @@ const Admin = () => {
           />
         )}
 
-        {/* ── EVENTS MANAGER ── */}
         {activeTab === "events" && <AdminEventsManager />}
-
-        {/* ── BUYERS ── */}
         {activeTab === "buyers" && <AdminBuyers />}
-
-        {/* ── INVITES ── */}
         {activeTab === "invites" && user && <AdminInvites userId={user.id} />}
-
-        {/* ── REFERRALS ── */}
         {activeTab === "referrals" && <AdminReferrals />}
-
-        {/* ── BRAND PARTNERS ── */}
         {activeTab === "brands" && <AdminBrandPartners />}
-
-        {/* ── ANALYTICS ── */}
         {activeTab === "analytics" && <AdminAnalytics />}
-
-        {/* ── EXPORT ── */}
         {activeTab === "export" && <AdminExport />}
-
-        {/* ── COLLABS ── */}
         {activeTab === "collabs" && <AdminCollabs />}
-
-        {/* ── DUPLICATES ── */}
         {activeTab === "duplicates" && <AdminDuplicates />}
 
         {/* ── EMAIL COMPOSER ── */}
         {activeTab === "email" && (
           <div className="max-w-[680px]">
-            <h2 className="text-2xl font-bold tracking-wider mb-7 text-slate-50">Send Email</h2>
+            <h2 className="font-display text-[32px] font-light tracking-wide mb-7 text-foreground">Send Email</h2>
 
-            <p className="text-[11px] tracking-[2px] text-slate-600 uppercase mb-2">Segment / Recipients</p>
+            <p className="text-[10px] tracking-[3px] text-muted-foreground uppercase mb-2">Segment / Recipients</p>
             <div className="flex gap-2.5 flex-wrap mb-2">
               <input
-                className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none min-w-[140px]"
+                className="bg-secondary border border-border text-foreground px-3 py-2 rounded-lg text-[13px] outline-none min-w-[140px] focus:border-accent transition-colors"
                 placeholder="Filter by city…"
                 value={filter.city}
                 onChange={(e) => setFilter({ ...filter, city: e.target.value })}
               />
               <input
-                className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none min-w-[140px]"
+                className="bg-secondary border border-border text-foreground px-3 py-2 rounded-lg text-[13px] outline-none min-w-[140px] focus:border-accent transition-colors"
                 placeholder="Filter by interest…"
                 value={filter.interest}
                 onChange={(e) => setFilter({ ...filter, interest: e.target.value })}
               />
               <select
-                className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none cursor-pointer"
+                className="bg-secondary border border-border text-foreground px-3 py-2 rounded-lg text-[13px] outline-none cursor-pointer"
                 value={filter.status}
                 onChange={(e) => setFilter({ ...filter, status: e.target.value })}
               >
@@ -599,21 +562,21 @@ const Admin = () => {
                 <option value="pending">Pending only</option>
               </select>
             </div>
-            <p className="text-purple-400 text-[13px] mb-5">
+            <p className="text-accent text-[13px] mb-5">
               → {getFilteredProfiles().length} recipients match this segment
             </p>
 
-            <p className="text-[11px] tracking-[2px] text-slate-600 uppercase mb-1.5">Subject</p>
+            <p className="text-[10px] tracking-[3px] text-muted-foreground uppercase mb-1.5">Subject</p>
             <input
-              className="w-full bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3.5 py-2.5 rounded-lg text-sm outline-none mb-4 focus:border-purple-800 transition-colors"
+              className="w-full bg-secondary border border-border text-foreground px-3.5 py-2.5 rounded-lg text-sm outline-none mb-4 focus:border-accent transition-colors"
               placeholder="Email subject"
               value={emailSubject}
               onChange={(e) => setEmailSubject(e.target.value)}
             />
 
-            <p className="text-[11px] tracking-[2px] text-slate-600 uppercase mb-1.5">Message</p>
+            <p className="text-[10px] tracking-[3px] text-muted-foreground uppercase mb-1.5">Message</p>
             <textarea
-              className="w-full bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3.5 py-3 rounded-lg text-sm outline-none mb-5 min-h-[180px] resize-y focus:border-purple-800 transition-colors"
+              className="w-full bg-secondary border border-border text-foreground px-3.5 py-3 rounded-lg text-sm outline-none mb-5 min-h-[180px] resize-y focus:border-accent transition-colors"
               placeholder="Write your message..."
               value={emailBody}
               onChange={(e) => setEmailBody(e.target.value)}
@@ -622,7 +585,7 @@ const Admin = () => {
             <button
               onClick={() => setEmailConfirm(true)}
               disabled={sending || !emailSubject || !emailBody}
-              className="bg-purple-600 text-white border-none px-7 py-3 rounded-lg cursor-pointer text-sm font-semibold tracking-wide hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-default"
+              className="bg-primary text-primary-foreground border-none px-7 py-3 rounded-lg cursor-pointer text-sm font-semibold tracking-wide hover:bg-accent transition-colors disabled:opacity-40 disabled:cursor-default"
             >
               {sending ? "Sending..." : `Send to ${getFilteredProfiles().length} people`}
             </button>
@@ -636,7 +599,7 @@ const Admin = () => {
               confirmLabel="Send Email"
             />
 
-            <div className="mt-6 p-4 bg-[#0f0f1a] border border-[#1e1e2e] rounded-lg text-xs text-slate-500 leading-relaxed">
+            <div className="mt-6 p-4 bg-secondary border border-border rounded-lg text-xs text-muted-foreground leading-relaxed">
               <strong>Note:</strong> Template visivi, tracking aperture e gestione bounce richiedono accesso diretto a Brevo. Questa interfaccia copre i casi d'uso principali.
             </div>
           </div>
@@ -645,13 +608,13 @@ const Admin = () => {
         {/* ── SYSTEM CHECK ── */}
         {activeTab === "testing" && (
           <div>
-            <h2 className="text-2xl font-bold tracking-wider mb-3 text-slate-50">System Check</h2>
-            <p className="text-slate-400 mb-6 text-sm">Run automated checks to verify all systems are working correctly.</p>
+            <h2 className="font-display text-[32px] font-light tracking-wide mb-3 text-foreground">System Check</h2>
+            <p className="text-muted-foreground mb-6 text-sm">Run automated checks to verify all systems are working correctly.</p>
 
             <button
               onClick={runSystemCheck}
               disabled={checking}
-              className="bg-purple-600 text-white border-none px-7 py-3 rounded-lg cursor-pointer text-sm font-semibold tracking-wide hover:bg-purple-500 transition-colors disabled:opacity-40"
+              className="bg-primary text-primary-foreground border-none px-7 py-3 rounded-lg cursor-pointer text-sm font-semibold tracking-wide hover:bg-accent transition-colors disabled:opacity-40"
             >
               {checking ? "Running checks..." : "▶ Run All Checks"}
             </button>
@@ -661,16 +624,16 @@ const Admin = () => {
                 {checkResults.map((r, i) => (
                   <div
                     key={i}
-                    className={`flex gap-4 items-start bg-[#0f0f1a] px-5 py-3.5 rounded-xl border-l-[3px] ${
-                      r.ok ? "border-l-emerald-500" : "border-l-red-500"
+                    className={`flex gap-4 items-start bg-secondary px-5 py-3.5 rounded-xl border-l-[3px] ${
+                      r.ok ? "border-l-emerald-600" : "border-l-red-600"
                     }`}
                   >
-                    <span className={`text-lg ${r.ok ? "text-emerald-500" : "text-red-500"}`}>
+                    <span className={`text-lg ${r.ok ? "text-emerald-600" : "text-red-600"}`}>
                       {r.ok ? "✓" : "✕"}
                     </span>
                     <div>
-                      <p className="text-sm text-slate-200 m-0">{r.name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5 m-0">{r.detail}</p>
+                      <p className="text-sm text-foreground m-0">{r.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 m-0">{r.detail}</p>
                     </div>
                   </div>
                 ))}
@@ -681,7 +644,7 @@ const Admin = () => {
               <AuditLog />
             </div>
 
-            <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mt-10 mb-4">Manual Testing Checklist</h3>
+            <h3 className="text-[10px] tracking-[3px] text-muted-foreground uppercase mt-10 mb-4">Manual Testing Checklist</h3>
             <div className="flex flex-col">
               {[
                 "Sign up with a new test email → check if profile appears in Members tab",
@@ -693,8 +656,8 @@ const Admin = () => {
                 "Filter by city + interest → verify correct results",
                 "Log out and try /admin → verify redirect",
               ].map((item, i) => (
-                <label key={i} className="flex items-center gap-2.5 py-2.5 border-b border-[#1a1a2e] cursor-pointer text-[13px] text-slate-300">
-                  <input type="checkbox" className="accent-purple-500" />
+                <label key={i} className="flex items-center gap-2.5 py-2.5 border-b border-border cursor-pointer text-[13px] text-foreground/70">
+                  <input type="checkbox" className="accent-accent" />
                   {item}
                 </label>
               ))}
@@ -704,19 +667,19 @@ const Admin = () => {
 
         {/* ── USER DETAIL MODAL ── */}
         {selectedProfile && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setSelectedProfile(null)}>
-            <div className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-2xl max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 bg-foreground/30 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setSelectedProfile(null)}>
+            <div className="bg-background border border-border rounded-2xl max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="p-8">
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-50">{selectedProfile.full_name || "—"}</h3>
-                    <p className="text-sm text-slate-500">{selectedProfile.email}</p>
+                    <h3 className="font-display text-xl font-light text-foreground">{selectedProfile.full_name || "—"}</h3>
+                    <p className="text-sm text-muted-foreground">{selectedProfile.email}</p>
                   </div>
                    <div className="flex gap-2">
-                    <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
+                    <button onClick={() => setSelectedProfile(null)} className="text-muted-foreground hover:text-foreground text-lg bg-transparent border-none cursor-pointer">✕</button>
                     <button
                       onClick={() => { setSelectedProfile(null); navigate(`/dashboard?impersonate=${selectedProfile.user_id}`); }}
-                      className="text-[10px] bg-amber-600 text-white border-none px-3 py-1.5 rounded-lg cursor-pointer hover:bg-amber-500 transition-colors"
+                      className="text-[10px] bg-accent text-accent-foreground border-none px-3 py-1.5 rounded-lg cursor-pointer hover:bg-accent/80 transition-colors"
                     >
                       👁 Preview as member
                     </button>
@@ -727,14 +690,14 @@ const Admin = () => {
                   <StatusBadge status={selectedProfile.application_status} />
                   <TierBadge tier={selectedProfile.buyer_tier} />
                   {selectedProfile.total_points > 0 && (
-                    <span className="bg-amber-950 text-amber-400 px-2.5 py-0.5 rounded-full text-xs font-semibold">{selectedProfile.total_points} pts</span>
+                    <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-semibold">{selectedProfile.total_points} pts</span>
                   )}
                 </div>
 
                 {selectedProfile.referral_code && (
-                  <div className="mt-4 bg-[#1a1a2e] px-4 py-2.5 rounded-lg inline-block">
-                    <span className="text-[10px] tracking-[2px] text-slate-600 uppercase mr-2">Code</span>
-                    <span className="text-purple-400 font-semibold text-sm">{selectedProfile.referral_code}</span>
+                  <div className="mt-4 bg-secondary px-4 py-2.5 rounded-lg inline-block">
+                    <span className="text-[10px] tracking-[2px] text-muted-foreground uppercase mr-2">Code</span>
+                    <span className="text-accent font-semibold text-sm">{selectedProfile.referral_code}</span>
                   </div>
                 )}
 
@@ -744,10 +707,10 @@ const Admin = () => {
                     ["Age", selectedProfile.age],
                     ["Phone", selectedProfile.phone],
                     ["Instagram", selectedProfile.instagram ? (
-                      <a href={`https://instagram.com/${selectedProfile.instagram.replace(/^@/, '')}`} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300 underline">{selectedProfile.instagram}</a>
+                      <a href={`https://instagram.com/${selectedProfile.instagram.replace(/^@/, '')}`} target="_blank" rel="noopener noreferrer" className="text-pink-700 hover:text-pink-600 underline">{selectedProfile.instagram}</a>
                     ) : null],
                     ["TikTok", selectedProfile.tiktok ? (
-                      <a href={`https://tiktok.com/@${selectedProfile.tiktok.replace(/^@/, '')}`} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 underline">{selectedProfile.tiktok}</a>
+                      <a href={`https://tiktok.com/@${selectedProfile.tiktok.replace(/^@/, '')}`} target="_blank" rel="noopener noreferrer" className="text-cyan-700 hover:text-cyan-600 underline">{selectedProfile.tiktok}</a>
                     ) : null],
                     ["Industry", selectedProfile.industry],
                     ["Job Title", selectedProfile.job_title],
@@ -761,18 +724,18 @@ const Admin = () => {
                     ["Joined", new Date(selectedProfile.created_at).toLocaleDateString()],
                   ].map(([label, value]) => (
                     <div key={label as string}>
-                      <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1">{label}</p>
-                      <p className="text-sm text-slate-300">{value || "—"}</p>
+                      <p className="text-[10px] tracking-[2px] text-muted-foreground uppercase mb-1">{label}</p>
+                      <p className="text-sm text-foreground/70">{value || "—"}</p>
                     </div>
                   ))}
                 </div>
 
                 {(selectedProfile.interests || []).length > 0 && (
                   <div className="mt-5">
-                    <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-2">Interests</p>
+                    <p className="text-[10px] tracking-[2px] text-muted-foreground uppercase mb-2">Interests</p>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedProfile.interests!.map((i) => (
-                        <span key={i} className="bg-indigo-950 text-purple-400 px-2.5 py-1 rounded-full text-xs">{i}</span>
+                        <span key={i} className="bg-accent/15 text-accent px-2.5 py-1 rounded-full text-xs">{i}</span>
                       ))}
                     </div>
                   </div>
@@ -784,22 +747,22 @@ const Admin = () => {
 
         {/* ── APPROVAL EMAIL MODAL ── */}
         {approvalProfile && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setApprovalProfile(null)}>
-            <div className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-2xl max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 bg-foreground/30 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setApprovalProfile(null)}>
+            <div className="bg-background border border-border rounded-2xl max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
               <div className="p-8">
-                <h3 className="text-lg font-bold text-slate-50 mb-1">Approve & Email</h3>
-                <p className="text-sm text-slate-500 mb-5">{approvalProfile.full_name} — {approvalProfile.email}</p>
+                <h3 className="font-display text-lg font-light text-foreground mb-1">Approve & Email</h3>
+                <p className="text-sm text-muted-foreground mb-5">{approvalProfile.full_name} — {approvalProfile.email}</p>
 
-                <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1.5">Subject</p>
+                <p className="text-[10px] tracking-[2px] text-muted-foreground uppercase mb-1.5">Subject</p>
                 <input
-                  className="w-full bg-[#0a0a12] border border-[#1e1e2e] text-slate-200 px-3.5 py-2.5 rounded-lg text-sm outline-none mb-4 focus:border-purple-800 transition-colors"
+                  className="w-full bg-secondary border border-border text-foreground px-3.5 py-2.5 rounded-lg text-sm outline-none mb-4 focus:border-accent transition-colors"
                   value={approvalSubject}
                   onChange={(e) => setApprovalSubject(e.target.value)}
                 />
 
-                <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1.5">Message</p>
+                <p className="text-[10px] tracking-[2px] text-muted-foreground uppercase mb-1.5">Message</p>
                 <textarea
-                  className="w-full bg-[#0a0a12] border border-[#1e1e2e] text-slate-200 px-3.5 py-3 rounded-lg text-sm outline-none mb-5 min-h-[140px] resize-y focus:border-purple-800 transition-colors"
+                  className="w-full bg-secondary border border-border text-foreground px-3.5 py-3 rounded-lg text-sm outline-none mb-5 min-h-[140px] resize-y focus:border-accent transition-colors"
                   value={approvalBody}
                   onChange={(e) => setApprovalBody(e.target.value)}
                 />
@@ -810,7 +773,7 @@ const Admin = () => {
                       await updateStatus(approvalProfile.id, "approved");
                       setApprovalProfile(null);
                     }}
-                    className="flex-1 bg-[#1a1a2e] text-slate-400 border border-[#2a2a3e] py-3 rounded-lg cursor-pointer text-[11px] tracking-wider hover:border-slate-500 transition-colors"
+                    className="flex-1 bg-secondary text-muted-foreground border border-border py-3 rounded-lg cursor-pointer text-[11px] tracking-wider hover:border-foreground/30 transition-colors"
                   >
                     Approve without email
                   </button>
@@ -831,7 +794,7 @@ const Admin = () => {
                       }
                       setApprovalProfile(null);
                     }}
-                    className="flex-[2] bg-emerald-600 text-white border-none py-3 rounded-lg cursor-pointer text-[11px] tracking-wider font-semibold hover:bg-emerald-500 transition-colors"
+                    className="flex-[2] bg-emerald-700 text-white border-none py-3 rounded-lg cursor-pointer text-[11px] tracking-wider font-semibold hover:bg-emerald-600 transition-colors"
                   >
                     ✓ Send & Approve
                   </button>
@@ -847,11 +810,11 @@ const Admin = () => {
 
 const StatusBadge = ({ status }: { status: string }) => {
   const classes = {
-    approved: "bg-emerald-950 text-emerald-400",
-    pending: "bg-amber-950 text-amber-400",
-    rejected: "bg-red-950 text-red-400",
+    approved: "bg-emerald-100 text-emerald-800",
+    pending: "bg-amber-100 text-amber-800",
+    rejected: "bg-red-100 text-red-800",
   };
-  const cls = classes[status as keyof typeof classes] || "bg-slate-800 text-slate-400";
+  const cls = classes[status as keyof typeof classes] || "bg-secondary text-muted-foreground";
   return (
     <span className={`${cls} px-2.5 py-0.5 rounded-full text-xs font-semibold`}>
       {status || "unknown"}
@@ -861,10 +824,10 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 const TierBadge = ({ tier }: { tier: string }) => {
   const classes: Record<string, string> = {
-    guest: "bg-slate-800 text-slate-400",
-    shopper: "bg-emerald-950 text-emerald-400",
-    buyer: "bg-sky-950 text-sky-400",
-    vip: "bg-purple-950 text-purple-400",
+    guest: "bg-foreground/10 text-muted-foreground",
+    shopper: "bg-emerald-100 text-emerald-800",
+    buyer: "bg-sky-100 text-sky-800",
+    vip: "bg-accent/20 text-accent",
   };
   const cls = classes[tier] || classes.guest;
   return (
