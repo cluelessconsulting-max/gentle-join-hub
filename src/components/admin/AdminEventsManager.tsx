@@ -220,7 +220,7 @@ const AdminEventsManager = () => {
                     <table className="w-full">
                       <thead>
                         <tr>
-                          {["Name", "Email", "City", "Status", "Date"].map((h) => (
+                          {["Name", "Email", "City", "Status", "Date", "Actions"].map((h) => (
                             <th key={h} className="text-left text-[11px] tracking-[2px] text-slate-600 pb-2 font-normal">{h}</th>
                           ))}
                         </tr>
