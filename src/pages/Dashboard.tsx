@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import EventConfirmationModal from "@/components/EventConfirmationModal";
 import NotificationBell from "@/components/NotificationBell";
+import ReferralLeaderboard from "@/components/ReferralLeaderboard";
 
 interface Event {
   id: string;
