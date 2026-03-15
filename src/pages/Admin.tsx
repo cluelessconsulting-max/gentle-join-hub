@@ -377,7 +377,7 @@ const Admin = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-10 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-10 overflow-y-auto pb-20 md:pb-10">
         {/* ── OVERVIEW ── */}
         {activeTab === "overview" && (
           <div>
