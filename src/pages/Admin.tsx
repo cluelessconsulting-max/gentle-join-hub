@@ -390,7 +390,7 @@ const Admin = () => {
       </aside>
 
       {/* Mobile Bottom Tab Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-secondary border-t border-border flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-primary/95 border-t border-primary-foreground/10 flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
         {tabs.slice(0, 5).map((tab) => (
           <button
             key={tab.id}
