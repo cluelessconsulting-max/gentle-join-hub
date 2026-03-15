@@ -186,6 +186,7 @@ const AdminEventsManager = () => {
         {events.map((evt) => {
           const regs = getEventRegs(evt.id);
           const confirmed = regs.filter((r) => r.status === "confirmed").length;
+          const pending = regs.filter((r) => r.status === "pending").length;
           const waitlist = regs.filter((r) => r.status === "waitlist").length;
           const isSelected = selectedEvent === evt.id;
 
@@ -200,6 +201,7 @@ const AdminEventsManager = () => {
                   <span className="text-xs text-slate-500 ml-3">{evt.date} · {evt.location}</span>
                 </div>
                 <div className="flex gap-3 items-center">
+                  {pending > 0 && <span className="text-xs text-orange-400 font-semibold">{pending} pending</span>}
                   <span className="text-xs text-emerald-400">{confirmed} confirmed</span>
                   {waitlist > 0 && <span className="text-xs text-amber-400">{waitlist} waitlist</span>}
                   {evt.capacity && <span className="text-xs text-slate-500">/ {evt.capacity} cap</span>}
