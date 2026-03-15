@@ -101,6 +101,42 @@ export type Database = {
         }
         Relationships: []
       }
+      collaboration_requests: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string | null
+          portfolio_url: string | null
+          role: string
+          status: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message?: string | null
+          portfolio_url?: string | null
+          role: string
+          status?: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string | null
+          portfolio_url?: string | null
+          role?: string
+          status?: string
+        }
+        Relationships: []
+      }
       discount_codes: {
         Row: {
           code: string

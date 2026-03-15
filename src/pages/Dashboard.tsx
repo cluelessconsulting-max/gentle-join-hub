@@ -280,9 +280,9 @@ const Dashboard = () => {
                 {isRegistered ? (
                   <div className="flex items-center gap-3">
                     <span className={`text-[10px] tracking-wide-md uppercase flex items-center gap-2 ${
-                      regStatus === "waitlist" ? "text-amber-500" : "text-accent"
+                      regStatus === "waitlist" ? "text-amber-500" : regStatus === "pending" ? "text-foreground/60" : "text-accent"
                     }`}>
-                      {regStatus === "waitlist" ? "⏳ On the waitlist" : "✓ On the guest list"}
+                      {regStatus === "waitlist" ? "⏳ On the waitlist" : regStatus === "pending" ? "⏳ Request Submitted — Pending" : "✓ Confirmed"}
                     </span>
                     <button
                       onClick={async () => {

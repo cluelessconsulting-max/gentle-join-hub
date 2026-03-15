@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import EventsSection from "@/components/EventsSection";
 import Footer from "@/components/Footer";
+import CollabSection from "@/components/CollabSection";
 import RegisterModal from "@/components/RegisterModal";
 import SignInModal from "@/components/SignInModal";
 import EventAccessModal from "@/components/EventAccessModal";
@@ -37,6 +38,7 @@ const Index = () => {
       <Navbar onRegister={openRegister} onSignIn={openSignIn} />
       <Hero onRegister={openRegister} onSignIn={openSignIn} />
       <EventsSection onEventClick={(name, date) => setEventModal({ title: name, date })} />
+      <CollabSection />
       <Footer />
 
       <RegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)} referralCode={referralCode} />
