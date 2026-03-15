@@ -510,12 +510,21 @@ const Admin = () => {
             />
 
             <button
-              onClick={sendBulkEmail}
+              onClick={() => setEmailConfirm(true)}
               disabled={sending || !emailSubject || !emailBody}
               className="bg-purple-600 text-white border-none px-7 py-3 rounded-lg cursor-pointer text-sm font-semibold tracking-wide hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-default"
             >
               {sending ? "Sending..." : `Send to ${getFilteredProfiles().length} people`}
             </button>
+
+            <ConfirmDialog
+              open={emailConfirm}
+              onCancel={() => setEmailConfirm(false)}
+              onConfirm={() => { setEmailConfirm(false); sendBulkEmail(); }}
+              title={`Send email to ${getFilteredProfiles().length} recipients?`}
+              description={`Subject: "${emailSubject}". This will send an email to all matching members. Make sure the content is correct before proceeding.`}
+              confirmLabel="Send Email"
+            />
 
             <div className="mt-6 p-4 bg-[#0f0f1a] border border-[#1e1e2e] rounded-lg text-xs text-slate-500 leading-relaxed">
               <strong>Note:</strong> Template visivi, tracking aperture e gestione bounce richiedono accesso diretto a Brevo. Questa interfaccia copre i casi d'uso principali.
