@@ -21,7 +21,11 @@ const Index = () => {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate("/dashboard");
+      if (user.email === "clueless.consulting@gmail.com") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     }
   }, [user, loading, navigate]);
 
