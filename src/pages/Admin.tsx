@@ -469,16 +469,18 @@ const Admin = () => {
         {/* ── MEMBERS ── */}
         {activeTab === "members" && (
           <MembersKanban
-            profiles={filteredProfiles}
+            profiles={profiles}
             allProfiles={profiles}
             updatingId={updatingId}
             updateStatus={updateStatus}
             syncToBrevo={syncToBrevo}
             onSelectProfile={setSelectedProfile}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            filter={filter}
-            setFilter={setFilter}
+            onApproveWithEmail={(profile) => {
+              setApprovalProfile(profile);
+              setApprovalSubject(`Welcome to Offlist, ${profile.full_name?.split(" ")[0] || "there"}`);
+              setApprovalBody(`Hi ${profile.full_name?.split(" ")[0] || "there"},\n\nYour application has been approved by our team.\n\nMake sure you follow us on Instagram and TikTok for the latest event updates.\n\nYou are now able to submit a request to be added to the guest list for the events on our website.\n\nGrazie e alla prossima!`);
+            }}
+            onProfilesChanged={fetchProfiles}
             onEmailGroup={(status: string) => {
               setFilter({ ...filter, status });
               setActiveTab("email");
