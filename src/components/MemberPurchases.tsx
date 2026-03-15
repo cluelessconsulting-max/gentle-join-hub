@@ -27,6 +27,7 @@ const MemberPurchases = ({ userId }: Props) => {
     amount: "",
     purchase_date: "",
     notes: "",
+    receipt_number: "",
   });
 
   useEffect(() => {
