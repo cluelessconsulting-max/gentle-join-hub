@@ -353,9 +353,9 @@ const Admin = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground font-body">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary text-primary-foreground font-body">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[220px] bg-secondary border-r border-border p-8 px-4 flex-col gap-1 shrink-0">
+      <aside className="hidden md:flex w-[220px] bg-primary/95 border-r border-primary-foreground/10 p-8 px-4 flex-col gap-1 shrink-0">
         <div className="flex items-center gap-2.5 mb-7">
           <span className="font-display text-[22px] font-normal tracking-wide uppercase text-foreground">Offlist</span>
         </div>
