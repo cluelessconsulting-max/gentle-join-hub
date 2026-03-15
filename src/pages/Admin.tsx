@@ -706,6 +706,65 @@ const Admin = () => {
             </div>
           </div>
         )}
+
+        {/* ── APPROVAL EMAIL MODAL ── */}
+        {approvalProfile && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setApprovalProfile(null)}>
+            <div className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-2xl max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
+              <div className="p-8">
+                <h3 className="text-lg font-bold text-slate-50 mb-1">Approve & Email</h3>
+                <p className="text-sm text-slate-500 mb-5">{approvalProfile.full_name} — {approvalProfile.email}</p>
+
+                <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1.5">Subject</p>
+                <input
+                  className="w-full bg-[#0a0a12] border border-[#1e1e2e] text-slate-200 px-3.5 py-2.5 rounded-lg text-sm outline-none mb-4 focus:border-purple-800 transition-colors"
+                  value={approvalSubject}
+                  onChange={(e) => setApprovalSubject(e.target.value)}
+                />
+
+                <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1.5">Message</p>
+                <textarea
+                  className="w-full bg-[#0a0a12] border border-[#1e1e2e] text-slate-200 px-3.5 py-3 rounded-lg text-sm outline-none mb-5 min-h-[140px] resize-y focus:border-purple-800 transition-colors"
+                  value={approvalBody}
+                  onChange={(e) => setApprovalBody(e.target.value)}
+                />
+
+                <div className="flex gap-2.5">
+                  <button
+                    onClick={async () => {
+                      await updateStatus(approvalProfile.id, "approved");
+                      setApprovalProfile(null);
+                    }}
+                    className="flex-1 bg-[#1a1a2e] text-slate-400 border border-[#2a2a3e] py-3 rounded-lg cursor-pointer text-[11px] tracking-wider hover:border-slate-500 transition-colors"
+                  >
+                    Approve without email
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await updateStatus(approvalProfile.id, "approved");
+                      if (approvalProfile.email) {
+                        const htmlContent = approvalBody.replace(/\n/g, "<br>");
+                        await supabase.functions.invoke("brevo-admin", {
+                          body: {
+                            action: "send_email",
+                            recipients: [{ email: approvalProfile.email, name: approvalProfile.full_name || "Member" }],
+                            subject: approvalSubject,
+                            htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">${htmlContent}</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><a href="https://off-list.uk/#events" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;">Browse Events</a></td></tr></table></td></tr></table></body></html>`,
+                          },
+                        });
+                        toast.success("Approval email sent");
+                      }
+                      setApprovalProfile(null);
+                    }}
+                    className="flex-[2] bg-emerald-600 text-white border-none py-3 rounded-lg cursor-pointer text-[11px] tracking-wider font-semibold hover:bg-emerald-500 transition-colors"
+                  >
+                    ✓ Send & Approve
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
