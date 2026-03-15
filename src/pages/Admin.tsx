@@ -328,7 +328,7 @@ const Admin = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-primary">
         <p className="text-2xl text-accent animate-pulse font-display">Offlist</p>
       </div>
     );
@@ -353,13 +353,13 @@ const Admin = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground font-body">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary text-primary-foreground font-body">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[220px] bg-secondary border-r border-border p-8 px-4 flex-col gap-1 shrink-0">
+      <aside className="hidden md:flex w-[220px] bg-primary/95 border-r border-primary-foreground/10 p-8 px-4 flex-col gap-1 shrink-0">
         <div className="flex items-center gap-2.5 mb-7">
-          <span className="font-display text-[22px] font-normal tracking-wide uppercase text-foreground">Offlist</span>
+          <span className="font-display text-[22px] font-normal tracking-wide uppercase text-primary-foreground">Offlist</span>
         </div>
-        <p className="text-[10px] tracking-[3px] text-muted-foreground mb-2 pl-2">ADMIN</p>
+        <p className="text-[10px] tracking-[3px] text-primary-foreground/50 mb-2 pl-2">ADMIN</p>
 
         {tabs.map((tab) => (
           <button
@@ -367,8 +367,8 @@ const Admin = () => {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2.5 bg-transparent border-none text-left px-3 py-2.5 rounded-lg cursor-pointer text-[13px] tracking-wide transition-all ${
               activeTab === tab.id
-                ? "bg-accent/15 text-accent"
-                : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                ? "bg-accent/20 text-accent"
+                : "text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/5"
             }`}
           >
             <span className="text-base">{tab.icon}</span>
@@ -383,20 +383,20 @@ const Admin = () => {
 
         <button
           onClick={async () => { await signOut(); navigate("/"); }}
-          className="mt-auto bg-transparent border border-border text-muted-foreground px-3 py-2 rounded-lg cursor-pointer text-xs tracking-wider hover:text-foreground hover:border-foreground/30 transition-colors"
+          className="mt-auto bg-transparent border border-primary-foreground/20 text-primary-foreground/60 px-3 py-2 rounded-lg cursor-pointer text-xs tracking-wider hover:text-primary-foreground hover:border-primary-foreground/40 transition-colors"
         >
           ↩ Sign Out
         </button>
       </aside>
 
       {/* Mobile Bottom Tab Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-secondary border-t border-border flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-primary/95 border-t border-primary-foreground/10 flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
         {tabs.slice(0, 5).map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex flex-col items-center gap-0.5 bg-transparent border-none cursor-pointer py-2 px-2 rounded-lg min-h-[44px] min-w-[44px] transition-all ${
-              activeTab === tab.id ? "text-accent" : "text-muted-foreground"
+              activeTab === tab.id ? "text-accent" : "text-primary-foreground/60"
             }`}
           >
             <span className="text-sm">{tab.icon}</span>
@@ -407,13 +407,13 @@ const Admin = () => {
       </nav>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-secondary border-b border-border">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-primary/95 border-b border-primary-foreground/10">
         <div className="flex items-center gap-2">
-          <span className="font-display text-[18px] font-normal tracking-wide uppercase text-foreground">Offlist</span>
+          <span className="font-display text-[18px] font-normal tracking-wide uppercase text-primary-foreground">Offlist</span>
         </div>
         <button
           onClick={async () => { await signOut(); navigate("/"); }}
-          className="text-muted-foreground text-[10px] tracking-wider bg-transparent border border-border px-2.5 py-1.5 rounded cursor-pointer"
+          className="text-primary-foreground/60 text-[10px] tracking-wider bg-transparent border border-primary-foreground/20 px-2.5 py-1.5 rounded cursor-pointer hover:text-primary-foreground"
         >
           Sign Out
         </button>
@@ -424,7 +424,7 @@ const Admin = () => {
         {/* ── OVERVIEW ── */}
         {activeTab === "overview" && (
           <div>
-            <h2 className="font-display text-[32px] font-light tracking-wide mb-5 text-foreground">Overview</h2>
+            <h2 className="font-display text-[32px] font-light tracking-wide mb-5 text-primary-foreground">Overview</h2>
 
             {/* Alert Banners */}
             {(() => {
