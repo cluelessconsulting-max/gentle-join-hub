@@ -475,9 +475,34 @@ const MembersKanban = ({
 
                       {/* Row 4: Social + Notes */}
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <SocialTooltip type="instagram" handle={p.instagram} />
-                          <SocialTooltip type="tiktok" handle={p.tiktok} />
+                        <div className="flex items-center gap-2.5">
+                          {p.instagram?.trim() ? (
+                            <a
+                              href={`https://instagram.com/${p.instagram.replace(/^@/, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center gap-1 text-pink-400 hover:text-pink-300 transition-colors no-underline"
+                            >
+                              <Instagram size={13} />
+                              <span className="text-[10px]">@{p.instagram.replace(/^@/, '')}</span>
+                            </a>
+                          ) : (
+                            <span className="text-slate-700"><Instagram size={13} /></span>
+                          )}
+                          {p.tiktok?.trim() ? (
+                            <a
+                              href={`https://tiktok.com/@${p.tiktok.replace(/^@/, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors no-underline"
+                            >
+                              <TikTokIcon />
+                            </a>
+                          ) : (
+                            <span className="text-slate-700"><TikTokIcon className="text-slate-700" /></span>
+                          )}
                           <NoteButton profile={p} onSaved={onProfilesChanged} />
                         </div>
 
