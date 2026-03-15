@@ -11,6 +11,7 @@ import Apply from "./pages/Apply";
 import QrCardApply from "./pages/QrCardApply";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import CheckIn from "./pages/CheckIn";
 
 const queryClient = new QueryClient();
 
