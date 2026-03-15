@@ -494,7 +494,7 @@ const MembersKanban = ({
                           )}
                           {col.status !== "rejected" && (
                             <button
-                              onClick={() => updateStatus(p.id, "rejected")}
+                              onClick={() => setConfirmAction({ type: "reject", profileId: p.id, name: p.full_name || "this member" })}
                               disabled={updatingId === p.id}
                               className="bg-red-950 text-red-400 border-none rounded px-2 py-0.5 cursor-pointer text-[10px] hover:bg-red-900 transition-colors disabled:opacity-50"
                             >
