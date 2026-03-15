@@ -109,12 +109,9 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
         setTimeout(() => setError(""), 2500);
         return false;
       }
-      const { data } = await supabase
-        .from("invites" as any)
-        .select("id")
-        .eq("code", inviteCode.trim().toUpperCase())
-        .is("used_by", null)
-        .single();
+      const { data } = await supabase.rpc("validate_invite_code" as any, {
+        p_code: inviteCode.trim().toUpperCase(),
+      });
       if (!data) {
         setError("Invalid or already used invite code");
         setTimeout(() => setError(""), 3000);
