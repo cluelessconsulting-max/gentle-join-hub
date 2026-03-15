@@ -59,6 +59,11 @@ const Admin = () => {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
 
+  // Approval email modal
+  const [approvalProfile, setApprovalProfile] = useState<Profile | null>(null);
+  const [approvalSubject, setApprovalSubject] = useState("");
+  const [approvalBody, setApprovalBody] = useState("");
+
   // Email composer
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
