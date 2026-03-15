@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Instagram, StickyNote, Copy, ExternalLink, Download, X, Search, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ConfirmDialog from "./ConfirmDialog";
 
 export interface Profile {
   id: string;
