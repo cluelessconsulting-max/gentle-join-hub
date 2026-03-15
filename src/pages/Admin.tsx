@@ -535,6 +535,9 @@ const Admin = () => {
         {/* ── REFERRALS ── */}
         {activeTab === "referrals" && <AdminReferrals />}
 
+        {/* ── BRAND PARTNERS ── */}
+        {activeTab === "brands" && <AdminBrandPartners />}
+
         {/* ── EMAIL COMPOSER ── */}
         {activeTab === "email" && (
           <div className="max-w-[680px]">

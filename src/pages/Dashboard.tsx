@@ -70,6 +70,7 @@ const Dashboard = () => {
       setApplicationStatus((profileData as any)?.application_status || "pending");
       setReferralCode((profileData as any)?.referral_code || null);
       setProfileName((profileData as any)?.full_name || null);
+      setMembershipType((profileData as any)?.membership_type || "free");
       setLoading(false);
     };
     fetchData();
