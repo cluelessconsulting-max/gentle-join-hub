@@ -37,6 +37,8 @@ interface Profile {
   referred_by: string | null;
   buyer_tier: string;
   total_points: number;
+  application_score: number | null;
+  admin_notes: string | null;
 }
 
 interface CheckResult {
