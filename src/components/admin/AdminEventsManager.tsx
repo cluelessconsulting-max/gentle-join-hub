@@ -106,7 +106,7 @@ const AdminEventsManager = () => {
   const getEventRegs = (eventId: string) => registrations.filter((r) => r.event_id === eventId);
   const getProfile = (userId: string) => profiles.find((p) => p.user_id === userId);
 
-  const updateRegStatus = async (regId: string, newStatus: string) => {
+  const updateRegStatus = async (regId: string, newStatus: string, userId: string, eventId: string) => {
     const { error } = await supabase
       .from("event_registrations" as any)
       .update({ status: newStatus } as any)
@@ -115,6 +115,33 @@ const AdminEventsManager = () => {
       toast.error("Failed to update status");
     } else {
       toast.success(`Registration ${newStatus}`);
+
+      // Send email via Brevo
+      const profile = getProfile(userId);
+      const event = events.find(e => e.id === eventId);
+      if (profile?.email && event) {
+        const firstName = profile.full_name?.split(" ")[0] || "";
+        if (newStatus === "confirmed") {
+          supabase.functions.invoke("brevo-admin", {
+            body: {
+              action: "send_email",
+              recipients: [{ email: profile.email, name: profile.full_name || "Member" }],
+              subject: `You're confirmed for ${event.name}`,
+              htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 16px;text-align:center;"><span style="font-size:22px;color:#0A0A0A;">You're on the list, ${firstName}!</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">Your registration for <strong>${event.name}</strong> has been confirmed.<br/><br/>📅 ${event.date}<br/>📍 ${event.location}<br/><br/>No tickets are required if you come with Offlist.</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><a href="https://off-list.uk/dashboard" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;">View Dashboard</a></td></tr></table></td></tr></table></body></html>`,
+            },
+          });
+        } else if (newStatus === "rejected") {
+          supabase.functions.invoke("brevo-admin", {
+            body: {
+              action: "send_email",
+              recipients: [{ email: profile.email, name: profile.full_name || "Member" }],
+              subject: `Registration update for ${event.name}`,
+              htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">Unfortunately your registration for <strong>${event.name}</strong> was not confirmed this time.<br/><br/>Keep an eye on our upcoming events — we'd love to see you at the next one.</span></td></tr></table></td></tr></table></body></html>`,
+            },
+          });
+        }
+      }
+
       fetchAll();
     }
   };
@@ -249,13 +276,13 @@ const AdminEventsManager = () => {
                                   {r.status === "pending" && (
                                     <>
                                       <button
-                                        onClick={() => updateRegStatus(r.id, "confirmed")}
+                                        onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
                                         className="text-[10px] bg-emerald-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-500 transition-colors"
                                       >
                                         ✓ Approve
                                       </button>
                                       <button
-                                        onClick={() => updateRegStatus(r.id, "rejected")}
+                                        onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)}
                                         className="text-[10px] bg-red-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-red-500 transition-colors"
                                       >
                                         ✕ Reject
@@ -264,19 +291,15 @@ const AdminEventsManager = () => {
                                   )}
                                   {r.status === "confirmed" && (
                                     <button
-                                      onClick={() => updateRegStatus(r.id, "rejected")}
+                                      onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)}
                                       className="text-[10px] text-red-400 hover:text-red-300 bg-transparent border-none cursor-pointer"
-                                    >
-                                      Revoke
-                                    </button>
+                                    >Revoke</button>
                                   )}
                                   {r.status === "rejected" && (
                                     <button
-                                      onClick={() => updateRegStatus(r.id, "confirmed")}
+                                      onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
                                       className="text-[10px] text-emerald-400 hover:text-emerald-300 bg-transparent border-none cursor-pointer"
-                                    >
-                                      Re-approve
-                                    </button>
+                                    >Re-approve</button>
                                   )}
                                 </div>
                               </td>

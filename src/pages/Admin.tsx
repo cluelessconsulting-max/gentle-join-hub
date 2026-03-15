@@ -14,6 +14,8 @@ import AdminBrandPartners from "@/components/admin/AdminBrandPartners";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminDuplicates from "@/components/admin/AdminDuplicates";
 import AdminExport from "@/components/admin/AdminExport";
+import AdminCollabs from "@/components/admin/AdminCollabs";
+import AdminScoring from "@/components/admin/AdminScoring";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
@@ -357,6 +359,7 @@ const Admin = () => {
     { id: "referrals", icon: "◈", label: "Referrals" },
     { id: "brands", icon: "◆", label: "Brands" },
     { id: "analytics", icon: "◈", label: "Analytics" },
+    { id: "collabs", icon: "◈", label: "Collabs" },
     { id: "export", icon: "↓", label: "Export" },
     { id: "duplicates", icon: "⊘", label: "Duplicates" },
     { id: "email", icon: "◎", label: "Send Email" },
@@ -498,6 +501,11 @@ const Admin = () => {
               </div>
             </div>
 
+            {/* Member Intelligence / Scoring */}
+            <div className="mb-10">
+              <AdminScoring profiles={profiles} onSelectProfile={setSelectedProfile} />
+            </div>
+
             <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">Recent Applications</h3>
             <div className="flex flex-col gap-0.5">
               {profiles.slice(0, 8).map((p) => (
@@ -555,6 +563,9 @@ const Admin = () => {
 
         {/* ── EXPORT ── */}
         {activeTab === "export" && <AdminExport />}
+
+        {/* ── COLLABS ── */}
+        {activeTab === "collabs" && <AdminCollabs />}
 
         {/* ── DUPLICATES ── */}
         {activeTab === "duplicates" && <AdminDuplicates />}
@@ -701,7 +712,15 @@ const Admin = () => {
                     <h3 className="text-xl font-bold text-slate-50">{selectedProfile.full_name || "—"}</h3>
                     <p className="text-sm text-slate-500">{selectedProfile.email}</p>
                   </div>
-                  <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
+                   <div className="flex gap-2">
+                    <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
+                    <button
+                      onClick={() => { setSelectedProfile(null); navigate(`/dashboard?impersonate=${selectedProfile.user_id}`); }}
+                      className="text-[10px] bg-amber-600 text-white border-none px-3 py-1.5 rounded-lg cursor-pointer hover:bg-amber-500 transition-colors"
+                    >
+                      👁 Preview as member
+                    </button>
+                   </div>
                 </div>
 
                 <div className="flex gap-2">
