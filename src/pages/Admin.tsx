@@ -315,6 +315,23 @@ const Admin = () => {
     cities: [...new Set(profiles.map((p) => p.city).filter(Boolean))].length,
   };
 
+  // City breakdown
+  const cityBreakdown = profiles.reduce((acc, p) => {
+    const city = p.city || "Unknown";
+    acc[city] = (acc[city] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const sortedCities = Object.entries(cityBreakdown).sort((a, b) => b[1] - a[1]);
+
+  // Tier breakdown
+  const tierBreakdown = profiles.reduce((acc, p) => {
+    const tier = p.buyer_tier || "guest";
+    acc[tier] = (acc[tier] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const tierOrder = ["guest", "shopper", "buyer", "vip"];
+  const sortedTiers = tierOrder.map(t => [t, tierBreakdown[t] || 0] as [string, number]);
+
   const filteredProfiles = getFilteredProfiles();
 
   if (authLoading || loading) {
@@ -396,6 +413,34 @@ const Admin = () => {
                   <p className="text-xs text-slate-500 mt-1 tracking-wider">{s.label}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-10">
+              {/* City Breakdown */}
+              <div>
+                <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">By City</h3>
+                <div className="flex flex-col gap-0.5">
+                  {sortedCities.slice(0, 10).map(([city, count]) => (
+                    <div key={city} className="flex justify-between items-center px-4 py-2.5 bg-[#0f0f1a] rounded-lg">
+                      <span className="text-sm text-slate-200">{city}</span>
+                      <span className="text-xs text-sky-400 font-semibold">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tier Breakdown */}
+              <div>
+                <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">By Buyer Tier</h3>
+                <div className="flex flex-col gap-0.5">
+                  {sortedTiers.map(([tier, count]) => (
+                    <div key={tier} className="flex justify-between items-center px-4 py-2.5 bg-[#0f0f1a] rounded-lg">
+                      <TierBadge tier={tier} />
+                      <span className="text-xs text-slate-300 font-semibold">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">Recent Applications</h3>

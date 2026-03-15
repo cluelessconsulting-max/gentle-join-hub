@@ -38,6 +38,9 @@ const Dashboard = () => {
     if (!authLoading && !user) {
       navigate("/");
     }
+    if (!authLoading && user?.email === "clueless.consulting@gmail.com") {
+      navigate("/admin");
+    }
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
