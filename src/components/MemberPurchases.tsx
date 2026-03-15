@@ -136,7 +136,7 @@ const MemberPurchases = ({ userId }: Props) => {
           <p className="text-[10px] text-foreground/30 mb-4">Your purchase will be verified by the Offlist team. Usually within 24 hours.</p>
           <button
             onClick={handleSubmit}
-            disabled={submitting || !form.brand_name || !form.amount}
+            disabled={submitting || !form.brand_name || !form.amount || !hasReference}
             className="bg-primary text-primary-foreground border-none px-8 py-3 font-body text-[10px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent disabled:opacity-40 disabled:cursor-default"
           >
             {submitting ? "Submitting…" : "Submit for Verification"}
