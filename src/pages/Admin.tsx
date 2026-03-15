@@ -11,6 +11,9 @@ import AdminBuyers from "@/components/admin/AdminBuyers";
 import MembersKanban from "@/components/admin/MembersKanban";
 import AuditLog from "@/components/admin/AuditLog";
 import AdminBrandPartners from "@/components/admin/AdminBrandPartners";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminDuplicates from "@/components/admin/AdminDuplicates";
+import AdminExport from "@/components/admin/AdminExport";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
@@ -347,6 +350,9 @@ const Admin = () => {
     { id: "invites", icon: "◇", label: "Invites" },
     { id: "referrals", icon: "◈", label: "Referrals" },
     { id: "brands", icon: "◆", label: "Brands" },
+    { id: "analytics", icon: "◈", label: "Analytics" },
+    { id: "export", icon: "↓", label: "Export" },
+    { id: "duplicates", icon: "⊘", label: "Duplicates" },
     { id: "email", icon: "◎", label: "Send Email" },
     { id: "testing", icon: "◌", label: "System Check" },
   ];
@@ -537,6 +543,15 @@ const Admin = () => {
 
         {/* ── BRAND PARTNERS ── */}
         {activeTab === "brands" && <AdminBrandPartners />}
+
+        {/* ── ANALYTICS ── */}
+        {activeTab === "analytics" && <AdminAnalytics />}
+
+        {/* ── EXPORT ── */}
+        {activeTab === "export" && <AdminExport />}
+
+        {/* ── DUPLICATES ── */}
+        {activeTab === "duplicates" && <AdminDuplicates />}
 
         {/* ── EMAIL COMPOSER ── */}
         {activeTab === "email" && (

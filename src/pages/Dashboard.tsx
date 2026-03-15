@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import EventConfirmationModal from "@/components/EventConfirmationModal";
+import NotificationBell from "@/components/NotificationBell";
+import ReferralLeaderboard from "@/components/ReferralLeaderboard";
 
 interface Event {
   id: string;
@@ -189,8 +191,9 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <nav className="flex justify-between items-center px-6 md:px-12 py-7">
         <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">Offlist</a>
-        <div className="flex gap-5 items-center">
-          <span className="text-[11px] tracking-wide text-warm-grey">{user?.email}</span>
+        <div className="flex gap-4 items-center">
+          <span className="text-[11px] tracking-wide text-warm-grey hidden md:inline">{user?.email}</span>
+          <NotificationBell />
           <button onClick={handleSignOut} className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary">Sign Out</button>
         </div>
       </nav>
@@ -236,6 +239,8 @@ const Dashboard = () => {
             </p>
           )}
         </div>
+
+        <ReferralLeaderboard />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
           {events.map((event) => {
