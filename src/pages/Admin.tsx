@@ -501,6 +501,11 @@ const Admin = () => {
               </div>
             </div>
 
+            {/* Member Intelligence / Scoring */}
+            <div className="mb-10">
+              <AdminScoring profiles={profiles} onSelectProfile={setSelectedProfile} />
+            </div>
+
             <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">Recent Applications</h3>
             <div className="flex flex-col gap-0.5">
               {profiles.slice(0, 8).map((p) => (
