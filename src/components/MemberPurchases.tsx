@@ -47,16 +47,23 @@ const MemberPurchases = ({ userId }: Props) => {
   const totalSpent = purchases.reduce((sum, p) => sum + Number(p.amount), 0);
   const verifiedCount = purchases.filter((p) => p.verification_status === "verified").length;
 
+  const hasReference = form.notes.trim().length > 0 || form.receipt_number.trim().length > 0;
+
   const handleSubmit = async () => {
-    if (!form.brand_name || !form.amount) return;
+    if (!form.brand_name || !form.amount || !hasReference) return;
     setSubmitting(true);
+
+    const notesValue = [
+      form.notes ? `Order: ${form.notes}` : "",
+      form.receipt_number ? `Receipt: ${form.receipt_number}` : "",
+    ].filter(Boolean).join(" | ") || null;
 
     const { error } = await supabase.from("purchases" as any).insert({
       user_id: userId,
       brand_name: form.brand_name,
       amount: parseFloat(form.amount),
       purchase_date: form.purchase_date || new Date().toISOString().split("T")[0],
-      notes: form.notes || null,
+      notes: notesValue,
       verification_status: "pending",
     } as any);
 
@@ -64,7 +71,7 @@ const MemberPurchases = ({ userId }: Props) => {
       toast.error("Failed to submit purchase");
     } else {
       toast.success("Purchase submitted for verification");
-      setForm({ brand_name: "", amount: "", purchase_date: "", notes: "" });
+      setForm({ brand_name: "", amount: "", purchase_date: "", notes: "", receipt_number: "" });
       setShowForm(false);
       fetchPurchases();
     }
