@@ -424,7 +424,7 @@ const Admin = () => {
         {/* ── OVERVIEW ── */}
         {activeTab === "overview" && (
           <div>
-            <h2 className="font-display text-[32px] font-light tracking-wide mb-5 text-foreground">Overview</h2>
+            <h2 className="font-display text-[32px] font-light tracking-wide mb-5 text-primary-foreground">Overview</h2>
 
             {/* Alert Banners */}
             {(() => {
