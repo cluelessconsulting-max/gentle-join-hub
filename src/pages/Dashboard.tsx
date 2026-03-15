@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import EventConfirmationModal from "@/components/EventConfirmationModal";
 import NotificationBell from "@/components/NotificationBell";
 import ReferralLeaderboard from "@/components/ReferralLeaderboard";
+import MemberPurchases from "@/components/MemberPurchases";
+import TierProgress from "@/components/TierProgress";
 
 interface Event {
   id: string;
