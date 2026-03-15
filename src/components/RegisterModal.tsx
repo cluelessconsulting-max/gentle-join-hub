@@ -349,9 +349,25 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
 
           {error && <p className="text-[11px] text-destructive tracking-wide mt-2">{error}</p>}
 
+          <label className="flex items-start gap-3 mt-5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={privacyAccepted}
+              onChange={(e) => setPrivacyAccepted(e.target.checked)}
+              className="appearance-none w-3.5 h-3.5 border border-foreground/25 shrink-0 cursor-pointer relative checked:bg-accent checked:border-accent transition-all mt-0.5"
+            />
+            <span className="text-[11px] text-warm-grey tracking-wide leading-relaxed">
+              I agree to the{" "}
+              <a href="/privacy" target="_blank" rel="noopener" className="underline text-foreground">Privacy Policy</a>{" "}
+              and{" "}
+              <a href="/terms" target="_blank" rel="noopener" className="underline text-foreground">Terms of Service</a>
+            </span>
+          </label>
+
           <button
             onClick={handleNext}
-            className="w-full bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer mt-6 transition-all hover:bg-accent hover:-translate-y-0.5"
+            disabled={!privacyAccepted}
+            className="w-full bg-primary text-primary-foreground border-none py-[18px] font-body text-[11px] tracking-wide-lg uppercase cursor-pointer mt-6 transition-all hover:bg-accent hover:-translate-y-0.5 disabled:bg-warm-grey disabled:translate-y-0 disabled:cursor-default"
           >
             Continue →
           </button>
