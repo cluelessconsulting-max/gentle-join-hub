@@ -533,6 +533,27 @@ const MembersKanban = ({
           <button onClick={() => setSelectedIds([])} className="text-slate-500 bg-transparent border-none cursor-pointer hover:text-slate-300 transition-colors"><X size={16} /></button>
         </div>
       )}
+
+      {/* ─── Confirm Dialog ─── */}
+      <ConfirmDialog
+        open={!!confirmAction}
+        onCancel={() => setConfirmAction(null)}
+        onConfirm={handleConfirm}
+        title={
+          confirmAction?.type === "reject" ? `Reject ${confirmAction.name}?` :
+          confirmAction?.type === "bulk_approved" ? `Approve ${confirmAction?.count} members?` :
+          confirmAction?.type === "bulk_rejected" ? `Reject ${confirmAction?.count} members?` :
+          confirmAction?.type === "auto_approve" ? `Auto-approve ${confirmAction?.count} members?` : "Confirm"
+        }
+        description={
+          confirmAction?.type === "reject" ? "They will not receive a welcome email. You can move them back to Pending later." :
+          confirmAction?.type === "bulk_approved" ? `This will approve ${confirmAction?.count} members. They won't receive emails automatically from this action.` :
+          confirmAction?.type === "bulk_rejected" ? `This will reject ${confirmAction?.count} members. This action can be undone by moving them back to Pending.` :
+          confirmAction?.type === "auto_approve" ? `All ${confirmAction?.count} pending members with score ≥ 80 will be approved.` : ""
+        }
+        confirmLabel={confirmAction?.type?.includes("reject") ? "Reject" : "Confirm"}
+        variant={confirmAction?.type?.includes("reject") ? "destructive" : "default"}
+      />
     </div>
   );
 };
