@@ -239,25 +239,14 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Membership Section */}
-        <div className="mb-14 bg-foreground/5 border border-foreground/10 p-6 md:p-8">
-          <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-2">Your Membership</p>
-          <div className="flex items-center gap-3 mb-2">
-            <span className="font-display text-[20px] capitalize text-foreground">{membershipType}</span>
-            <span className={`text-[9px] tracking-wide-lg uppercase px-2.5 py-1 rounded-full font-semibold ${
-              membershipType === "vip" ? "bg-amber-500/15 text-amber-400" :
-              membershipType === "premium" ? "bg-purple-500/15 text-purple-400" :
-              "bg-foreground/10 text-warm-grey"
-            }`}>
-              {membershipType === "free" ? "Free Tier" : membershipType === "premium" ? "Premium" : "VIP"}
-            </span>
-          </div>
-          {membershipType === "free" && (
-            <p className="text-[12px] text-warm-grey leading-relaxed">
-              Upgrade to Premium for priority event access and exclusive previews. Contact us for more info.
-            </p>
-          )}
-        </div>
+        <TierProgress
+          tier={buyerTier}
+          totalPoints={totalPoints}
+          purchaseCount={purchaseCount}
+          totalSpent={totalSpent}
+        />
+
+        {user && <MemberPurchases userId={user.id} />}
 
         <ReferralLeaderboard />
 
