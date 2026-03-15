@@ -333,6 +333,33 @@ export type Database = {
         }
         Relationships: []
       }
+      points_transactions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          points: number
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          points: number
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          points?: number
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           admin_notes: string | null
@@ -456,7 +483,9 @@ export type Database = {
           id: string
           notes: string | null
           purchase_date: string
+          receipt_url: string | null
           user_id: string
+          verification_status: string
           verified_by: string | null
         }
         Insert: {
@@ -467,7 +496,9 @@ export type Database = {
           id?: string
           notes?: string | null
           purchase_date?: string
+          receipt_url?: string | null
           user_id: string
+          verification_status?: string
           verified_by?: string | null
         }
         Update: {
@@ -478,7 +509,9 @@ export type Database = {
           id?: string
           notes?: string | null
           purchase_date?: string
+          receipt_url?: string | null
           user_id?: string
+          verification_status?: string
           verified_by?: string | null
         }
         Relationships: [
