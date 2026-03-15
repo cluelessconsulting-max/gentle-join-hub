@@ -7,7 +7,6 @@ import EventConfirmationModal from "@/components/EventConfirmationModal";
 import NotificationBell from "@/components/NotificationBell";
 import ReferralLeaderboard from "@/components/ReferralLeaderboard";
 import MemberPurchases from "@/components/MemberPurchases";
-import DashboardHero from "@/components/dashboard/DashboardHero";
 import LoyaltySection from "@/components/dashboard/LoyaltySection";
 
 interface Event {
@@ -25,6 +24,24 @@ interface Registration {
   event_id: string;
   status: string;
 }
+
+/* ── skeleton helpers ────────────────────────── */
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={`bg-foreground/5 animate-pulse ${className || ""}`} />
+);
+
+const EventSkeleton = () => (
+  <div className="bg-background p-10 md:p-12 border-b border-r border-border">
+    <Skeleton className="w-24 h-3 mb-6" />
+    <Skeleton className="w-3/4 h-8 mb-5" />
+    <div className="flex flex-col gap-2 mb-9">
+      <Skeleton className="w-1/2 h-3" />
+      <Skeleton className="w-2/3 h-3" />
+      <Skeleton className="w-1/3 h-3" />
+    </div>
+    <Skeleton className="w-40 h-10" />
+  </div>
+);
 
 const Dashboard = () => {
   const { user, signOut, loading: authLoading } = useAuth();
@@ -45,6 +62,8 @@ const Dashboard = () => {
   const [totalSpent, setTotalSpent] = useState<number>(0);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{ eventName: string; status: string } | null>(null);
+  const [multiplierActive, setMultiplierActive] = useState(false);
+  const [multiplierEnds, setMultiplierEnds] = useState<string | null>(null);
 
   // Impersonation mode
   const impersonateUserId = searchParams.get("impersonate");
@@ -93,6 +112,18 @@ const Dashboard = () => {
       setPurchaseCount(pData.length);
       setTotalSpent(pData.reduce((s: number, p: any) => s + Number(p.amount), 0));
 
+      // Check multiplier
+      const [{ data: multActive }, { data: multEnds }] = await Promise.all([
+        supabase.from("app_settings").select("value").eq("key", "multiplier_active").single(),
+        supabase.from("app_settings").select("value").eq("key", "multiplier_ends_at").single(),
+      ]);
+      const active = (multActive as any)?.value === true || (multActive as any)?.value === "true";
+      const ends = (multEnds as any)?.value;
+      if (active && ends && ends !== "null" && new Date(ends) > new Date()) {
+        setMultiplierActive(true);
+        setMultiplierEnds(ends);
+      }
+
       setLoading(false);
     };
     fetchData();
@@ -122,8 +153,19 @@ const Dashboard = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="font-display text-2xl text-foreground/40 animate-pulse">Loading…</p>
+      <div className="min-h-screen bg-background">
+        <nav className="flex justify-between items-center px-6 md:px-12 py-7">
+          <span className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground">Offlist</span>
+          <Skeleton className="w-20 h-8" />
+        </nav>
+        <section className="px-6 md:px-12 py-12">
+          <Skeleton className="w-64 h-3 mb-6" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border mb-14">
+            <EventSkeleton />
+            <EventSkeleton />
+            <EventSkeleton />
+          </div>
+        </section>
       </div>
     );
   }
@@ -160,77 +202,111 @@ const Dashboard = () => {
     );
   }
 
+  const firstName = profileName
+    ? profileName.split(" ")[0].charAt(0).toUpperCase() + profileName.split(" ")[0].slice(1).toLowerCase()
+    : "";
   const initials = profileName?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "?";
+
+  const tierConfig: Record<string, { label: string; color: string }> = {
+    guest: { label: "Guest", color: "text-warm-grey border-foreground/15" },
+    shopper: { label: "Shopper", color: "text-accent border-accent/30" },
+    buyer: { label: "Buyer", color: "text-accent border-accent/50" },
+    vip: { label: "VIP", color: "text-accent border-accent" },
+  };
+  const tc = tierConfig[buyerTier.toLowerCase()] || tierConfig.guest;
 
   return (
     <div className="min-h-screen bg-background">
       {/* Impersonation Banner */}
       {isImpersonating && (
-        <div className="sticky top-0 z-50 bg-gradient-to-r from-amber-500 to-yellow-500 px-6 py-2.5 flex items-center justify-center gap-4">
-          <span className="text-[12px] font-semibold text-black tracking-wide">
-            ADMIN PREVIEW — Viewing as {profileName || "Member"} ({user?.email})
+        <div className="sticky top-0 z-50 bg-accent px-6 py-2.5 flex items-center justify-center gap-4">
+          <span className="text-[11px] font-semibold text-accent-foreground tracking-wide">
+            ADMIN PREVIEW — Viewing as {profileName || "Member"}
           </span>
           <button
             onClick={() => navigate("/admin")}
-            className="bg-black text-white text-[10px] tracking-wider uppercase px-4 py-1.5 border-none cursor-pointer rounded hover:bg-black/80"
+            className="bg-primary text-primary-foreground text-[10px] tracking-wider uppercase px-4 py-1.5 border-none cursor-pointer hover:bg-foreground/80 transition-colors"
           >
             ← Exit Preview
           </button>
         </div>
       )}
 
-      {/* Sticky Nav */}
-      <nav className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-foreground/5">
-        <div className="flex justify-between items-center px-6 md:px-12 py-4">
+      {/* Double Points Banner */}
+      {multiplierActive && (
+        <div className="bg-accent/10 border-b border-accent/20 px-6 py-2.5 text-center">
+          <span className="text-[11px] text-accent tracking-wide">
+            🌟 Double Points Weekend — earn 2x points on all purchases
+            {multiplierEnds && ` until ${new Date(multiplierEnds).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}`}
+          </span>
+        </div>
+      )}
+
+      {/* ── Sticky Nav matching site aesthetic ──────── */}
+      <nav className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex justify-between items-center px-6 md:px-12 py-5">
           <a href="/" className="font-display text-[22px] font-normal tracking-wide-md uppercase text-foreground no-underline">Offlist</a>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-5 items-center">
             <a href="/profile" className="text-[10px] tracking-wide-lg uppercase text-warm-grey hover:text-foreground transition-colors no-underline hidden md:inline">Profile</a>
             <NotificationBell />
             {avatarUrl ? (
               <img src={avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover border border-foreground/10" />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center text-[11px] text-foreground/50 font-semibold">{initials}</div>
+              <div className="w-8 h-8 rounded-full bg-foreground/5 border border-foreground/10 flex items-center justify-center text-[11px] text-foreground/40 font-semibold">{initials}</div>
             )}
             <button onClick={handleSignOut} className="text-[10px] tracking-wide-lg uppercase bg-transparent border border-foreground/15 text-foreground px-5 py-2 cursor-pointer transition-colors font-body font-light hover:bg-primary hover:text-primary-foreground hover:border-primary">Sign Out</button>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <DashboardHero
-        profileName={profileName}
-        tier={buyerTier}
-        totalPoints={totalPoints}
-        purchaseCount={purchaseCount}
-        totalSpent={totalSpent}
-        referralCode={referralCode}
-      />
+      {/* ── Welcome Header — site aesthetic ──────── */}
+      <section className="px-6 md:px-12 pt-16 pb-8 border-b border-border">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-3">Member Dashboard</p>
+            <h1 className="font-display text-[clamp(38px,5vw,64px)] font-light leading-[0.95] tracking-tight">
+              Welcome back{firstName ? `, ${firstName}` : ""}
+            </h1>
+          </div>
+          <div className="flex items-center gap-6 pb-2">
+            <div className={`border px-4 py-1.5 ${tc.color}`}>
+              <span className="text-[10px] tracking-wide-lg uppercase font-semibold">{tc.label}</span>
+            </div>
+            <div className="text-right">
+              <p className="font-display text-[28px] font-light text-foreground leading-none">{totalPoints}</p>
+              <p className="text-[9px] tracking-[0.2em] uppercase text-warm-grey">Points</p>
+            </div>
+            {referralCode && (
+              <div className="flex items-center gap-2 border border-foreground/10 px-3 py-1.5">
+                <span className="font-mono text-[12px] tracking-wider text-foreground/60">{referralCode}</span>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(referralCode); toast.success("Code copied!"); }}
+                  className="text-[9px] text-accent hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+                >Copy</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
 
-      <section className="px-6 md:px-12 py-12">
-        {/* Loyalty Section */}
-        {effectiveUserId && (
-          <LoyaltySection
-            userId={effectiveUserId}
-            tier={buyerTier}
-            totalPoints={totalPoints}
-            purchaseCount={purchaseCount}
-            totalSpent={totalSpent}
-          />
-        )}
+      {/* ── EVENTS FIRST — Primary section ──────── */}
+      <section className="px-6 md:px-12 py-[72px] border-b border-border">
+        <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-3.5">Upcoming</p>
+        <h2 className="font-display text-[clamp(32px,3vw,48px)] font-light leading-tight mb-12">Explore Events</h2>
 
-        {effectiveUserId && <MemberPurchases userId={effectiveUserId} />}
-
-        <ReferralLeaderboard />
-
-        {/* Events */}
-        <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-6">Upcoming Events</p>
-        {events.length === 0 ? (
-          <div className="bg-foreground/5 border border-foreground/10 p-12 text-center mb-14">
-            <p className="text-[13px] text-warm-grey">No events available right now.</p>
-            <p className="text-[11px] text-foreground/30 mt-1">Check back soon for upcoming events.</p>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
+            <EventSkeleton />
+            <EventSkeleton />
+            <EventSkeleton />
+          </div>
+        ) : events.length === 0 ? (
+          <div className="border border-border p-14 md:p-20 text-center">
+            <p className="font-display text-2xl font-light text-foreground/30 mb-2">No events yet</p>
+            <p className="text-[12px] text-warm-grey tracking-wide">Check back soon for upcoming events.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border mb-14">
+          <div className="grid grid-cols-1 md:grid-cols-3">
             {events.map((event) => {
               const regStatus = registrations.get(event.id);
               const isRegistered = !!regStatus;
@@ -239,7 +315,7 @@ const Dashboard = () => {
               const isFull = event.capacity ? confirmed >= event.capacity : false;
 
               return (
-                <div key={event.id} className="bg-background p-10 md:p-12 relative overflow-hidden group">
+                <div key={event.id} className="bg-background p-10 md:p-12 relative overflow-hidden group hover:bg-foreground/[0.02] border-b border-r border-border transition-colors">
                   <div className="absolute top-0 left-0 right-0 h-0.5 bg-accent scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100" />
                   <span className="text-[9px] tracking-wide-lg uppercase text-accent mb-6 block">{event.tag}</span>
                   <h3 className="font-display text-[28px] font-light leading-tight mb-5">{event.name}</h3>
@@ -253,10 +329,10 @@ const Dashboard = () => {
                     <div className="mb-5">
                       <div className="flex justify-between text-[10px] text-warm-grey mb-1">
                         <span>{confirmed} / {event.capacity} spots</span>
-                        {isFull && <span className="text-amber-500">Full</span>}
+                        {isFull && <span className="text-accent">Full</span>}
                       </div>
                       <div className="w-full h-1 bg-foreground/10 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all ${isFull ? "bg-amber-500" : "bg-accent"}`} style={{ width: `${Math.min(100, (confirmed / event.capacity) * 100)}%` }} />
+                        <div className={`h-full rounded-full transition-all ${isFull ? "bg-accent" : "bg-accent"}`} style={{ width: `${Math.min(100, (confirmed / event.capacity) * 100)}%` }} />
                       </div>
                     </div>
                   )}
@@ -264,7 +340,7 @@ const Dashboard = () => {
                   {isRegistered ? (
                     <div className="flex items-center gap-3">
                       <span className={`text-[10px] tracking-wide-md uppercase flex items-center gap-2 ${
-                        regStatus === "waitlist" ? "text-amber-500" : regStatus === "pending" ? "text-foreground/60" : "text-accent"
+                        regStatus === "waitlist" ? "text-warm-grey" : regStatus === "pending" ? "text-foreground/60" : "text-accent"
                       }`}>
                         {regStatus === "waitlist" ? "⏳ On the waitlist" : regStatus === "pending" ? "⏳ Request Submitted — Pending" : "✓ Confirmed"}
                       </span>
@@ -298,6 +374,29 @@ const Dashboard = () => {
             })}
           </div>
         )}
+      </section>
+
+      {/* ── My Purchases ──────── */}
+      <section className="px-6 md:px-12 py-[72px] border-b border-border">
+        {effectiveUserId && <MemberPurchases userId={effectiveUserId} />}
+      </section>
+
+      {/* ── Loyalty & Rewards ──────── */}
+      <section className="px-6 md:px-12 py-[72px] border-b border-border">
+        {effectiveUserId && (
+          <LoyaltySection
+            userId={effectiveUserId}
+            tier={buyerTier}
+            totalPoints={totalPoints}
+            purchaseCount={purchaseCount}
+            totalSpent={totalSpent}
+          />
+        )}
+      </section>
+
+      {/* ── Referral Leaderboard ──────── */}
+      <section className="px-6 md:px-12 py-[72px]">
+        <ReferralLeaderboard />
       </section>
 
       <EventConfirmationModal
