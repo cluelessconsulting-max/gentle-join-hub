@@ -217,6 +217,15 @@ const Admin = () => {
         setEmailSubject("");
         setEmailBody("");
         setSelectedUsers([]);
+        // Audit log
+        try {
+          await supabase.from("audit_log" as any).insert({
+            action: "bulk_email_sent",
+            performed_by: user?.email || "admin",
+            new_value: `${recipients.length} recipients`,
+            metadata: { subject: emailSubject, recipientCount: recipients.length },
+          } as any);
+        } catch {}
       }
     } catch (e) {
       toast.error("Network error sending email. Please check your connection and retry.");
