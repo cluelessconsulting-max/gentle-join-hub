@@ -406,7 +406,23 @@ const Admin = () => {
         {/* ── OVERVIEW ── */}
         {activeTab === "overview" && (
           <div>
-            <h2 className="text-2xl font-bold tracking-wider mb-7 text-slate-50">Overview</h2>
+            <h2 className="text-2xl font-bold tracking-wider mb-5 text-slate-50">Overview</h2>
+
+            {/* ─── Alert Banners ─── */}
+            {(() => {
+              const alerts: { text: string; tab: string; color: string }[] = [];
+              const pending48h = profiles.filter(p => p.application_status === "pending" && (Date.now() - new Date(p.created_at).getTime()) > 48 * 60 * 60 * 1000);
+              if (pending48h.length > 0) alerts.push({ text: `${pending48h.length} applicant${pending48h.length > 1 ? 's' : ''} waiting over 48h — review now`, tab: "members", color: "border-amber-500/50 bg-amber-500/5 text-amber-400" });
+              return alerts.length > 0 ? (
+                <div className="flex flex-col gap-2 mb-6">
+                  {alerts.map((a, i) => (
+                    <button key={i} onClick={() => setActiveTab(a.tab)} className={`w-full text-left border rounded-lg px-4 py-3 cursor-pointer text-[13px] tracking-wide transition-all hover:opacity-80 bg-transparent ${a.color}`}>
+                      ⚠ {a.text}
+                    </button>
+                  ))}
+                </div>
+              ) : null;
+            })()}
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
               {[
