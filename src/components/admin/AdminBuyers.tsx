@@ -29,6 +29,7 @@ interface Purchase {
   purchase_date: string;
   notes: string | null;
   verified_by: string | null;
+  verification_status: string;
   created_at: string;
 }
 
