@@ -37,6 +37,8 @@ interface Profile {
   referred_by: string | null;
   buyer_tier: string;
   total_points: number;
+  application_score: number | null;
+  admin_notes: string | null;
 }
 
 interface CheckResult {
@@ -56,6 +58,11 @@ const Admin = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+
+  // Approval email modal
+  const [approvalProfile, setApprovalProfile] = useState<Profile | null>(null);
+  const [approvalSubject, setApprovalSubject] = useState("");
+  const [approvalBody, setApprovalBody] = useState("");
 
   // Email composer
   const [emailSubject, setEmailSubject] = useState("");
@@ -127,68 +134,6 @@ const Admin = () => {
       setProfiles((prev) =>
         prev.map((p) => (p.id === profileId ? { ...p, application_status: status } : p))
       );
-
-      // Send welcome email on approval
-      if (status === "approved") {
-        const profile = profiles.find((p) => p.id === profileId);
-        if (profile?.email) {
-          const approvalHtml = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#EDE8E0;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background-color:#EDE8E0;">
-        <tr><td style="padding:0 0 32px 0;text-align:center;">
-          <span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;font-weight:400;">OFFLIST</span>
-        </td></tr>
-        <tr><td style="padding:0 0 10px 0;text-align:center;">
-          <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#B49A6A;">APPLICATION APPROVED</span>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <span style="font-size:28px;font-weight:300;color:#0A0A0A;letter-spacing:0.5px;">You're in.</span>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Hi ${profile.full_name?.split(" ")[0] || "there"},<br><br>
-            Your application has been approved by our team.<br><br>
-            Make sure you follow us on
-            <a href="https://www.instagram.com/offlist.network/" style="color:#0A0A0A;text-decoration:underline;">Instagram</a>
-            and
-            <a href="https://www.tiktok.com/@off.list.network" style="color:#0A0A0A;text-decoration:underline;">TikTok</a>
-            for the latest event updates.<br><br>
-            You are now able to submit a request to be added to the guest list for the events on our website.
-          </span>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <a href="https://gentle-join-hub.lovable.app/#events" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">Browse Events</a>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;">
-            Grazie e alla prossima!
-          </span>
-        </td></tr>
-        <tr><td><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
-        <tr><td style="padding:24px 0 0 0;text-align:center;">
-          <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#8B8178;">OFFLIST NETWORK</span>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-          supabase.functions.invoke("brevo-admin", {
-            body: {
-              action: "send_email",
-              recipients: [{ email: profile.email, name: profile.full_name || "Member" }],
-              subject: "You're in — Welcome to Offlist",
-              htmlContent: approvalHtml,
-            },
-          }).catch((err) => console.error("Welcome email error:", err));
-        }
-      }
     }
     setUpdatingId(null);
   };
@@ -399,7 +344,23 @@ const Admin = () => {
         {/* ── OVERVIEW ── */}
         {activeTab === "overview" && (
           <div>
-            <h2 className="text-2xl font-bold tracking-wider mb-7 text-slate-50">Overview</h2>
+            <h2 className="text-2xl font-bold tracking-wider mb-5 text-slate-50">Overview</h2>
+
+            {/* ─── Alert Banners ─── */}
+            {(() => {
+              const alerts: { text: string; tab: string; color: string }[] = [];
+              const pending48h = profiles.filter(p => p.application_status === "pending" && (Date.now() - new Date(p.created_at).getTime()) > 48 * 60 * 60 * 1000);
+              if (pending48h.length > 0) alerts.push({ text: `${pending48h.length} applicant${pending48h.length > 1 ? 's' : ''} waiting over 48h — review now`, tab: "members", color: "border-amber-500/50 bg-amber-500/5 text-amber-400" });
+              return alerts.length > 0 ? (
+                <div className="flex flex-col gap-2 mb-6">
+                  {alerts.map((a, i) => (
+                    <button key={i} onClick={() => setActiveTab(a.tab)} className={`w-full text-left border rounded-lg px-4 py-3 cursor-pointer text-[13px] tracking-wide transition-all hover:opacity-80 bg-transparent ${a.color}`}>
+                      ⚠ {a.text}
+                    </button>
+                  ))}
+                </div>
+              ) : null;
+            })()}
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
               {[
@@ -462,16 +423,18 @@ const Admin = () => {
         {/* ── MEMBERS ── */}
         {activeTab === "members" && (
           <MembersKanban
-            profiles={filteredProfiles}
+            profiles={profiles}
             allProfiles={profiles}
             updatingId={updatingId}
             updateStatus={updateStatus}
             syncToBrevo={syncToBrevo}
             onSelectProfile={setSelectedProfile}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            filter={filter}
-            setFilter={setFilter}
+            onApproveWithEmail={(profile) => {
+              setApprovalProfile(profile);
+              setApprovalSubject(`Welcome to Offlist, ${profile.full_name?.split(" ")[0] || "there"}`);
+              setApprovalBody(`Hi ${profile.full_name?.split(" ")[0] || "there"},\n\nYour application has been approved by our team.\n\nMake sure you follow us on Instagram and TikTok for the latest event updates.\n\nYou are now able to submit a request to be added to the guest list for the events on our website.\n\nGrazie e alla prossima!`);
+            }}
+            onProfilesChanged={fetchProfiles}
             onEmailGroup={(status: string) => {
               setFilter({ ...filter, status });
               setActiveTab("email");
@@ -677,6 +640,65 @@ const Admin = () => {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── APPROVAL EMAIL MODAL ── */}
+        {approvalProfile && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setApprovalProfile(null)}>
+            <div className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-2xl max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
+              <div className="p-8">
+                <h3 className="text-lg font-bold text-slate-50 mb-1">Approve & Email</h3>
+                <p className="text-sm text-slate-500 mb-5">{approvalProfile.full_name} — {approvalProfile.email}</p>
+
+                <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1.5">Subject</p>
+                <input
+                  className="w-full bg-[#0a0a12] border border-[#1e1e2e] text-slate-200 px-3.5 py-2.5 rounded-lg text-sm outline-none mb-4 focus:border-purple-800 transition-colors"
+                  value={approvalSubject}
+                  onChange={(e) => setApprovalSubject(e.target.value)}
+                />
+
+                <p className="text-[10px] tracking-[2px] text-slate-600 uppercase mb-1.5">Message</p>
+                <textarea
+                  className="w-full bg-[#0a0a12] border border-[#1e1e2e] text-slate-200 px-3.5 py-3 rounded-lg text-sm outline-none mb-5 min-h-[140px] resize-y focus:border-purple-800 transition-colors"
+                  value={approvalBody}
+                  onChange={(e) => setApprovalBody(e.target.value)}
+                />
+
+                <div className="flex gap-2.5">
+                  <button
+                    onClick={async () => {
+                      await updateStatus(approvalProfile.id, "approved");
+                      setApprovalProfile(null);
+                    }}
+                    className="flex-1 bg-[#1a1a2e] text-slate-400 border border-[#2a2a3e] py-3 rounded-lg cursor-pointer text-[11px] tracking-wider hover:border-slate-500 transition-colors"
+                  >
+                    Approve without email
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await updateStatus(approvalProfile.id, "approved");
+                      if (approvalProfile.email) {
+                        const htmlContent = approvalBody.replace(/\n/g, "<br>");
+                        await supabase.functions.invoke("brevo-admin", {
+                          body: {
+                            action: "send_email",
+                            recipients: [{ email: approvalProfile.email, name: approvalProfile.full_name || "Member" }],
+                            subject: approvalSubject,
+                            htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">${htmlContent}</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><a href="https://off-list.uk/#events" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;">Browse Events</a></td></tr></table></td></tr></table></body></html>`,
+                          },
+                        });
+                        toast.success("Approval email sent");
+                      }
+                      setApprovalProfile(null);
+                    }}
+                    className="flex-[2] bg-emerald-600 text-white border-none py-3 rounded-lg cursor-pointer text-[11px] tracking-wider font-semibold hover:bg-emerald-500 transition-colors"
+                  >
+                    ✓ Send & Approve
+                  </button>
+                </div>
               </div>
             </div>
           </div>
