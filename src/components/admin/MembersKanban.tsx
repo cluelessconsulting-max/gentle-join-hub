@@ -272,11 +272,39 @@ const MembersKanban = ({
     const selected = allProfiles.filter(p => selectedIds.includes(p.id));
     if (action === "export") { exportCSV(selected); return; }
     if (action === "email") { onEmailGroup("selected"); return; }
+    // Require confirmation for destructive bulk actions
+    if (action === "approved" || action === "rejected") {
+      setConfirmAction({ type: `bulk_${action}`, count: selected.length });
+      return;
+    }
+    await executeBulkAction(action);
+  };
+
+  const executeBulkAction = async (action: string) => {
+    const selected = allProfiles.filter(p => selectedIds.includes(p.id));
     for (const p of selected) {
       await updateStatus(p.id, action);
     }
     setSelectedIds([]);
     toast.success(`${selected.length} members updated`);
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmAction) return;
+    if (confirmAction.type === "reject" && confirmAction.profileId) {
+      await updateStatus(confirmAction.profileId, "rejected");
+    } else if (confirmAction.type === "bulk_approved") {
+      await executeBulkAction("approved");
+    } else if (confirmAction.type === "bulk_rejected") {
+      await executeBulkAction("rejected");
+    } else if (confirmAction.type === "auto_approve") {
+      const pending = getColumnProfiles("pending").filter(p => (p.application_score || 0) >= 80);
+      for (const p of pending) {
+        await updateStatus(p.id, "approved");
+      }
+      toast.success(`Auto-approved ${pending.length} members`);
+    }
+    setConfirmAction(null);
   };
 
   const hasActiveFilters = searchQuery || filterCity || filterInterests.length > 0 || scoreRange[0] > 0 || scoreRange[1] < 100 || hasIG || hasTT;
