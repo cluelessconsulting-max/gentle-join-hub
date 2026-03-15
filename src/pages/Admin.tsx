@@ -407,7 +407,7 @@ const Admin = () => {
       </nav>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-secondary border-b border-border">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-primary/95 border-b border-primary-foreground/10">
         <div className="flex items-center gap-2">
           <span className="font-display text-[18px] font-normal tracking-wide uppercase text-foreground">Offlist</span>
         </div>
