@@ -69,6 +69,7 @@ const Admin = () => {
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
   const [sending, setSending] = useState(false);
+  const [emailConfirm, setEmailConfirm] = useState(false);
 
   // System check
   const [checkResults, setCheckResults] = useState<CheckResult[]>([]);
