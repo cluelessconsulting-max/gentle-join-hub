@@ -346,6 +346,7 @@ const Admin = () => {
     { id: "buyers", icon: "◆", label: "Buyers" },
     { id: "invites", icon: "◇", label: "Invites" },
     { id: "referrals", icon: "◈", label: "Referrals" },
+    { id: "brands", icon: "◆", label: "Brands" },
     { id: "email", icon: "◎", label: "Send Email" },
     { id: "testing", icon: "◌", label: "System Check" },
   ];

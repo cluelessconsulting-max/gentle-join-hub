@@ -12,6 +12,7 @@ import QrCardApply from "./pages/QrCardApply";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import CheckIn from "./pages/CheckIn";
+import BrandPortal from "./pages/BrandPortal";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/checkin/:eventId" element={<CheckIn />} />
+            <Route path="/brand/:slug" element={<BrandPortal />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
