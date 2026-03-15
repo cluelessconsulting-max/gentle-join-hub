@@ -642,8 +642,12 @@ const Admin = () => {
                     ["City", selectedProfile.city],
                     ["Age", selectedProfile.age],
                     ["Phone", selectedProfile.phone],
-                    ["Instagram", selectedProfile.instagram],
-                    ["TikTok", selectedProfile.tiktok],
+                    ["Instagram", selectedProfile.instagram ? (
+                      <a href={`https://instagram.com/${selectedProfile.instagram.replace(/^@/, '')}`} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300 underline">{selectedProfile.instagram}</a>
+                    ) : null],
+                    ["TikTok", selectedProfile.tiktok ? (
+                      <a href={`https://tiktok.com/@${selectedProfile.tiktok.replace(/^@/, '')}`} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 underline">{selectedProfile.tiktok}</a>
+                    ) : null],
                     ["Industry", selectedProfile.industry],
                     ["Job Title", selectedProfile.job_title],
                     ["Shopping Style", selectedProfile.shopping_style],
