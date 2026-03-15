@@ -544,6 +544,15 @@ const Admin = () => {
         {/* ── BRAND PARTNERS ── */}
         {activeTab === "brands" && <AdminBrandPartners />}
 
+        {/* ── ANALYTICS ── */}
+        {activeTab === "analytics" && <AdminAnalytics />}
+
+        {/* ── EXPORT ── */}
+        {activeTab === "export" && <AdminExport />}
+
+        {/* ── DUPLICATES ── */}
+        {activeTab === "duplicates" && <AdminDuplicates />}
+
         {/* ── EMAIL COMPOSER ── */}
         {activeTab === "email" && (
           <div className="max-w-[680px]">
