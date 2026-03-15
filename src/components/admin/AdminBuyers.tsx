@@ -283,7 +283,7 @@ const AdminBuyers = () => {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                {["Name", "Email", "Brand", "Amount", "Date", "Notes", ""].map((h) => (
+                {["Name", "Email", "Brand", "Amount", "Date", "Status", "Notes", ""].map((h) => (
                   <th key={h} className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e] font-normal">{h}</th>
                 ))}
               </tr>
