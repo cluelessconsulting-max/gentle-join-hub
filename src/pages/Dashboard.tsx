@@ -250,11 +250,36 @@ const Dashboard = () => {
                 )}
 
                 {isRegistered ? (
-                  <span className={`text-[10px] tracking-wide-md uppercase flex items-center gap-2 ${
-                    regStatus === "waitlist" ? "text-amber-500" : "text-accent"
-                  }`}>
-                    {regStatus === "waitlist" ? "⏳ On the waitlist" : "✓ On the guest list"}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className={`text-[10px] tracking-wide-md uppercase flex items-center gap-2 ${
+                      regStatus === "waitlist" ? "text-amber-500" : "text-accent"
+                    }`}>
+                      {regStatus === "waitlist" ? "⏳ On the waitlist" : "✓ On the guest list"}
+                    </span>
+                    <button
+                      onClick={async () => {
+                        if (!user) return;
+                        const { error } = await supabase
+                          .from("event_registrations" as any)
+                          .delete()
+                          .eq("user_id", user.id)
+                          .eq("event_id", event.id);
+                        if (error) {
+                          toast.error("Failed to cancel");
+                        } else {
+                          toast.success("Registration cancelled");
+                          setRegistrations((prev) => {
+                            const next = new Map(prev);
+                            next.delete(event.id);
+                            return next;
+                          });
+                        }
+                      }}
+                      className="text-[10px] text-warm-grey hover:text-foreground transition-colors cursor-pointer bg-transparent border-none underline"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 ) : (
                   <button
                     onClick={() => handleRegister(event)}

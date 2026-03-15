@@ -32,6 +32,42 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          new_value: string | null
+          old_value: string | null
+          performed_by: string
+          target_user_id: string | null
+          target_user_name: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          performed_by: string
+          target_user_id?: string | null
+          target_user_name?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          performed_by?: string
+          target_user_id?: string | null
+          target_user_name?: string | null
+        }
+        Relationships: []
+      }
       discount_codes: {
         Row: {
           code: string
@@ -58,25 +94,31 @@ export type Database = {
       }
       event_registrations: {
         Row: {
+          checked_in_at: string | null
           event_id: string
           id: string
           registered_at: string
           status: string
           user_id: string
+          waitlist_position: number | null
         }
         Insert: {
+          checked_in_at?: string | null
           event_id: string
           id?: string
           registered_at?: string
           status?: string
           user_id: string
+          waitlist_position?: number | null
         }
         Update: {
+          checked_in_at?: string | null
           event_id?: string
           id?: string
           registered_at?: string
           status?: string
           user_id?: string
+          waitlist_position?: number | null
         }
         Relationships: [
           {
@@ -319,6 +361,47 @@ export type Database = {
             columns: ["discount_code_id"]
             isOneToOne: false
             referencedRelation: "discount_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_emails: {
+        Row: {
+          body: string
+          created_at: string
+          event_id: string
+          id: string
+          recipient_filter: string
+          send_at: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          event_id: string
+          id?: string
+          recipient_filter?: string
+          send_at: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          recipient_filter?: string
+          send_at?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_emails_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]

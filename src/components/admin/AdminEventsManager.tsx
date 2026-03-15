@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import EventReminders from "./EventReminders";
 
 interface Event {
   id: string;
@@ -30,6 +32,7 @@ interface Profile {
 }
 
 const AdminEventsManager = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -187,6 +190,7 @@ const AdminEventsManager = () => {
                   <span className="text-xs text-emerald-400">{confirmed} confirmed</span>
                   {waitlist > 0 && <span className="text-xs text-amber-400">{waitlist} waitlist</span>}
                   {evt.capacity && <span className="text-xs text-slate-500">/ {evt.capacity} cap</span>}
+                  <button onClick={(e) => { e.stopPropagation(); navigate(`/checkin/${evt.id}`); }} className="text-emerald-400 hover:text-emerald-300 text-xs bg-transparent border-none cursor-pointer">◉ Check-in</button>
                   <button onClick={(e) => { e.stopPropagation(); editEvent(evt); }} className="text-purple-400 hover:text-purple-300 text-xs bg-transparent border-none cursor-pointer">✎</button>
                   <button onClick={(e) => { e.stopPropagation(); exportCSV(evt.id); }} className="text-sky-400 hover:text-sky-300 text-xs bg-transparent border-none cursor-pointer">↓ CSV</button>
                   <button onClick={(e) => { e.stopPropagation(); deleteEvent(evt.id); }} className="text-red-400 hover:text-red-300 text-xs bg-transparent border-none cursor-pointer">✕</button>
@@ -228,6 +232,7 @@ const AdminEventsManager = () => {
                       </tbody>
                     </table>
                   )}
+                  <EventReminders eventId={evt.id} eventName={evt.name} eventDate={evt.date} />
                 </div>
               )}
             </div>
