@@ -10,6 +10,7 @@ import AdminReferrals from "@/components/admin/AdminReferrals";
 import AdminBuyers from "@/components/admin/AdminBuyers";
 import MembersKanban from "@/components/admin/MembersKanban";
 import AuditLog from "@/components/admin/AuditLog";
+import AdminBrandPartners from "@/components/admin/AdminBrandPartners";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
