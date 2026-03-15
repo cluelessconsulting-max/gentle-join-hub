@@ -173,34 +173,38 @@ const Admin = () => {
     }
     setSending(true);
 
-    const targets =
-      selectedUsers.length > 0
-        ? profiles.filter((p) => selectedUsers.includes(p.id))
-        : getFilteredProfiles();
+    try {
+      const targets =
+        selectedUsers.length > 0
+          ? profiles.filter((p) => selectedUsers.includes(p.id))
+          : getFilteredProfiles();
 
-    const recipients = targets
-      .filter((p) => p.email)
-      .map((p) => ({
-        email: p.email!,
-        name: p.full_name || "Member",
-      }));
+      const recipients = targets
+        .filter((p) => p.email)
+        .map((p) => ({
+          email: p.email!,
+          name: p.full_name || "Member",
+        }));
 
-    const { error } = await supabase.functions.invoke("brevo-admin", {
-      body: {
-        action: "send_email",
-        recipients,
-        subject: emailSubject,
-        htmlContent: emailBody.replace(/\n/g, "<br>"),
-      },
-    });
+      const { error } = await supabase.functions.invoke("brevo-admin", {
+        body: {
+          action: "send_email",
+          recipients,
+          subject: emailSubject,
+          htmlContent: emailBody.replace(/\n/g, "<br>"),
+        },
+      });
 
-    if (error) {
-      toast.error("Failed to send email");
-    } else {
-      toast.success(`Email sent to ${recipients.length} people`);
-      setEmailSubject("");
-      setEmailBody("");
-      setSelectedUsers([]);
+      if (error) {
+        toast.error("Failed to send email. Please try again.");
+      } else {
+        toast.success(`Email sent to ${recipients.length} people`);
+        setEmailSubject("");
+        setEmailBody("");
+        setSelectedUsers([]);
+      }
+    } catch (e) {
+      toast.error("Network error sending email. Please check your connection and retry.");
     }
     setSending(false);
   };
