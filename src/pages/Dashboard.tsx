@@ -78,6 +78,18 @@ const Dashboard = () => {
       setReferralCode((profileData as any)?.referral_code || null);
       setProfileName((profileData as any)?.full_name || null);
       setMembershipType((profileData as any)?.membership_type || "free");
+      setBuyerTier((profileData as any)?.buyer_tier || "guest");
+      setTotalPoints((profileData as any)?.total_points || 0);
+
+      // Fetch purchase stats
+      const { data: purchasesData } = await supabase
+        .from("purchases" as any)
+        .select("amount")
+        .eq("user_id", user.id);
+      const pData = (purchasesData as any[]) || [];
+      setPurchaseCount(pData.length);
+      setTotalSpent(pData.reduce((s: number, p: any) => s + Number(p.amount), 0));
+
       setLoading(false);
     };
     fetchData();
