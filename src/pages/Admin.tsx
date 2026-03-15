@@ -383,7 +383,7 @@ const Admin = () => {
 
         <button
           onClick={async () => { await signOut(); navigate("/"); }}
-          className="mt-auto bg-transparent border border-border text-muted-foreground px-3 py-2 rounded-lg cursor-pointer text-xs tracking-wider hover:text-foreground hover:border-foreground/30 transition-colors"
+          className="mt-auto bg-transparent border border-primary-foreground/20 text-primary-foreground/60 px-3 py-2 rounded-lg cursor-pointer text-xs tracking-wider hover:text-primary-foreground hover:border-primary-foreground/40 transition-colors"
         >
           ↩ Sign Out
         </button>
