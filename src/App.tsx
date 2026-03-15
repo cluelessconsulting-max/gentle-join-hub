@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import CheckIn from "./pages/CheckIn";
 import BrandPortal from "./pages/BrandPortal";
 import MemberProfile from "./pages/MemberProfile";
+import ProfilePage from "./pages/ProfilePage";
 
 const queryClient = new QueryClient();
 
