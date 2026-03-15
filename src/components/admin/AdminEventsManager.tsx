@@ -291,19 +291,15 @@ const AdminEventsManager = () => {
                                   )}
                                   {r.status === "confirmed" && (
                                     <button
-                                      onClick={() => updateRegStatus(r.id, "rejected")}
+                                      onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)}
                                       className="text-[10px] text-red-400 hover:text-red-300 bg-transparent border-none cursor-pointer"
-                                    >
-                                      Revoke
-                                    </button>
+                                    >Revoke</button>
                                   )}
                                   {r.status === "rejected" && (
                                     <button
-                                      onClick={() => updateRegStatus(r.id, "confirmed")}
+                                      onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
                                       className="text-[10px] text-emerald-400 hover:text-emerald-300 bg-transparent border-none cursor-pointer"
-                                    >
-                                      Re-approve
-                                    </button>
+                                    >Re-approve</button>
                                   )}
                                 </div>
                               </td>
