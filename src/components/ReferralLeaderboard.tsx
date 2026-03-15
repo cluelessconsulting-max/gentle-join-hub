@@ -54,7 +54,24 @@ const ReferralLeaderboard = () => {
     fetch();
   }, []);
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="mb-14">
+        <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-4">Referral Leaderboard</p>
+        <div className="bg-foreground/5 border border-foreground/10">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="flex items-center gap-4 px-5 py-3 border-b border-foreground/5 last:border-b-0">
+              <div className="bg-foreground/5 animate-pulse w-8 h-8 rounded-full" />
+              <div className="flex-1 space-y-1.5">
+                <div className="bg-foreground/5 animate-pulse h-3 w-28" />
+              </div>
+              <div className="bg-foreground/5 animate-pulse h-4 w-8" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
   if (leaders.length === 0) return null;
 
   const medals = ["🥇", "🥈", "🥉"];
