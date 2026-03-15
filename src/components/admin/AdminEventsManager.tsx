@@ -235,12 +235,51 @@ const AdminEventsManager = () => {
                               <td className="py-2 text-[13px] text-slate-400">{p?.city || "—"}</td>
                               <td className="py-2">
                                 <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                                  r.status === "confirmed" ? "bg-emerald-950 text-emerald-400" : "bg-amber-950 text-amber-400"
+                                  r.status === "confirmed" ? "bg-emerald-950 text-emerald-400" :
+                                  r.status === "pending" ? "bg-orange-950 text-orange-400" :
+                                  r.status === "rejected" ? "bg-red-950 text-red-400" :
+                                  "bg-amber-950 text-amber-400"
                                 }`}>
                                   {r.status}
                                 </span>
                               </td>
                               <td className="py-2 text-[11px] text-slate-500">{new Date(r.registered_at).toLocaleDateString()}</td>
+                              <td className="py-2">
+                                <div className="flex gap-2">
+                                  {r.status === "pending" && (
+                                    <>
+                                      <button
+                                        onClick={() => updateRegStatus(r.id, "confirmed")}
+                                        className="text-[10px] bg-emerald-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-500 transition-colors"
+                                      >
+                                        ✓ Approve
+                                      </button>
+                                      <button
+                                        onClick={() => updateRegStatus(r.id, "rejected")}
+                                        className="text-[10px] bg-red-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-red-500 transition-colors"
+                                      >
+                                        ✕ Reject
+                                      </button>
+                                    </>
+                                  )}
+                                  {r.status === "confirmed" && (
+                                    <button
+                                      onClick={() => updateRegStatus(r.id, "rejected")}
+                                      className="text-[10px] text-red-400 hover:text-red-300 bg-transparent border-none cursor-pointer"
+                                    >
+                                      Revoke
+                                    </button>
+                                  )}
+                                  {r.status === "rejected" && (
+                                    <button
+                                      onClick={() => updateRegStatus(r.id, "confirmed")}
+                                      className="text-[10px] text-emerald-400 hover:text-emerald-300 bg-transparent border-none cursor-pointer"
+                                    >
+                                      Re-approve
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
                             </tr>
                           );
                         })}
