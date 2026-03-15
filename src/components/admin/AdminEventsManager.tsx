@@ -301,6 +301,22 @@ const AdminEventsManager = () => {
                                       className="text-[10px] text-emerald-400 hover:text-emerald-300 bg-transparent border-none cursor-pointer"
                                     >Re-approve</button>
                                   )}
+                                  {r.status === "waitlist" && (
+                                    <>
+                                      <button
+                                        onClick={() => updateRegStatus(r.id, "pending", r.user_id, r.event_id)}
+                                        className="text-[10px] bg-orange-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-orange-500 transition-colors"
+                                      >
+                                        → Pending
+                                      </button>
+                                      <button
+                                        onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
+                                        className="text-[10px] bg-emerald-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-500 transition-colors"
+                                      >
+                                        ✓ Approve
+                                      </button>
+                                    </>
+                                  )}
                                 </div>
                               </td>
                             </tr>
