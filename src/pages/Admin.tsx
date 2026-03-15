@@ -7,6 +7,7 @@ import AdminInvites from "@/components/admin/AdminInvites";
 import AdminEventsManager from "@/components/admin/AdminEventsManager";
 import AdminReferrals from "@/components/admin/AdminReferrals";
 import AdminBuyers from "@/components/admin/AdminBuyers";
+import MembersKanban from "@/components/admin/MembersKanban";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
