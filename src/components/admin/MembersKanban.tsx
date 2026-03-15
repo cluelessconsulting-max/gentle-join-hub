@@ -262,10 +262,7 @@ const MembersKanban = ({
   const autoApproveAbove80 = async () => {
     const pending = getColumnProfiles("pending").filter(p => (p.application_score || 0) >= 80);
     if (pending.length === 0) { toast.info("No applicants above 80"); return; }
-    for (const p of pending) {
-      await updateStatus(p.id, "approved");
-    }
-    toast.success(`Auto-approved ${pending.length} members`);
+    setConfirmAction({ type: "auto_approve", count: pending.length });
   };
 
   const bulkAction = async (action: string) => {
