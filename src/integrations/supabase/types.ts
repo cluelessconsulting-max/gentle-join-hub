@@ -304,10 +304,12 @@ export type Database = {
           application_score: number | null
           application_status: string
           avatar_url: string | null
+          bio: string | null
           buyer_tier: string
           city: string | null
           created_at: string
           email: string | null
+          email_notifications: boolean
           event_frequency: string | null
           favourite_neighbourhoods: string | null
           full_name: string | null
@@ -321,8 +323,10 @@ export type Database = {
           job_title: string | null
           membership_type: string
           phone: string | null
+          public_profile: boolean
           referral: string | null
           referral_code: string | null
+          referral_notifications: boolean
           referred_by: string | null
           shopping_style: string | null
           tiktok: string | null
@@ -337,10 +341,12 @@ export type Database = {
           application_score?: number | null
           application_status?: string
           avatar_url?: string | null
+          bio?: string | null
           buyer_tier?: string
           city?: string | null
           created_at?: string
           email?: string | null
+          email_notifications?: boolean
           event_frequency?: string | null
           favourite_neighbourhoods?: string | null
           full_name?: string | null
@@ -354,8 +360,10 @@ export type Database = {
           job_title?: string | null
           membership_type?: string
           phone?: string | null
+          public_profile?: boolean
           referral?: string | null
           referral_code?: string | null
+          referral_notifications?: boolean
           referred_by?: string | null
           shopping_style?: string | null
           tiktok?: string | null
@@ -370,10 +378,12 @@ export type Database = {
           application_score?: number | null
           application_status?: string
           avatar_url?: string | null
+          bio?: string | null
           buyer_tier?: string
           city?: string | null
           created_at?: string
           email?: string | null
+          email_notifications?: boolean
           event_frequency?: string | null
           favourite_neighbourhoods?: string | null
           full_name?: string | null
@@ -387,8 +397,10 @@ export type Database = {
           job_title?: string | null
           membership_type?: string
           phone?: string | null
+          public_profile?: boolean
           referral?: string | null
           referral_code?: string | null
+          referral_notifications?: boolean
           referred_by?: string | null
           shopping_style?: string | null
           tiktok?: string | null

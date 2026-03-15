@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import CheckIn from "./pages/CheckIn";
 import BrandPortal from "./pages/BrandPortal";
 import MemberProfile from "./pages/MemberProfile";
+import ProfilePage from "./pages/ProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/checkin/:eventId" element={<CheckIn />} />
             <Route path="/brand/:slug" element={<BrandPortal />} />
             <Route path="/member/:code" element={<MemberProfile />} />
+            <Route path="/profile" element={<ProfilePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
