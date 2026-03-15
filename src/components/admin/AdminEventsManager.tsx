@@ -41,9 +41,7 @@ const AdminEventsManager = () => {
   const [form, setForm] = useState({ name: "", date: "", location: "", tag: "", access: "", description: "", capacity: "" });
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  useEffect(() => { fetchAll(); }, []);
 
   const fetchAll = async () => {
     const [{ data: evts }, { data: regs }, { data: profs }] = await Promise.all([
@@ -58,15 +56,11 @@ const AdminEventsManager = () => {
 
   const saveEvent = async () => {
     const payload = {
-      name: form.name,
-      date: form.date,
-      location: form.location,
-      tag: form.tag || "Event",
-      access: form.access || "Open",
+      name: form.name, date: form.date, location: form.location,
+      tag: form.tag || "Event", access: form.access || "Open",
       description: form.description || null,
       capacity: form.capacity ? parseInt(form.capacity) : null,
     };
-
     if (editingId) {
       const { error } = await supabase.from("events").update(payload as any).eq("id", editingId);
       if (error) { toast.error("Failed to update"); return; }
@@ -76,8 +70,7 @@ const AdminEventsManager = () => {
       if (error) { toast.error("Failed to create"); return; }
       toast.success("Event created");
     }
-    setShowForm(false);
-    setEditingId(null);
+    setShowForm(false); setEditingId(null);
     setForm({ name: "", date: "", location: "", tag: "", access: "", description: "", capacity: "" });
     fetchAll();
   };
@@ -85,63 +78,31 @@ const AdminEventsManager = () => {
   const deleteEvent = async (id: string) => {
     if (!confirm("Delete this event?")) return;
     await supabase.from("events").delete().eq("id", id);
-    toast.success("Event deleted");
-    fetchAll();
+    toast.success("Event deleted"); fetchAll();
   };
 
   const editEvent = (evt: Event) => {
-    setForm({
-      name: evt.name,
-      date: evt.date,
-      location: evt.location,
-      tag: evt.tag,
-      access: evt.access,
-      description: evt.description || "",
-      capacity: evt.capacity?.toString() || "",
-    });
-    setEditingId(evt.id);
-    setShowForm(true);
+    setForm({ name: evt.name, date: evt.date, location: evt.location, tag: evt.tag, access: evt.access, description: evt.description || "", capacity: evt.capacity?.toString() || "" });
+    setEditingId(evt.id); setShowForm(true);
   };
 
   const getEventRegs = (eventId: string) => registrations.filter((r) => r.event_id === eventId);
   const getProfile = (userId: string) => profiles.find((p) => p.user_id === userId);
 
   const updateRegStatus = async (regId: string, newStatus: string, userId: string, eventId: string) => {
-    const { error } = await supabase
-      .from("event_registrations" as any)
-      .update({ status: newStatus } as any)
-      .eq("id", regId);
-    if (error) {
-      toast.error("Failed to update status");
-    } else {
+    const { error } = await supabase.from("event_registrations" as any).update({ status: newStatus } as any).eq("id", regId);
+    if (error) { toast.error("Failed to update status"); } else {
       toast.success(`Registration ${newStatus}`);
-
-      // Send email via Brevo
       const profile = getProfile(userId);
       const event = events.find(e => e.id === eventId);
       if (profile?.email && event) {
         const firstName = profile.full_name?.split(" ")[0] || "";
         if (newStatus === "confirmed") {
-          supabase.functions.invoke("brevo-admin", {
-            body: {
-              action: "send_email",
-              recipients: [{ email: profile.email, name: profile.full_name || "Member" }],
-              subject: `You're confirmed for ${event.name}`,
-              htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 16px;text-align:center;"><span style="font-size:22px;color:#0A0A0A;">You're on the list, ${firstName}!</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">Your registration for <strong>${event.name}</strong> has been confirmed.<br/><br/>📅 ${event.date}<br/>📍 ${event.location}<br/><br/>No tickets are required if you come with Offlist.</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><a href="https://off-list.uk/dashboard" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;">View Dashboard</a></td></tr></table></td></tr></table></body></html>`,
-            },
-          });
+          supabase.functions.invoke("brevo-admin", { body: { action: "send_email", recipients: [{ email: profile.email, name: profile.full_name || "Member" }], subject: `You're confirmed for ${event.name}`, htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 16px;text-align:center;"><span style="font-size:22px;color:#0A0A0A;">You're on the list, ${firstName}!</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">Your registration for <strong>${event.name}</strong> has been confirmed.<br/><br/>📅 ${event.date}<br/>📍 ${event.location}<br/><br/>No tickets are required if you come with Offlist.</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><a href="https://off-list.uk/dashboard" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;">View Dashboard</a></td></tr></table></td></tr></table></body></html>` } });
         } else if (newStatus === "rejected") {
-          supabase.functions.invoke("brevo-admin", {
-            body: {
-              action: "send_email",
-              recipients: [{ email: profile.email, name: profile.full_name || "Member" }],
-              subject: `Registration update for ${event.name}`,
-              htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">Unfortunately your registration for <strong>${event.name}</strong> was not confirmed this time.<br/><br/>Keep an eye on our upcoming events — we'd love to see you at the next one.</span></td></tr></table></td></tr></table></body></html>`,
-            },
-          });
+          supabase.functions.invoke("brevo-admin", { body: { action: "send_email", recipients: [{ email: profile.email, name: profile.full_name || "Member" }], subject: `Registration update for ${event.name}`, htmlContent: `<!DOCTYPE html><html><body style="margin:0;padding:40px 20px;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="520" cellpadding="0" cellspacing="0"><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;">OFFLIST</span></td></tr><tr><td style="padding:0 0 24px;text-align:center;"><span style="font-size:13px;color:#8B8178;line-height:1.8;">Unfortunately your registration for <strong>${event.name}</strong> was not confirmed this time.<br/><br/>Keep an eye on our upcoming events — we'd love to see you at the next one.</span></td></tr></table></td></tr></table></body></html>` } });
         }
       }
-
       fetchAll();
     }
   };
@@ -152,43 +113,28 @@ const AdminEventsManager = () => {
     const header = "Name,Email,City,Interests,Registration Date,Status\n";
     const rows = regs.map((r) => {
       const p = getProfile(r.user_id);
-      return [
-        `"${p?.full_name || ""}"`,
-        `"${p?.email || ""}"`,
-        `"${p?.city || ""}"`,
-        `"${(p?.interests || []).join("; ")}"`,
-        `"${new Date(r.registered_at).toLocaleDateString()}"`,
-        `"${r.status}"`,
-      ].join(",");
+      return [`"${p?.full_name || ""}"`, `"${p?.email || ""}"`, `"${p?.city || ""}"`, `"${(p?.interests || []).join("; ")}"`, `"${new Date(r.registered_at).toLocaleDateString()}"`, `"${r.status}"`].join(",");
     }).join("\n");
-
     const blob = new Blob([header + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${evt?.name || "event"}-guestlist.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const a = document.createElement("a"); a.href = url; a.download = `${evt?.name || "event"}-guestlist.csv`; a.click(); URL.revokeObjectURL(url);
     toast.success(`Exported ${regs.length} registrations`);
   };
 
-  const inputCls = "bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none w-full focus:border-purple-800 transition-colors";
+  const inputCls = "bg-secondary border border-border text-foreground px-3 py-2 rounded-lg text-[13px] outline-none w-full focus:border-accent transition-colors";
 
   return (
     <div>
       <div className="flex justify-between items-center mb-7">
-        <h2 className="text-2xl font-bold tracking-wider text-slate-50">Events</h2>
-        <button
-          onClick={() => { setShowForm(!showForm); setEditingId(null); setForm({ name: "", date: "", location: "", tag: "", access: "", description: "", capacity: "" }); }}
-          className="bg-purple-600 text-white border-none px-5 py-2 rounded-lg cursor-pointer text-[13px] font-semibold hover:bg-purple-500 transition-colors"
-        >
+        <h2 className="font-display text-[32px] font-light tracking-wide text-foreground">Events</h2>
+        <button onClick={() => { setShowForm(!showForm); setEditingId(null); setForm({ name: "", date: "", location: "", tag: "", access: "", description: "", capacity: "" }); }}
+          className="bg-primary text-primary-foreground border-none px-5 py-2 rounded-lg cursor-pointer text-[13px] font-semibold hover:bg-accent transition-colors">
           {showForm ? "Cancel" : "+ New Event"}
         </button>
       </div>
 
-      {/* Event Form */}
       {showForm && (
-        <div className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-xl p-5 mb-7">
+        <div className="bg-secondary border border-border rounded-xl p-5 mb-7">
           <div className="grid grid-cols-2 gap-3 mb-3">
             <input className={inputCls} placeholder="Event name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <input className={inputCls} placeholder="Date (e.g. 27 March 2026)" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
@@ -198,17 +144,13 @@ const AdminEventsManager = () => {
             <input className={inputCls} type="number" placeholder="Capacity (empty = unlimited)" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} />
           </div>
           <textarea className={`${inputCls} min-h-[60px] resize-y mb-3`} placeholder="Description (optional)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          <button
-            onClick={saveEvent}
-            disabled={!form.name || !form.date || !form.location}
-            className="bg-emerald-600 text-white border-none px-5 py-2 rounded-lg cursor-pointer text-[13px] font-semibold hover:bg-emerald-500 transition-colors disabled:opacity-40"
-          >
+          <button onClick={saveEvent} disabled={!form.name || !form.date || !form.location}
+            className="bg-emerald-700 text-white border-none px-5 py-2 rounded-lg cursor-pointer text-[13px] font-semibold hover:bg-emerald-600 transition-colors disabled:opacity-40">
             {editingId ? "Update Event" : "Create Event"}
           </button>
         </div>
       )}
 
-      {/* Events List */}
       <div className="flex flex-col gap-3">
         {events.map((evt) => {
           const regs = getEventRegs(evt.id);
@@ -218,37 +160,34 @@ const AdminEventsManager = () => {
           const isSelected = selectedEvent === evt.id;
 
           return (
-            <div key={evt.id} className="bg-[#0f0f1a] border border-[#1e1e2e] rounded-xl overflow-hidden">
-              <div
-                className="flex justify-between items-center p-4 cursor-pointer hover:bg-[#1a1a2e] transition-colors"
-                onClick={() => setSelectedEvent(isSelected ? null : evt.id)}
-              >
+            <div key={evt.id} className="bg-secondary border border-border rounded-xl overflow-hidden">
+              <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-foreground/[0.03] transition-colors" onClick={() => setSelectedEvent(isSelected ? null : evt.id)}>
                 <div>
-                  <span className="text-sm text-slate-200 font-semibold">{evt.name}</span>
-                  <span className="text-xs text-slate-500 ml-3">{evt.date} · {evt.location}</span>
+                  <span className="text-sm text-foreground font-semibold">{evt.name}</span>
+                  <span className="text-xs text-muted-foreground ml-3">{evt.date} · {evt.location}</span>
                 </div>
                 <div className="flex gap-3 items-center">
-                  {pending > 0 && <span className="text-xs text-orange-400 font-semibold">{pending} pending</span>}
-                  <span className="text-xs text-emerald-400">{confirmed} confirmed</span>
-                  {waitlist > 0 && <span className="text-xs text-amber-400">{waitlist} waitlist</span>}
-                  {evt.capacity && <span className="text-xs text-slate-500">/ {evt.capacity} cap</span>}
-                  <button onClick={(e) => { e.stopPropagation(); navigate(`/checkin/${evt.id}`); }} className="text-emerald-400 hover:text-emerald-300 text-xs bg-transparent border-none cursor-pointer">◉ Check-in</button>
-                  <button onClick={(e) => { e.stopPropagation(); editEvent(evt); }} className="text-purple-400 hover:text-purple-300 text-xs bg-transparent border-none cursor-pointer">✎</button>
-                  <button onClick={(e) => { e.stopPropagation(); exportCSV(evt.id); }} className="text-sky-400 hover:text-sky-300 text-xs bg-transparent border-none cursor-pointer">↓ CSV</button>
-                  <button onClick={(e) => { e.stopPropagation(); deleteEvent(evt.id); }} className="text-red-400 hover:text-red-300 text-xs bg-transparent border-none cursor-pointer">✕</button>
+                  {pending > 0 && <span className="text-xs text-amber-700 font-semibold">{pending} pending</span>}
+                  <span className="text-xs text-emerald-700">{confirmed} confirmed</span>
+                  {waitlist > 0 && <span className="text-xs text-amber-600">{waitlist} waitlist</span>}
+                  {evt.capacity && <span className="text-xs text-muted-foreground">/ {evt.capacity} cap</span>}
+                  <button onClick={(e) => { e.stopPropagation(); navigate(`/checkin/${evt.id}`); }} className="text-emerald-700 hover:text-emerald-600 text-xs bg-transparent border-none cursor-pointer">◉ Check-in</button>
+                  <button onClick={(e) => { e.stopPropagation(); editEvent(evt); }} className="text-accent hover:text-accent/80 text-xs bg-transparent border-none cursor-pointer">✎</button>
+                  <button onClick={(e) => { e.stopPropagation(); exportCSV(evt.id); }} className="text-sky-700 hover:text-sky-600 text-xs bg-transparent border-none cursor-pointer">↓ CSV</button>
+                  <button onClick={(e) => { e.stopPropagation(); deleteEvent(evt.id); }} className="text-red-700 hover:text-red-600 text-xs bg-transparent border-none cursor-pointer">✕</button>
                 </div>
               </div>
 
               {isSelected && (
-                <div className="border-t border-[#1e1e2e] p-4">
+                <div className="border-t border-border p-4">
                   {regs.length === 0 ? (
-                    <p className="text-slate-600 text-[13px]">No registrations yet</p>
+                    <p className="text-muted-foreground text-[13px]">No registrations yet</p>
                   ) : (
                     <table className="w-full">
                       <thead>
                         <tr>
                           {["Name", "Email", "City", "Status", "Date", "Actions"].map((h) => (
-                            <th key={h} className="text-left text-[11px] tracking-[2px] text-slate-600 pb-2 font-normal">{h}</th>
+                            <th key={h} className="text-left text-[11px] tracking-[2px] text-muted-foreground pb-2 font-normal">{h}</th>
                           ))}
                         </tr>
                       </thead>
@@ -256,65 +195,37 @@ const AdminEventsManager = () => {
                         {regs.map((r) => {
                           const p = getProfile(r.user_id);
                           return (
-                            <tr key={r.id} className="border-t border-[#1a1a2e]">
-                              <td className="py-2 text-[13px] text-slate-200">{p?.full_name || "—"}</td>
-                              <td className="py-2 text-[13px] text-slate-400">{p?.email || "—"}</td>
-                              <td className="py-2 text-[13px] text-slate-400">{p?.city || "—"}</td>
+                            <tr key={r.id} className="border-t border-border">
+                              <td className="py-2 text-[13px] text-foreground">{p?.full_name || "—"}</td>
+                              <td className="py-2 text-[13px] text-foreground/70">{p?.email || "—"}</td>
+                              <td className="py-2 text-[13px] text-foreground/70">{p?.city || "—"}</td>
                               <td className="py-2">
                                 <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                                  r.status === "confirmed" ? "bg-emerald-950 text-emerald-400" :
-                                  r.status === "pending" ? "bg-orange-950 text-orange-400" :
-                                  r.status === "rejected" ? "bg-red-950 text-red-400" :
-                                  "bg-amber-950 text-amber-400"
-                                }`}>
-                                  {r.status}
-                                </span>
+                                  r.status === "confirmed" ? "bg-emerald-100 text-emerald-800" :
+                                  r.status === "pending" ? "bg-amber-100 text-amber-800" :
+                                  r.status === "rejected" ? "bg-red-100 text-red-800" :
+                                  "bg-amber-100 text-amber-700"
+                                }`}>{r.status}</span>
                               </td>
-                              <td className="py-2 text-[11px] text-slate-500">{new Date(r.registered_at).toLocaleDateString()}</td>
+                              <td className="py-2 text-[11px] text-muted-foreground">{new Date(r.registered_at).toLocaleDateString()}</td>
                               <td className="py-2">
                                 <div className="flex gap-2">
                                   {r.status === "pending" && (
                                     <>
-                                      <button
-                                        onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
-                                        className="text-[10px] bg-emerald-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-500 transition-colors"
-                                      >
-                                        ✓ Approve
-                                      </button>
-                                      <button
-                                        onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)}
-                                        className="text-[10px] bg-red-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-red-500 transition-colors"
-                                      >
-                                        ✕ Reject
-                                      </button>
+                                      <button onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)} className="text-[10px] bg-emerald-700 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-600 transition-colors">✓ Approve</button>
+                                      <button onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)} className="text-[10px] bg-red-700 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-red-600 transition-colors">✕ Reject</button>
                                     </>
                                   )}
                                   {r.status === "confirmed" && (
-                                    <button
-                                      onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)}
-                                      className="text-[10px] text-red-400 hover:text-red-300 bg-transparent border-none cursor-pointer"
-                                    >Revoke</button>
+                                    <button onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)} className="text-[10px] text-red-700 hover:text-red-600 bg-transparent border-none cursor-pointer">Revoke</button>
                                   )}
                                   {r.status === "rejected" && (
-                                    <button
-                                      onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
-                                      className="text-[10px] text-emerald-400 hover:text-emerald-300 bg-transparent border-none cursor-pointer"
-                                    >Re-approve</button>
+                                    <button onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)} className="text-[10px] text-emerald-700 hover:text-emerald-600 bg-transparent border-none cursor-pointer">Re-approve</button>
                                   )}
                                   {r.status === "waitlist" && (
                                     <>
-                                      <button
-                                        onClick={() => updateRegStatus(r.id, "pending", r.user_id, r.event_id)}
-                                        className="text-[10px] bg-orange-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-orange-500 transition-colors"
-                                      >
-                                        → Pending
-                                      </button>
-                                      <button
-                                        onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
-                                        className="text-[10px] bg-emerald-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-500 transition-colors"
-                                      >
-                                        ✓ Approve
-                                      </button>
+                                      <button onClick={() => updateRegStatus(r.id, "pending", r.user_id, r.event_id)} className="text-[10px] bg-amber-700 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-amber-600 transition-colors">→ Pending</button>
+                                      <button onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)} className="text-[10px] bg-emerald-700 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-600 transition-colors">✓ Approve</button>
                                     </>
                                   )}
                                 </div>
@@ -331,7 +242,7 @@ const AdminEventsManager = () => {
             </div>
           );
         })}
-        {events.length === 0 && <p className="text-slate-600 text-[13px] text-center py-10">No events yet</p>}
+        {events.length === 0 && <p className="text-muted-foreground text-[13px] text-center py-10">No events yet</p>}
       </div>
     </div>
   );

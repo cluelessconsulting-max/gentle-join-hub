@@ -21,16 +21,16 @@ interface Props {
 
 const ConfirmDialog = ({ open, onConfirm, onCancel, title, description, confirmLabel = "Continue", variant = "default" }: Props) => (
   <AlertDialog open={open} onOpenChange={(o) => !o && onCancel()}>
-    <AlertDialogContent className="bg-[#0f0f1a] border-[#1e1e2e] text-slate-200">
+    <AlertDialogContent className="bg-background border-border text-foreground">
       <AlertDialogHeader>
-        <AlertDialogTitle className="text-slate-50">{title}</AlertDialogTitle>
-        <AlertDialogDescription className="text-slate-400">{description}</AlertDialogDescription>
+        <AlertDialogTitle className="text-foreground font-display">{title}</AlertDialogTitle>
+        <AlertDialogDescription className="text-muted-foreground">{description}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel className="bg-[#1a1a2e] border-[#2a2a3e] text-slate-300 hover:bg-[#2a2a3e] hover:text-slate-100">Cancel</AlertDialogCancel>
+        <AlertDialogCancel className="bg-secondary border-border text-foreground/70 hover:bg-foreground/5 hover:text-foreground">Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={onConfirm}
-          className={variant === "destructive" ? "bg-red-600 text-white hover:bg-red-500" : "bg-purple-600 text-white hover:bg-purple-500"}
+          className={variant === "destructive" ? "bg-red-700 text-white hover:bg-red-600" : "bg-primary text-primary-foreground hover:bg-accent"}
         >
           {confirmLabel}
         </AlertDialogAction>

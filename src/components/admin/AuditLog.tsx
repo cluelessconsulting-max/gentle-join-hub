@@ -13,16 +13,16 @@ interface AuditEntry {
 }
 
 const ACTION_COLORS: Record<string, string> = {
-  member_approved: "text-emerald-400 bg-emerald-950",
-  member_rejected: "text-red-400 bg-red-950",
-  member_waitlisted: "text-amber-400 bg-amber-950",
-  purchase_added: "text-sky-400 bg-sky-950",
-  purchase_deleted: "text-red-400 bg-red-950",
-  event_created: "text-purple-400 bg-purple-950",
-  event_deleted: "text-red-400 bg-red-950",
-  bulk_email_sent: "text-purple-400 bg-purple-950",
-  invite_generated: "text-sky-400 bg-sky-950",
-  checkin: "text-emerald-400 bg-emerald-950",
+  member_approved: "text-emerald-800 bg-emerald-100",
+  member_rejected: "text-red-800 bg-red-100",
+  member_waitlisted: "text-amber-800 bg-amber-100",
+  purchase_added: "text-sky-800 bg-sky-100",
+  purchase_deleted: "text-red-800 bg-red-100",
+  event_created: "text-accent bg-accent/15",
+  event_deleted: "text-red-800 bg-red-100",
+  bulk_email_sent: "text-accent bg-accent/15",
+  invite_generated: "text-sky-800 bg-sky-100",
+  checkin: "text-emerald-800 bg-emerald-100",
 };
 
 const AuditLog = () => {
@@ -68,16 +68,16 @@ const AuditLog = () => {
   };
 
   if (loading) {
-    return <div className="text-slate-500 text-sm animate-pulse py-6">Loading audit log…</div>;
+    return <div className="text-muted-foreground text-sm animate-pulse py-6">Loading audit log…</div>;
   }
 
   return (
     <div>
-      <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mb-4">Action History</h3>
+      <h3 className="text-[10px] tracking-[3px] text-muted-foreground uppercase mb-4">Action History</h3>
 
       <div className="flex gap-2.5 mb-4 flex-wrap">
         <select
-          className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none cursor-pointer"
+          className="bg-secondary border border-border text-foreground px-3 py-2 rounded-lg text-[13px] outline-none cursor-pointer"
           value={filterAction}
           onChange={(e) => setFilterAction(e.target.value)}
         >
@@ -88,14 +88,14 @@ const AuditLog = () => {
         </select>
         <input
           type="date"
-          className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none"
+          className="bg-secondary border border-border text-foreground px-3 py-2 rounded-lg text-[13px] outline-none"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
         />
         {(filterAction || filterDate) && (
           <button
             onClick={() => { setFilterAction(""); setFilterDate(""); }}
-            className="text-slate-500 text-xs bg-transparent border-none cursor-pointer hover:text-slate-300"
+            className="text-muted-foreground text-xs bg-transparent border-none cursor-pointer hover:text-foreground"
           >
             Reset
           </button>
@@ -103,31 +103,31 @@ const AuditLog = () => {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-slate-600 text-[13px] py-6 text-center">No actions recorded yet</p>
+        <p className="text-muted-foreground text-[13px] py-6 text-center">No actions recorded yet</p>
       ) : (
         <div className="flex flex-col gap-1 max-h-[500px] overflow-y-auto">
           {filtered.map((e) => {
-            const color = ACTION_COLORS[e.action] || "text-slate-400 bg-slate-900";
+            const color = ACTION_COLORS[e.action] || "text-muted-foreground bg-secondary";
             return (
-              <div key={e.id} className="flex items-start gap-3 px-4 py-3 bg-[#0f0f1a] rounded-lg">
+              <div key={e.id} className="flex items-start gap-3 px-4 py-3 bg-secondary rounded-lg">
                 <span className={`${color} px-2 py-0.5 rounded text-[10px] font-semibold shrink-0 mt-0.5`}>
                   {e.action.replace(/_/g, " ")}
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     {e.target_user_name && (
-                      <span className="text-[13px] text-slate-200">{e.target_user_name}</span>
+                      <span className="text-[13px] text-foreground">{e.target_user_name}</span>
                     )}
                     {e.old_value && e.new_value && (
-                      <span className="text-[11px] text-slate-500">
+                      <span className="text-[11px] text-muted-foreground">
                         {e.old_value} → {e.new_value}
                       </span>
                     )}
                     {e.new_value && !e.old_value && (
-                      <span className="text-[11px] text-slate-400">{e.new_value}</span>
+                      <span className="text-[11px] text-foreground/70">{e.new_value}</span>
                     )}
                   </div>
-                  <span className="text-[10px] text-slate-600">{e.performed_by} · {relTime(e.created_at)}</span>
+                  <span className="text-[10px] text-muted-foreground">{e.performed_by} · {relTime(e.created_at)}</span>
                 </div>
               </div>
             );
