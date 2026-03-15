@@ -201,7 +201,7 @@ const Dashboard = () => {
 
       <section className="px-6 md:px-12 py-16">
         <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-3.5">Your Events</p>
-        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-6">Welcome back{profileName ? `, ${profileName.split(" ")[0]}` : ""}</h1>
+        <h1 className="font-display text-[clamp(32px,4vw,56px)] font-light leading-tight mb-6">Welcome back{profileName ? `, ${profileName.split(" ")[0].charAt(0).toUpperCase() + profileName.split(" ")[0].slice(1).toLowerCase()}` : ""}</h1>
 
         {referralCode && (
           <div className="mb-14 flex items-center gap-4">
