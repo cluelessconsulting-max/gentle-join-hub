@@ -232,6 +232,7 @@ const AdminEventsManager = () => {
                       </tbody>
                     </table>
                   )}
+                  <EventReminders eventId={evt.id} eventName={evt.name} eventDate={evt.date} />
                 </div>
               )}
             </div>
