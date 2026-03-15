@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [membershipType, setMembershipType] = useState<string>("free");
   const [confirmModal, setConfirmModal] = useState<{ eventName: string; status: string } | null>(null);
 
   useEffect(() => {
