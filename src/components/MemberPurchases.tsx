@@ -27,6 +27,7 @@ const MemberPurchases = ({ userId }: Props) => {
     amount: "",
     purchase_date: "",
     notes: "",
+    receipt_number: "",
   });
 
   useEffect(() => {
@@ -46,16 +47,23 @@ const MemberPurchases = ({ userId }: Props) => {
   const totalSpent = purchases.reduce((sum, p) => sum + Number(p.amount), 0);
   const verifiedCount = purchases.filter((p) => p.verification_status === "verified").length;
 
+  const hasReference = form.notes.trim().length > 0 || form.receipt_number.trim().length > 0;
+
   const handleSubmit = async () => {
-    if (!form.brand_name || !form.amount) return;
+    if (!form.brand_name || !form.amount || !hasReference) return;
     setSubmitting(true);
+
+    const notesValue = [
+      form.notes ? `Order: ${form.notes}` : "",
+      form.receipt_number ? `Receipt: ${form.receipt_number}` : "",
+    ].filter(Boolean).join(" | ") || null;
 
     const { error } = await supabase.from("purchases" as any).insert({
       user_id: userId,
       brand_name: form.brand_name,
       amount: parseFloat(form.amount),
       purchase_date: form.purchase_date || new Date().toISOString().split("T")[0],
-      notes: form.notes || null,
+      notes: notesValue,
       verification_status: "pending",
     } as any);
 
@@ -63,7 +71,7 @@ const MemberPurchases = ({ userId }: Props) => {
       toast.error("Failed to submit purchase");
     } else {
       toast.success("Purchase submitted for verification");
-      setForm({ brand_name: "", amount: "", purchase_date: "", notes: "" });
+      setForm({ brand_name: "", amount: "", purchase_date: "", notes: "", receipt_number: "" });
       setShowForm(false);
       fetchPurchases();
     }
@@ -112,16 +120,23 @@ const MemberPurchases = ({ userId }: Props) => {
               className="bg-transparent border border-foreground/15 text-foreground px-4 py-3 text-[12px] tracking-wide outline-none font-body transition-colors focus:border-accent placeholder:text-foreground/25"
             />
             <input
-              placeholder="Order reference (optional)"
+              placeholder="Order reference number"
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
               className="bg-transparent border border-foreground/15 text-foreground px-4 py-3 text-[12px] tracking-wide outline-none font-body transition-colors focus:border-accent placeholder:text-foreground/25"
             />
+            <input
+              placeholder="Receipt / scontrino number"
+              value={form.receipt_number}
+              onChange={(e) => setForm({ ...form, receipt_number: e.target.value })}
+              className="bg-transparent border border-foreground/15 text-foreground px-4 py-3 text-[12px] tracking-wide outline-none font-body transition-colors focus:border-accent placeholder:text-foreground/25"
+            />
           </div>
+          <p className="text-[10px] text-foreground/30 mb-1">* At least one of Order Reference or Receipt Number is required.</p>
           <p className="text-[10px] text-foreground/30 mb-4">Your purchase will be verified by the Offlist team. Usually within 24 hours.</p>
           <button
             onClick={handleSubmit}
-            disabled={submitting || !form.brand_name || !form.amount}
+            disabled={submitting || !form.brand_name || !form.amount || !hasReference}
             className="bg-primary text-primary-foreground border-none px-8 py-3 font-body text-[10px] tracking-wide-lg uppercase cursor-pointer transition-all hover:bg-accent disabled:opacity-40 disabled:cursor-default"
           >
             {submitting ? "Submitting…" : "Submit for Verification"}
