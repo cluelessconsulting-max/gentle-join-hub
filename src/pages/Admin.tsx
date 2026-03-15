@@ -308,9 +308,9 @@ const Admin = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0f] font-mono text-slate-200">
-      {/* Sidebar */}
-      <aside className="w-[220px] bg-[#0f0f1a] border-r border-[#1e1e2e] p-8 px-4 flex flex-col gap-1">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#0a0a0f] font-mono text-slate-200">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-[220px] bg-[#0f0f1a] border-r border-[#1e1e2e] p-8 px-4 flex-col gap-1 shrink-0">
         <div className="flex items-center gap-2.5 mb-7">
           <span className="text-2xl text-purple-400">⬡</span>
           <span className="text-lg font-bold tracking-[4px] text-slate-50">OFFLIST</span>
@@ -344,6 +344,37 @@ const Admin = () => {
           ↩ Sign Out
         </button>
       </aside>
+
+      {/* Mobile Bottom Tab Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f0f1a] border-t border-[#1e1e2e] flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
+        {tabs.slice(0, 5).map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex flex-col items-center gap-0.5 bg-transparent border-none cursor-pointer py-2 px-2 rounded-lg min-h-[44px] min-w-[44px] transition-all ${
+              activeTab === tab.id ? "text-purple-400" : "text-slate-500"
+            }`}
+          >
+            <span className="text-sm">{tab.icon}</span>
+            <span className="text-[9px] tracking-wider">{tab.label}</span>
+            {tab.badge && <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />}
+          </button>
+        ))}
+      </nav>
+
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#0f0f1a] border-b border-[#1e1e2e]">
+        <div className="flex items-center gap-2">
+          <span className="text-lg text-purple-400">⬡</span>
+          <span className="text-sm font-bold tracking-[3px] text-slate-50">OFFLIST</span>
+        </div>
+        <button
+          onClick={async () => { await signOut(); navigate("/"); }}
+          className="text-slate-500 text-[10px] tracking-wider bg-transparent border border-[#1e1e2e] px-2.5 py-1.5 rounded cursor-pointer"
+        >
+          Sign Out
+        </button>
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 p-10 overflow-y-auto">
