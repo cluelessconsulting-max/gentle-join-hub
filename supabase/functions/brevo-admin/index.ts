@@ -112,21 +112,28 @@ Deno.serve(async (req) => {
     // Action: create_attributes — create missing contact attributes
     if (action === 'create_attributes') {
       const attributes = [
+        { name: 'FULL_NAME', type: 'text' },
         { name: 'CITY', type: 'text' },
         { name: 'AGE', type: 'text' },
         { name: 'INSTAGRAM', type: 'text' },
         { name: 'TIKTOK', type: 'text' },
+        { name: 'PHONE', type: 'text' },
         { name: 'INTERESTS', type: 'text' },
         { name: 'SHOPPING_STYLE', type: 'text' },
         { name: 'EVENT_FREQUENCY', type: 'text' },
         { name: 'REFERRAL', type: 'text' },
         { name: 'HOW_HEARD', type: 'text' },
-        { name: 'STATUS', type: 'text' },
+        { name: 'APPLICATION_STATUS', type: 'text' },
         { name: 'JOB_TITLE', type: 'text' },
         { name: 'INDUSTRY', type: 'text' },
         { name: 'TRAVEL_STYLE', type: 'text' },
         { name: 'IDEAL_NIGHT_OUT', type: 'text' },
         { name: 'FAVOURITE_NEIGHBOURHOODS', type: 'text' },
+        { name: 'INVITE_CODE', type: 'text' },
+        { name: 'REFERRAL_CODE', type: 'text' },
+        { name: 'REFERRED_BY', type: 'text' },
+        { name: 'BUYER_TIER', type: 'text' },
+        { name: 'TOTAL_POINTS', type: 'text' },
       ];
 
       const results = [];

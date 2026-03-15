@@ -13,19 +13,17 @@ Deno.serve(async (req) => {
     if (!BREVO_API_KEY) {
       throw new Error('BREVO_API_KEY is not configured');
     }
-    
-    // Handle base64-encoded JSON format
+
     if (!BREVO_API_KEY.startsWith('xkeysib-')) {
       try {
         const decoded = atob(BREVO_API_KEY);
         const parsed = JSON.parse(decoded);
         BREVO_API_KEY = parsed.api_key || BREVO_API_KEY;
-      } catch {
-        // Use as-is if decoding fails
-      }
+      } catch { /* use as-is */ }
     }
 
-    const { email, firstName, lastName, city, age, instagram, tiktok, phone, interests, shoppingStyle, eventFrequency, referral, howHeard, jobTitle, industry, travelStyle, idealNightOut, favouriteNeighbourhoods } = await req.json();
+    const body = await req.json();
+    const { email } = body;
 
     if (!email) {
       return new Response(JSON.stringify({ error: 'Email is required' }), {
@@ -33,6 +31,33 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    const attributes: Record<string, string> = {
+      FULL_NAME:                body.fullName || body.full_name || '',
+      NOME:                     body.firstName || '',
+      COGNOME:                  body.lastName || '',
+      AGE:                      body.age || '',
+      INSTAGRAM:                body.instagram || '',
+      TIKTOK:                   body.tiktok || '',
+      PHONE:                    body.phone || '',
+      CITY:                     body.city || '',
+      INTERESTS:                body.interests || '',
+      SHOPPING_STYLE:           body.shoppingStyle || '',
+      EVENT_FREQUENCY:          body.eventFrequency || '',
+      REFERRAL:                 body.referral || '',
+      HOW_HEARD:                body.howHeard || '',
+      APPLICATION_STATUS:       body.applicationStatus || '',
+      JOB_TITLE:                body.jobTitle || '',
+      INDUSTRY:                 body.industry || '',
+      TRAVEL_STYLE:             body.travelStyle || '',
+      IDEAL_NIGHT_OUT:          body.idealNightOut || '',
+      FAVOURITE_NEIGHBOURHOODS: body.favouriteNeighbourhoods || '',
+      INVITE_CODE:              body.inviteCode || '',
+      REFERRAL_CODE:            body.referralCode || '',
+      REFERRED_BY:              body.referredBy || '',
+      BUYER_TIER:               body.buyerTier || '',
+      TOTAL_POINTS:             body.totalPoints || '',
+    };
 
     const response = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
@@ -43,25 +68,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         email,
-        attributes: {
-          NOME: firstName || '',
-          COGNOME: lastName || '',
-          CITY: city || '',
-          AGE: age || '',
-          INSTAGRAM: instagram || '',
-          TIKTOK: tiktok || '',
-          SMS: phone || '',
-          INTERESTS: interests || '',
-          SHOPPING_STYLE: shoppingStyle || '',
-          EVENT_FREQUENCY: eventFrequency || '',
-          REFERRAL: referral || '',
-          HOW_HEARD: howHeard || '',
-          JOBTITLE: jobTitle || '',
-          INDUSTRY: industry || '',
-          TRAVEL_STYLE: travelStyle || '',
-          IDEAL_NIGHT_OUT: idealNightOut || '',
-          FAVOURITE_NEIGHBOURHOODS: favouriteNeighbourhoods || '',
-        },
+        attributes,
         updateEnabled: true,
       }),
     });
