@@ -38,6 +38,7 @@ const Index = () => {
       <Navbar onRegister={openRegister} onSignIn={openSignIn} />
       <Hero onRegister={openRegister} onSignIn={openSignIn} />
       <EventsSection onEventClick={(name, date) => setEventModal({ title: name, date })} />
+      <CollabSection />
       <Footer />
 
       <RegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)} referralCode={referralCode} />

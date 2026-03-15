@@ -106,6 +106,19 @@ const AdminEventsManager = () => {
   const getEventRegs = (eventId: string) => registrations.filter((r) => r.event_id === eventId);
   const getProfile = (userId: string) => profiles.find((p) => p.user_id === userId);
 
+  const updateRegStatus = async (regId: string, newStatus: string) => {
+    const { error } = await supabase
+      .from("event_registrations" as any)
+      .update({ status: newStatus } as any)
+      .eq("id", regId);
+    if (error) {
+      toast.error("Failed to update status");
+    } else {
+      toast.success(`Registration ${newStatus}`);
+      fetchAll();
+    }
+  };
+
   const exportCSV = (eventId: string) => {
     const evt = events.find((e) => e.id === eventId);
     const regs = getEventRegs(eventId);
