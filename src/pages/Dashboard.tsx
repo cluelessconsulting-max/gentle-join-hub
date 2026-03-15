@@ -395,6 +395,11 @@ const Dashboard = () => {
         )}
       </section>
 
+      {/* ── Partner Perks & Discounts ──────── */}
+      <section className="px-6 md:px-12 py-[72px] border-b border-border">
+        {effectiveUserId && <PartnerPerks userId={effectiveUserId} tier={buyerTier} />}
+      </section>
+
       {/* ── Referral Leaderboard ──────── */}
       <section className="px-6 md:px-12 py-[72px]">
         <ReferralLeaderboard />
