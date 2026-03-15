@@ -8,6 +8,7 @@ import NotificationBell from "@/components/NotificationBell";
 import ReferralLeaderboard from "@/components/ReferralLeaderboard";
 import MemberPurchases from "@/components/MemberPurchases";
 import LoyaltySection from "@/components/dashboard/LoyaltySection";
+import PartnerPerks from "@/components/dashboard/PartnerPerks";
 
 interface Event {
   id: string;
@@ -392,6 +393,11 @@ const Dashboard = () => {
             totalSpent={totalSpent}
           />
         )}
+      </section>
+
+      {/* ── Partner Perks & Discounts ──────── */}
+      <section className="px-6 md:px-12 py-[72px] border-b border-border">
+        {effectiveUserId && <PartnerPerks userId={effectiveUserId} tier={buyerTier} />}
       </section>
 
       {/* ── Referral Leaderboard ──────── */}
