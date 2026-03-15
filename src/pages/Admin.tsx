@@ -712,7 +712,15 @@ const Admin = () => {
                     <h3 className="text-xl font-bold text-slate-50">{selectedProfile.full_name || "—"}</h3>
                     <p className="text-sm text-slate-500">{selectedProfile.email}</p>
                   </div>
-                  <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
+                   <div className="flex gap-2">
+                    <button onClick={() => setSelectedProfile(null)} className="text-slate-600 hover:text-slate-300 text-lg bg-transparent border-none cursor-pointer">✕</button>
+                    <button
+                      onClick={() => { setSelectedProfile(null); navigate(`/dashboard?impersonate=${selectedProfile.user_id}`); }}
+                      className="text-[10px] bg-amber-600 text-white border-none px-3 py-1.5 rounded-lg cursor-pointer hover:bg-amber-500 transition-colors"
+                    >
+                      👁 Preview as member
+                    </button>
+                   </div>
                 </div>
 
                 <div className="flex gap-2">
