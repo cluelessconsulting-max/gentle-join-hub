@@ -6,13 +6,26 @@ interface Profile {
   full_name: string | null;
   email: string | null;
   city: string | null;
+  age: number | null;
   instagram: string | null;
   tiktok: string | null;
+  phone: string | null;
+  interests: string[] | null;
+  shopping_style: string | null;
+  event_frequency: string | null;
+  referral: string | null;
+  how_heard: string | null;
   application_status: string;
   created_at: string;
+  referral_code: string | null;
+  job_title: string | null;
+  industry: string | null;
+  travel_style: string | null;
+  ideal_night_out: string | null;
+  favourite_neighbourhoods: string | null;
+  referred_by: string | null;
   buyer_tier: string;
-  interests: string[] | null;
-  [key: string]: any;
+  total_points: number;
 }
 
 interface Props {
