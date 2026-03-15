@@ -409,11 +409,11 @@ const Admin = () => {
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-primary/95 border-b border-primary-foreground/10">
         <div className="flex items-center gap-2">
-          <span className="font-display text-[18px] font-normal tracking-wide uppercase text-foreground">Offlist</span>
+          <span className="font-display text-[18px] font-normal tracking-wide uppercase text-primary-foreground">Offlist</span>
         </div>
         <button
           onClick={async () => { await signOut(); navigate("/"); }}
-          className="text-muted-foreground text-[10px] tracking-wider bg-transparent border border-border px-2.5 py-1.5 rounded cursor-pointer"
+          className="text-primary-foreground/60 text-[10px] tracking-wider bg-transparent border border-primary-foreground/20 px-2.5 py-1.5 rounded cursor-pointer hover:text-primary-foreground"
         >
           Sign Out
         </button>
