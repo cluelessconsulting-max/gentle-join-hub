@@ -86,7 +86,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   };
 
   const validateStep1 = async () => {
-    if (!firstName || !lastName || !email || !password || !phone || !city) {
+    if (!firstName || !lastName || !email || !password || !phone || !city || !instagram.trim()) {
       setError("Please fill all required fields");
       setTimeout(() => setError(""), 2500);
       return false;
