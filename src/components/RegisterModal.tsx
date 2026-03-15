@@ -333,7 +333,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             <div className="mb-5">
-              <label className={labelClass}>Instagram</label>
+              <label className={labelClass}>Instagram *</label>
               <p className="text-[10px] text-warm-grey/70 tracking-wide mb-1.5">Handle or profile link</p>
               <input className={inputClass} placeholder="@handle or instagram.com/..." value={instagram} onChange={(e) => setInstagram(e.target.value)} style={borderStyle} />
             </div>
