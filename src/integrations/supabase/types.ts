@@ -68,6 +68,39 @@ export type Database = {
         }
         Relationships: []
       }
+      brand_partners: {
+        Row: {
+          active: boolean
+          contact_email: string
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          password_hash: string
+          slug: string
+        }
+        Insert: {
+          active?: boolean
+          contact_email: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          password_hash: string
+          slug: string
+        }
+        Update: {
+          active?: boolean
+          contact_email?: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          password_hash?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       discount_codes: {
         Row: {
           code: string
@@ -97,8 +130,10 @@ export type Database = {
           checked_in_at: string | null
           event_id: string
           id: string
+          payment_status: string
           registered_at: string
           status: string
+          stripe_payment_id: string | null
           user_id: string
           waitlist_position: number | null
         }
@@ -106,8 +141,10 @@ export type Database = {
           checked_in_at?: string | null
           event_id: string
           id?: string
+          payment_status?: string
           registered_at?: string
           status?: string
+          stripe_payment_id?: string | null
           user_id: string
           waitlist_position?: number | null
         }
@@ -115,8 +152,10 @@ export type Database = {
           checked_in_at?: string | null
           event_id?: string
           id?: string
+          payment_status?: string
           registered_at?: string
           status?: string
+          stripe_payment_id?: string | null
           user_id?: string
           waitlist_position?: number | null
         }
@@ -140,6 +179,7 @@ export type Database = {
           id: string
           location: string
           name: string
+          price: number
           tag: string
         }
         Insert: {
@@ -151,6 +191,7 @@ export type Database = {
           id?: string
           location: string
           name: string
+          price?: number
           tag: string
         }
         Update: {
@@ -162,6 +203,7 @@ export type Database = {
           id?: string
           location?: string
           name?: string
+          price?: number
           tag?: string
         }
         Relationships: []
@@ -244,6 +286,7 @@ export type Database = {
           interests: string[] | null
           invite_code: string | null
           job_title: string | null
+          membership_type: string
           phone: string | null
           referral: string | null
           referral_code: string | null
@@ -276,6 +319,7 @@ export type Database = {
           interests?: string[] | null
           invite_code?: string | null
           job_title?: string | null
+          membership_type?: string
           phone?: string | null
           referral?: string | null
           referral_code?: string | null
@@ -308,6 +352,7 @@ export type Database = {
           interests?: string[] | null
           invite_code?: string | null
           job_title?: string | null
+          membership_type?: string
           phone?: string | null
           referral?: string | null
           referral_code?: string | null

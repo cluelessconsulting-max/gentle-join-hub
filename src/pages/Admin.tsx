@@ -10,6 +10,7 @@ import AdminReferrals from "@/components/admin/AdminReferrals";
 import AdminBuyers from "@/components/admin/AdminBuyers";
 import MembersKanban from "@/components/admin/MembersKanban";
 import AuditLog from "@/components/admin/AuditLog";
+import AdminBrandPartners from "@/components/admin/AdminBrandPartners";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
@@ -345,6 +346,7 @@ const Admin = () => {
     { id: "buyers", icon: "◆", label: "Buyers" },
     { id: "invites", icon: "◇", label: "Invites" },
     { id: "referrals", icon: "◈", label: "Referrals" },
+    { id: "brands", icon: "◆", label: "Brands" },
     { id: "email", icon: "◎", label: "Send Email" },
     { id: "testing", icon: "◌", label: "System Check" },
   ];
@@ -532,6 +534,9 @@ const Admin = () => {
 
         {/* ── REFERRALS ── */}
         {activeTab === "referrals" && <AdminReferrals />}
+
+        {/* ── BRAND PARTNERS ── */}
+        {activeTab === "brands" && <AdminBrandPartners />}
 
         {/* ── EMAIL COMPOSER ── */}
         {activeTab === "email" && (

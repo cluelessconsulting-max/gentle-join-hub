@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [membershipType, setMembershipType] = useState<string>("free");
   const [confirmModal, setConfirmModal] = useState<{ eventName: string; status: string } | null>(null);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const Dashboard = () => {
       const [{ data: eventsData }, { data: regsData }, { data: profileData }, { data: allRegs }] = await Promise.all([
         supabase.from("events").select("*"),
         supabase.from("event_registrations" as any).select("event_id, status").eq("user_id", user.id),
-        supabase.from("profiles").select("application_status, full_name, referral_code").eq("user_id", user.id).single(),
+        supabase.from("profiles").select("application_status, full_name, referral_code, membership_type").eq("user_id", user.id).single(),
         supabase.from("event_registrations" as any).select("event_id, status"),
       ]);
       setEvents((eventsData as Event[]) || []);
@@ -69,6 +70,7 @@ const Dashboard = () => {
       setApplicationStatus((profileData as any)?.application_status || "pending");
       setReferralCode((profileData as any)?.referral_code || null);
       setProfileName((profileData as any)?.full_name || null);
+      setMembershipType((profileData as any)?.membership_type || "free");
       setLoading(false);
     };
     fetchData();
@@ -214,6 +216,26 @@ const Dashboard = () => {
             </div>
           </div>
         )}
+
+        {/* Membership Section */}
+        <div className="mb-14 bg-foreground/5 border border-foreground/10 p-6 md:p-8">
+          <p className="text-[10px] tracking-wide-xl uppercase text-accent mb-2">Your Membership</p>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="font-display text-[20px] capitalize text-foreground">{membershipType}</span>
+            <span className={`text-[9px] tracking-wide-lg uppercase px-2.5 py-1 rounded-full font-semibold ${
+              membershipType === "vip" ? "bg-amber-500/15 text-amber-400" :
+              membershipType === "premium" ? "bg-purple-500/15 text-purple-400" :
+              "bg-foreground/10 text-warm-grey"
+            }`}>
+              {membershipType === "free" ? "Free Tier" : membershipType === "premium" ? "Premium" : "VIP"}
+            </span>
+          </div>
+          {membershipType === "free" && (
+            <p className="text-[12px] text-warm-grey leading-relaxed">
+              Upgrade to Premium for priority event access and exclusive previews. Contact us for more info.
+            </p>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
           {events.map((event) => {
