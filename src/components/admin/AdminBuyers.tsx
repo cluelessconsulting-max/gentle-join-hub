@@ -56,7 +56,7 @@ const AdminBuyers = () => {
 
   const fetchAll = async () => {
     const [{ data: purchasesData }, { data: profilesData }, { data: codesData }] = await Promise.all([
-      supabase.from("purchases" as any).select("*").order("purchase_date", { ascending: false }),
+      supabase.from("purchases" as any).select("*").order("created_at", { ascending: false }),
       supabase.from("profiles").select("user_id, full_name, email, city, buyer_tier, total_points"),
       supabase.from("discount_codes" as any).select("*"),
     ]);
