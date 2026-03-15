@@ -359,6 +359,7 @@ const Admin = () => {
     { id: "referrals", icon: "◈", label: "Referrals" },
     { id: "brands", icon: "◆", label: "Brands" },
     { id: "analytics", icon: "◈", label: "Analytics" },
+    { id: "collabs", icon: "◈", label: "Collabs" },
     { id: "export", icon: "↓", label: "Export" },
     { id: "duplicates", icon: "⊘", label: "Duplicates" },
     { id: "email", icon: "◎", label: "Send Email" },
