@@ -240,6 +240,8 @@ const Dashboard = () => {
           )}
         </div>
 
+        <ReferralLeaderboard />
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
           {events.map((event) => {
             const regStatus = registrations.get(event.id);
