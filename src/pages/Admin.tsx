@@ -125,6 +125,9 @@ const Admin = () => {
 
   const updateStatus = async (profileId: string, status: string) => {
     setUpdatingId(profileId);
+    const profile = profiles.find((p) => p.id === profileId);
+    const oldStatus = profile?.application_status;
+
     const { error } = await supabase
       .from("profiles")
       .update({ application_status: status } as any)
@@ -137,6 +140,17 @@ const Admin = () => {
       setProfiles((prev) =>
         prev.map((p) => (p.id === profileId ? { ...p, application_status: status } : p))
       );
+      // Audit log
+      try {
+        await supabase.from("audit_log" as any).insert({
+          action: `member_${status}`,
+          performed_by: user?.email || "admin",
+          target_user_id: profile?.user_id,
+          target_user_name: profile?.full_name || profile?.email || "Unknown",
+          old_value: oldStatus,
+          new_value: status,
+        } as any);
+      } catch {}
     }
     setUpdatingId(null);
   };
