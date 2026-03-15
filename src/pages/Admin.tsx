@@ -134,68 +134,6 @@ const Admin = () => {
       setProfiles((prev) =>
         prev.map((p) => (p.id === profileId ? { ...p, application_status: status } : p))
       );
-
-      // Send welcome email on approval
-      if (status === "approved") {
-        const profile = profiles.find((p) => p.id === profileId);
-        if (profile?.email) {
-          const approvalHtml = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#EDE8E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#EDE8E0;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background-color:#EDE8E0;">
-        <tr><td style="padding:0 0 32px 0;text-align:center;">
-          <span style="font-size:18px;letter-spacing:4px;text-transform:uppercase;color:#0A0A0A;font-weight:400;">OFFLIST</span>
-        </td></tr>
-        <tr><td style="padding:0 0 10px 0;text-align:center;">
-          <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#B49A6A;">APPLICATION APPROVED</span>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <span style="font-size:28px;font-weight:300;color:#0A0A0A;letter-spacing:0.5px;">You're in.</span>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;"><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;line-height:1.8;">
-            Hi ${profile.full_name?.split(" ")[0] || "there"},<br><br>
-            Your application has been approved by our team.<br><br>
-            Make sure you follow us on
-            <a href="https://www.instagram.com/offlist.network/" style="color:#0A0A0A;text-decoration:underline;">Instagram</a>
-            and
-            <a href="https://www.tiktok.com/@off.list.network" style="color:#0A0A0A;text-decoration:underline;">TikTok</a>
-            for the latest event updates.<br><br>
-            You are now able to submit a request to be added to the guest list for the events on our website.
-          </span>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <a href="https://gentle-join-hub.lovable.app/#events" style="display:inline-block;background-color:#0A0A0A;color:#EDE8E0;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">Browse Events</a>
-        </td></tr>
-        <tr><td style="padding:0 0 24px 0;text-align:center;">
-          <span style="font-size:13px;color:#8B8178;letter-spacing:0.3px;">
-            Grazie e alla prossima!
-          </span>
-        </td></tr>
-        <tr><td><div style="height:1px;background-color:rgba(10,10,10,0.12);"></div></td></tr>
-        <tr><td style="padding:24px 0 0 0;text-align:center;">
-          <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#8B8178;">OFFLIST NETWORK</span>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-          supabase.functions.invoke("brevo-admin", {
-            body: {
-              action: "send_email",
-              recipients: [{ email: profile.email, name: profile.full_name || "Member" }],
-              subject: "You're in — Welcome to Offlist",
-              htmlContent: approvalHtml,
-            },
-          }).catch((err) => console.error("Welcome email error:", err));
-        }
-      }
     }
     setUpdatingId(null);
   };
