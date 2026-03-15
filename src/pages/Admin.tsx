@@ -396,7 +396,7 @@ const Admin = () => {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex flex-col items-center gap-0.5 bg-transparent border-none cursor-pointer py-2 px-2 rounded-lg min-h-[44px] min-w-[44px] transition-all ${
-              activeTab === tab.id ? "text-accent" : "text-muted-foreground"
+              activeTab === tab.id ? "text-accent" : "text-primary-foreground/60"
             }`}
           >
             <span className="text-sm">{tab.icon}</span>
