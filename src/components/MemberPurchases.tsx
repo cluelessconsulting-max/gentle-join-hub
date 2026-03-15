@@ -120,12 +120,19 @@ const MemberPurchases = ({ userId }: Props) => {
               className="bg-transparent border border-foreground/15 text-foreground px-4 py-3 text-[12px] tracking-wide outline-none font-body transition-colors focus:border-accent placeholder:text-foreground/25"
             />
             <input
-              placeholder="Order reference (optional)"
+              placeholder="Order reference number"
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
               className="bg-transparent border border-foreground/15 text-foreground px-4 py-3 text-[12px] tracking-wide outline-none font-body transition-colors focus:border-accent placeholder:text-foreground/25"
             />
+            <input
+              placeholder="Receipt / scontrino number"
+              value={form.receipt_number}
+              onChange={(e) => setForm({ ...form, receipt_number: e.target.value })}
+              className="bg-transparent border border-foreground/15 text-foreground px-4 py-3 text-[12px] tracking-wide outline-none font-body transition-colors focus:border-accent placeholder:text-foreground/25"
+            />
           </div>
+          <p className="text-[10px] text-foreground/30 mb-1">* At least one of Order Reference or Receipt Number is required.</p>
           <p className="text-[10px] text-foreground/30 mb-4">Your purchase will be verified by the Offlist team. Usually within 24 hours.</p>
           <button
             onClick={handleSubmit}
