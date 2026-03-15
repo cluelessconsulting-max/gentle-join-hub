@@ -57,7 +57,7 @@ const Dashboard = () => {
       const [{ data: eventsData }, { data: regsData }, { data: profileData }, { data: allRegs }] = await Promise.all([
         supabase.from("events").select("*"),
         supabase.from("event_registrations" as any).select("event_id, status").eq("user_id", user.id),
-        supabase.from("profiles").select("application_status, full_name, referral_code, membership_type").eq("user_id", user.id).single(),
+        supabase.from("profiles").select("application_status, full_name, referral_code, membership_type, buyer_tier, total_points").eq("user_id", user.id).single(),
         supabase.from("event_registrations" as any).select("event_id, status"),
       ]);
       setEvents((eventsData as Event[]) || []);
