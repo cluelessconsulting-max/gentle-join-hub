@@ -32,6 +32,7 @@ interface Profile {
 }
 
 const AdminEventsManager = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
