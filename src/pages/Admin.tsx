@@ -359,7 +359,7 @@ const Admin = () => {
         <div className="flex items-center gap-2.5 mb-7">
           <span className="font-display text-[22px] font-normal tracking-wide uppercase text-primary-foreground">Offlist</span>
         </div>
-        <p className="text-[10px] tracking-[3px] text-muted-foreground mb-2 pl-2">ADMIN</p>
+        <p className="text-[10px] tracking-[3px] text-primary-foreground/50 mb-2 pl-2">ADMIN</p>
 
         {tabs.map((tab) => (
           <button
