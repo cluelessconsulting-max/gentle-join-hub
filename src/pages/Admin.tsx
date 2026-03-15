@@ -613,6 +613,10 @@ const Admin = () => {
               </div>
             )}
 
+            <div className="mt-10">
+              <AuditLog />
+            </div>
+
             <h3 className="text-sm tracking-[2px] text-slate-600 uppercase mt-10 mb-4">Manual Testing Checklist</h3>
             <div className="flex flex-col">
               {[
