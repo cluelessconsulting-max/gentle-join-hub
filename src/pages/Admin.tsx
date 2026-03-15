@@ -564,6 +564,9 @@ const Admin = () => {
         {/* ── EXPORT ── */}
         {activeTab === "export" && <AdminExport />}
 
+        {/* ── COLLABS ── */}
+        {activeTab === "collabs" && <AdminCollabs />}
+
         {/* ── DUPLICATES ── */}
         {activeTab === "duplicates" && <AdminDuplicates />}
 
