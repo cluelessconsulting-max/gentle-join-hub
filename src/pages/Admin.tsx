@@ -14,6 +14,8 @@ import AdminBrandPartners from "@/components/admin/AdminBrandPartners";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminDuplicates from "@/components/admin/AdminDuplicates";
 import AdminExport from "@/components/admin/AdminExport";
+import AdminCollabs from "@/components/admin/AdminCollabs";
+import AdminScoring from "@/components/admin/AdminScoring";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
