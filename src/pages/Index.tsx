@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import EventsSection from "@/components/EventsSection";
 import Footer from "@/components/Footer";
+import CollabSection from "@/components/CollabSection";
 import RegisterModal from "@/components/RegisterModal";
 import SignInModal from "@/components/SignInModal";
 import EventAccessModal from "@/components/EventAccessModal";

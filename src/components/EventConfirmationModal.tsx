@@ -12,15 +12,15 @@ const EventConfirmationModal = ({ open, onClose, eventName, status }: Props) => 
     <div className="p-10 md:p-14 text-center">
       <div className="font-display text-[56px] text-accent mb-8 leading-none">◆</div>
       <p className="text-[10px] tracking-[0.24em] uppercase text-accent mb-5">
-        {status === "waitlist" ? "Waitlist" : "Guest List"}
+        {status === "waitlist" ? "Waitlist" : "Request Submitted"}
       </p>
       <h2 className="font-display text-[32px] font-light leading-tight mb-4">
-        {status === "waitlist" ? "You're on the waitlist." : "Thank you."}
+        {status === "waitlist" ? "You're on the waitlist." : "Request Submitted — Pending"}
       </h2>
       <p className="text-[13px] text-warm-grey leading-relaxed tracking-wide mb-3">
         {status === "waitlist"
           ? `${eventName} is currently full. We'll notify you if a spot opens up.`
-          : "Your application will be processed."}
+          : `Your request for ${eventName} has been submitted. You will be notified once it's been reviewed.`}
       </p>
       {status !== "waitlist" && (
         <p className="text-[12px] text-foreground/50 leading-relaxed tracking-wide">
