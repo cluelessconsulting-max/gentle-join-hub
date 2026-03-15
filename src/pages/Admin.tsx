@@ -155,6 +155,12 @@ const Admin = () => {
           new_value: status,
         } as any);
       } catch {}
+
+      // Also explicitly sync to Brevo for reliability
+      if (profile) {
+        const updatedProfile = { ...profile, application_status: status };
+        syncToBrevo(updatedProfile).catch(() => {});
+      }
     }
     setUpdatingId(null);
   };
