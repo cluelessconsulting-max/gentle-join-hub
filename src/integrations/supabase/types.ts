@@ -182,7 +182,9 @@ export type Database = {
       }
       profiles: {
         Row: {
+          admin_notes: string | null
           age: number | null
+          application_score: number | null
           application_status: string
           avatar_url: string | null
           buyer_tier: string
@@ -212,7 +214,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          admin_notes?: string | null
           age?: number | null
+          application_score?: number | null
           application_status?: string
           avatar_url?: string | null
           buyer_tier?: string
@@ -242,7 +246,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          admin_notes?: string | null
           age?: number | null
+          application_score?: number | null
           application_status?: string
           avatar_url?: string | null
           buyer_tier?: string
