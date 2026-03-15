@@ -460,134 +460,22 @@ const Admin = () => {
 
         {/* ── MEMBERS ── */}
         {activeTab === "members" && (
-          <div>
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-2xl font-bold tracking-wider text-slate-50">Members</h2>
-              <button
-                onClick={() => setActiveTab("email")}
-                disabled={selectedUsers.length === 0}
-                className="bg-indigo-950 text-purple-400 border border-indigo-900 px-4 py-2 rounded-lg cursor-pointer text-[13px] disabled:opacity-30 disabled:cursor-default hover:bg-indigo-900 transition-colors"
-              >
-                ✉ Email Selected ({selectedUsers.length})
-              </button>
-            </div>
-
-            {/* Filters */}
-            <div className="flex gap-2.5 flex-wrap mb-5 items-center">
-              <input
-                className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none min-w-[140px] focus:border-purple-800 transition-colors"
-                placeholder="Search name…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <input
-                className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none min-w-[140px] focus:border-purple-800 transition-colors"
-                placeholder="Filter city…"
-                value={filter.city}
-                onChange={(e) => setFilter({ ...filter, city: e.target.value })}
-              />
-              <input
-                className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none min-w-[140px] focus:border-purple-800 transition-colors"
-                placeholder="Filter interest…"
-                value={filter.interest}
-                onChange={(e) => setFilter({ ...filter, interest: e.target.value })}
-              />
-              <select
-                className="bg-[#0f0f1a] border border-[#1e1e2e] text-slate-200 px-3 py-2 rounded-lg text-[13px] outline-none cursor-pointer"
-                value={filter.status}
-                onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-              >
-                <option value="">All statuses</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
-              <span className="text-slate-600 text-xs">{filteredProfiles.length} results</span>
-            </div>
-
-            {/* Table */}
-            <div className="overflow-x-auto rounded-xl border border-[#1e1e2e]">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr>
-                    <th className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e]">
-                      <input
-                        type="checkbox"
-                        onChange={(e) =>
-                          setSelectedUsers(e.target.checked ? filteredProfiles.map((p) => p.id) : [])
-                        }
-                        checked={selectedUsers.length === filteredProfiles.length && filteredProfiles.length > 0}
-                      />
-                    </th>
-                    {["Name", "Email", "City", "Age", "IG", "Phone", "Interests", "Tier", "Status", "Date", "Actions"].map((h) => (
-                      <th key={h} className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e] whitespace-nowrap font-normal">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredProfiles.map((p) => (
-                    <tr key={p.id} className="border-b border-[#1a1a2e] hover:bg-[#0f0f1a]/50 transition-colors cursor-pointer" onClick={() => setSelectedProfile(p)}>
-                      <td className="p-3 text-[13px] text-slate-300">
-                        <input
-                          type="checkbox"
-                          checked={selectedUsers.includes(p.id)}
-                          onChange={(e) =>
-                            setSelectedUsers((prev) =>
-                              e.target.checked ? [...prev, p.id] : prev.filter((id) => id !== p.id)
-                            )
-                          }
-                        />
-                      </td>
-                      <td className="p-3 text-[13px] text-slate-200 whitespace-nowrap">{p.full_name || "—"}</td>
-                      <td className="p-3 text-[13px] text-slate-400 whitespace-nowrap">{p.email || "—"}</td>
-                      <td className="p-3 text-[13px] text-slate-400">{p.city || "—"}</td>
-                      <td className="p-3 text-[13px] text-slate-400">{p.age || "—"}</td>
-                      <td className="p-3 text-[13px] text-slate-400">{p.instagram || "—"}</td>
-                      <td className="p-3 text-[13px] text-slate-400">{p.phone || "—"}</td>
-                      <td className="p-3 text-[11px] text-slate-400 max-w-[200px] truncate">{(p.interests || []).join(", ") || "—"}</td>
-                      <td className="p-3"><TierBadge tier={p.buyer_tier} /></td>
-                      <td className="p-3"><StatusBadge status={p.application_status} /></td>
-                      <td className="p-3 text-[11px] text-slate-500 whitespace-nowrap">{new Date(p.created_at).toLocaleDateString()}</td>
-                      <td className="p-3">
-                        <div className="flex gap-1.5">
-                          {p.application_status !== "approved" && (
-                            <button
-                              onClick={() => updateStatus(p.id, "approved")}
-                              disabled={updatingId === p.id}
-                              className="bg-emerald-950 text-emerald-400 border-none rounded-md px-2.5 py-1 cursor-pointer text-[13px] hover:bg-emerald-900 transition-colors disabled:opacity-50"
-                            >
-                              ✓
-                            </button>
-                          )}
-                          {p.application_status !== "rejected" && (
-                            <button
-                              onClick={() => updateStatus(p.id, "rejected")}
-                              disabled={updatingId === p.id}
-                              className="bg-red-950 text-red-400 border-none rounded-md px-2.5 py-1 cursor-pointer text-[13px] hover:bg-red-900 transition-colors disabled:opacity-50"
-                            >
-                              ✕
-                            </button>
-                          )}
-                          <button
-                            onClick={() => syncToBrevo(p)}
-                            className="bg-indigo-950 text-purple-400 border-none rounded-md px-2.5 py-1 cursor-pointer text-[11px] hover:bg-indigo-900 transition-colors"
-                          >
-                            ↑ Brevo
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {filteredProfiles.length === 0 && (
-              <p className="text-center text-slate-600 text-[13px] py-16">No members found.</p>
-            )}
-          </div>
+          <MembersKanban
+            profiles={filteredProfiles}
+            allProfiles={profiles}
+            updatingId={updatingId}
+            updateStatus={updateStatus}
+            syncToBrevo={syncToBrevo}
+            onSelectProfile={setSelectedProfile}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filter={filter}
+            setFilter={setFilter}
+            onEmailGroup={(status: string) => {
+              setFilter({ ...filter, status });
+              setActiveTab("email");
+            }}
+          />
         )}
 
         {/* ── EVENTS MANAGER ── */}
