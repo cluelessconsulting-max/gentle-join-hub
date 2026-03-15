@@ -62,6 +62,7 @@ const RegisterModal = ({ open, onClose, referralCode }: Props) => {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const { signUp } = useAuth();
 
   // Check if invite-only mode is enabled
