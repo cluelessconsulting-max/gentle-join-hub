@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import AdminInvites from "@/components/admin/AdminInvites";
 import AdminEventsManager from "@/components/admin/AdminEventsManager";
 import AdminReferrals from "@/components/admin/AdminReferrals";
@@ -68,6 +69,7 @@ const Admin = () => {
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
   const [sending, setSending] = useState(false);
+  const [emailConfirm, setEmailConfirm] = useState(false);
 
   // System check
   const [checkResults, setCheckResults] = useState<CheckResult[]>([]);
@@ -171,34 +173,38 @@ const Admin = () => {
     }
     setSending(true);
 
-    const targets =
-      selectedUsers.length > 0
-        ? profiles.filter((p) => selectedUsers.includes(p.id))
-        : getFilteredProfiles();
+    try {
+      const targets =
+        selectedUsers.length > 0
+          ? profiles.filter((p) => selectedUsers.includes(p.id))
+          : getFilteredProfiles();
 
-    const recipients = targets
-      .filter((p) => p.email)
-      .map((p) => ({
-        email: p.email!,
-        name: p.full_name || "Member",
-      }));
+      const recipients = targets
+        .filter((p) => p.email)
+        .map((p) => ({
+          email: p.email!,
+          name: p.full_name || "Member",
+        }));
 
-    const { error } = await supabase.functions.invoke("brevo-admin", {
-      body: {
-        action: "send_email",
-        recipients,
-        subject: emailSubject,
-        htmlContent: emailBody.replace(/\n/g, "<br>"),
-      },
-    });
+      const { error } = await supabase.functions.invoke("brevo-admin", {
+        body: {
+          action: "send_email",
+          recipients,
+          subject: emailSubject,
+          htmlContent: emailBody.replace(/\n/g, "<br>"),
+        },
+      });
 
-    if (error) {
-      toast.error("Failed to send email");
-    } else {
-      toast.success(`Email sent to ${recipients.length} people`);
-      setEmailSubject("");
-      setEmailBody("");
-      setSelectedUsers([]);
+      if (error) {
+        toast.error("Failed to send email. Please try again.");
+      } else {
+        toast.success(`Email sent to ${recipients.length} people`);
+        setEmailSubject("");
+        setEmailBody("");
+        setSelectedUsers([]);
+      }
+    } catch (e) {
+      toast.error("Network error sending email. Please check your connection and retry.");
     }
     setSending(false);
   };
@@ -302,9 +308,9 @@ const Admin = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0f] font-mono text-slate-200">
-      {/* Sidebar */}
-      <aside className="w-[220px] bg-[#0f0f1a] border-r border-[#1e1e2e] p-8 px-4 flex flex-col gap-1">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#0a0a0f] font-mono text-slate-200">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-[220px] bg-[#0f0f1a] border-r border-[#1e1e2e] p-8 px-4 flex-col gap-1 shrink-0">
         <div className="flex items-center gap-2.5 mb-7">
           <span className="text-2xl text-purple-400">⬡</span>
           <span className="text-lg font-bold tracking-[4px] text-slate-50">OFFLIST</span>
@@ -339,8 +345,39 @@ const Admin = () => {
         </button>
       </aside>
 
+      {/* Mobile Bottom Tab Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f0f1a] border-t border-[#1e1e2e] flex justify-around items-center z-50 px-1 py-1 safe-area-pb">
+        {tabs.slice(0, 5).map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex flex-col items-center gap-0.5 bg-transparent border-none cursor-pointer py-2 px-2 rounded-lg min-h-[44px] min-w-[44px] transition-all ${
+              activeTab === tab.id ? "text-purple-400" : "text-slate-500"
+            }`}
+          >
+            <span className="text-sm">{tab.icon}</span>
+            <span className="text-[9px] tracking-wider">{tab.label}</span>
+            {tab.badge && <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />}
+          </button>
+        ))}
+      </nav>
+
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#0f0f1a] border-b border-[#1e1e2e]">
+        <div className="flex items-center gap-2">
+          <span className="text-lg text-purple-400">⬡</span>
+          <span className="text-sm font-bold tracking-[3px] text-slate-50">OFFLIST</span>
+        </div>
+        <button
+          onClick={async () => { await signOut(); navigate("/"); }}
+          className="text-slate-500 text-[10px] tracking-wider bg-transparent border border-[#1e1e2e] px-2.5 py-1.5 rounded cursor-pointer"
+        >
+          Sign Out
+        </button>
+      </div>
+
       {/* Main Content */}
-      <main className="flex-1 p-10 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-10 overflow-y-auto pb-20 md:pb-10">
         {/* ── OVERVIEW ── */}
         {activeTab === "overview" && (
           <div>
@@ -504,12 +541,21 @@ const Admin = () => {
             />
 
             <button
-              onClick={sendBulkEmail}
+              onClick={() => setEmailConfirm(true)}
               disabled={sending || !emailSubject || !emailBody}
               className="bg-purple-600 text-white border-none px-7 py-3 rounded-lg cursor-pointer text-sm font-semibold tracking-wide hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-default"
             >
               {sending ? "Sending..." : `Send to ${getFilteredProfiles().length} people`}
             </button>
+
+            <ConfirmDialog
+              open={emailConfirm}
+              onCancel={() => setEmailConfirm(false)}
+              onConfirm={() => { setEmailConfirm(false); sendBulkEmail(); }}
+              title={`Send email to ${getFilteredProfiles().length} recipients?`}
+              description={`Subject: "${emailSubject}". This will send an email to all matching members. Make sure the content is correct before proceeding.`}
+              confirmLabel="Send Email"
+            />
 
             <div className="mt-6 p-4 bg-[#0f0f1a] border border-[#1e1e2e] rounded-lg text-xs text-slate-500 leading-relaxed">
               <strong>Note:</strong> Template visivi, tracking aperture e gestione bounce richiedono accesso diretto a Brevo. Questa interfaccia copre i casi d'uso principali.

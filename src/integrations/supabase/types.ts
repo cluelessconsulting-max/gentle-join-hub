@@ -341,6 +341,7 @@ export type Database = {
         Args: { p_referral_code: string; p_user_id: string }
         Returns: undefined
       }
+      validate_invite_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

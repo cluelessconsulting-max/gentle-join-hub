@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Instagram, StickyNote, Copy, ExternalLink, Download, X, Search, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ConfirmDialog from "./ConfirmDialog";
 
 export interface Profile {
   id: string;
@@ -231,6 +232,7 @@ const MembersKanban = ({
   const [hasIG, setHasIG] = useState(false);
   const [hasTT, setHasTT] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ type: string; profileId?: string; name?: string; count?: number } | null>(null);
 
   const allInterests = ["Fashion & Style", "Music & Nightlife", "Art & Design", "Gastronomy & Social Dining", "Fitness & Wellness", "Travel & Culture", "Luxury & Lifestyle"];
   const allCities = [...new Set(allProfiles.map(p => p.city).filter(Boolean) as string[])].sort();
@@ -260,21 +262,46 @@ const MembersKanban = ({
   const autoApproveAbove80 = async () => {
     const pending = getColumnProfiles("pending").filter(p => (p.application_score || 0) >= 80);
     if (pending.length === 0) { toast.info("No applicants above 80"); return; }
-    for (const p of pending) {
-      await updateStatus(p.id, "approved");
-    }
-    toast.success(`Auto-approved ${pending.length} members`);
+    setConfirmAction({ type: "auto_approve", count: pending.length });
   };
 
   const bulkAction = async (action: string) => {
     const selected = allProfiles.filter(p => selectedIds.includes(p.id));
     if (action === "export") { exportCSV(selected); return; }
     if (action === "email") { onEmailGroup("selected"); return; }
+    // Require confirmation for destructive bulk actions
+    if (action === "approved" || action === "rejected") {
+      setConfirmAction({ type: `bulk_${action}`, count: selected.length });
+      return;
+    }
+    await executeBulkAction(action);
+  };
+
+  const executeBulkAction = async (action: string) => {
+    const selected = allProfiles.filter(p => selectedIds.includes(p.id));
     for (const p of selected) {
       await updateStatus(p.id, action);
     }
     setSelectedIds([]);
     toast.success(`${selected.length} members updated`);
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmAction) return;
+    if (confirmAction.type === "reject" && confirmAction.profileId) {
+      await updateStatus(confirmAction.profileId, "rejected");
+    } else if (confirmAction.type === "bulk_approved") {
+      await executeBulkAction("approved");
+    } else if (confirmAction.type === "bulk_rejected") {
+      await executeBulkAction("rejected");
+    } else if (confirmAction.type === "auto_approve") {
+      const pending = getColumnProfiles("pending").filter(p => (p.application_score || 0) >= 80);
+      for (const p of pending) {
+        await updateStatus(p.id, "approved");
+      }
+      toast.success(`Auto-approved ${pending.length} members`);
+    }
+    setConfirmAction(null);
   };
 
   const hasActiveFilters = searchQuery || filterCity || filterInterests.length > 0 || scoreRange[0] > 0 || scoreRange[1] < 100 || hasIG || hasTT;
@@ -467,7 +494,7 @@ const MembersKanban = ({
                           )}
                           {col.status !== "rejected" && (
                             <button
-                              onClick={() => updateStatus(p.id, "rejected")}
+                              onClick={() => setConfirmAction({ type: "reject", profileId: p.id, name: p.full_name || "this member" })}
                               disabled={updatingId === p.id}
                               className="bg-red-950 text-red-400 border-none rounded px-2 py-0.5 cursor-pointer text-[10px] hover:bg-red-900 transition-colors disabled:opacity-50"
                             >
@@ -506,6 +533,27 @@ const MembersKanban = ({
           <button onClick={() => setSelectedIds([])} className="text-slate-500 bg-transparent border-none cursor-pointer hover:text-slate-300 transition-colors"><X size={16} /></button>
         </div>
       )}
+
+      {/* ─── Confirm Dialog ─── */}
+      <ConfirmDialog
+        open={!!confirmAction}
+        onCancel={() => setConfirmAction(null)}
+        onConfirm={handleConfirm}
+        title={
+          confirmAction?.type === "reject" ? `Reject ${confirmAction.name}?` :
+          confirmAction?.type === "bulk_approved" ? `Approve ${confirmAction?.count} members?` :
+          confirmAction?.type === "bulk_rejected" ? `Reject ${confirmAction?.count} members?` :
+          confirmAction?.type === "auto_approve" ? `Auto-approve ${confirmAction?.count} members?` : "Confirm"
+        }
+        description={
+          confirmAction?.type === "reject" ? "They will not receive a welcome email. You can move them back to Pending later." :
+          confirmAction?.type === "bulk_approved" ? `This will approve ${confirmAction?.count} members. They won't receive emails automatically from this action.` :
+          confirmAction?.type === "bulk_rejected" ? `This will reject ${confirmAction?.count} members. This action can be undone by moving them back to Pending.` :
+          confirmAction?.type === "auto_approve" ? `All ${confirmAction?.count} pending members with score ≥ 80 will be approved.` : ""
+        }
+        confirmLabel={confirmAction?.type?.includes("reject") ? "Reject" : "Confirm"}
+        variant={confirmAction?.type?.includes("reject") ? "destructive" : "default"}
+      />
     </div>
   );
 };
