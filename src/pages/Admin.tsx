@@ -11,6 +11,9 @@ import AdminBuyers from "@/components/admin/AdminBuyers";
 import MembersKanban from "@/components/admin/MembersKanban";
 import AuditLog from "@/components/admin/AuditLog";
 import AdminBrandPartners from "@/components/admin/AdminBrandPartners";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminDuplicates from "@/components/admin/AdminDuplicates";
+import AdminExport from "@/components/admin/AdminExport";
 
 const ADMIN_EMAIL = "clueless.consulting@gmail.com";
 
