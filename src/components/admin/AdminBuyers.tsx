@@ -29,6 +29,7 @@ interface Purchase {
   purchase_date: string;
   notes: string | null;
   verified_by: string | null;
+  verification_status: string;
   created_at: string;
 }
 
@@ -282,7 +283,7 @@ const AdminBuyers = () => {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                {["Name", "Email", "Brand", "Amount", "Date", "Notes", ""].map((h) => (
+                {["Name", "Email", "Brand", "Amount", "Date", "Status", "Notes", ""].map((h) => (
                   <th key={h} className="p-3 text-left text-[11px] tracking-[2px] text-slate-600 bg-[#0f0f1a] border-b border-[#1e1e2e] font-normal">{h}</th>
                 ))}
               </tr>
@@ -296,8 +297,37 @@ const AdminBuyers = () => {
                     <td className="p-3 text-[13px] text-slate-400">{prof?.email || "—"}</td>
                     <td className="p-3 text-[13px] text-slate-200">{p.brand_name}</td>
                     <td className="p-3 text-[13px] text-emerald-400 font-semibold">£{Number(p.amount).toFixed(2)}</td>
-                    <td className="p-3 text-[11px] text-slate-500">{p.purchase_date}</td>
-                    <td className="p-3 text-[12px] text-slate-500">{p.notes || "—"}</td>
+                     <td className="p-3 text-[11px] text-slate-500">{p.purchase_date}</td>
+                     <td className="p-3">
+                       <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                         p.verification_status === "verified" ? "bg-emerald-950 text-emerald-400" :
+                         p.verification_status === "rejected" ? "bg-red-950 text-red-400" :
+                         "bg-orange-950 text-orange-400"
+                       }`}>
+                         {p.verification_status || "pending"}
+                       </span>
+                       {p.verification_status === "pending" && (
+                         <span className="ml-2 inline-flex gap-1">
+                           <button
+                             onClick={async () => {
+                               await supabase.from("purchases" as any).update({ verification_status: "verified", verified_by: "clueless.consulting@gmail.com" } as any).eq("id", p.id);
+                               toast.success("Purchase verified");
+                               fetchAll();
+                             }}
+                             className="text-[10px] bg-emerald-600 text-white border-none px-2 py-0.5 rounded cursor-pointer hover:bg-emerald-500"
+                           >✓</button>
+                           <button
+                             onClick={async () => {
+                               await supabase.from("purchases" as any).update({ verification_status: "rejected" } as any).eq("id", p.id);
+                               toast.success("Purchase rejected");
+                               fetchAll();
+                             }}
+                             className="text-[10px] bg-red-600 text-white border-none px-2 py-0.5 rounded cursor-pointer hover:bg-red-500"
+                           >✕</button>
+                         </span>
+                       )}
+                     </td>
+                     <td className="p-3 text-[12px] text-slate-500">{p.notes || "—"}</td>
                     <td className="p-3">
                       <button
                         onClick={() => setDeleteTarget(p)}
