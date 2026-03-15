@@ -276,13 +276,13 @@ const AdminEventsManager = () => {
                                   {r.status === "pending" && (
                                     <>
                                       <button
-                                        onClick={() => updateRegStatus(r.id, "confirmed")}
+                                        onClick={() => updateRegStatus(r.id, "confirmed", r.user_id, r.event_id)}
                                         className="text-[10px] bg-emerald-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-emerald-500 transition-colors"
                                       >
                                         ✓ Approve
                                       </button>
                                       <button
-                                        onClick={() => updateRegStatus(r.id, "rejected")}
+                                        onClick={() => updateRegStatus(r.id, "rejected", r.user_id, r.event_id)}
                                         className="text-[10px] bg-red-600 text-white border-none px-3 py-1 rounded cursor-pointer hover:bg-red-500 transition-colors"
                                       >
                                         ✕ Reject
